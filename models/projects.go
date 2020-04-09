@@ -28,13 +28,14 @@ func ReadProjectsforUser() (*[]dto.Project, error) {
 	rows, err := db.Query(`SELECT id, name, song, created, status, url, openshot_id FROM projects`)
 	if err != nil {
 		fmt.Println("error querying")
+		return nil, err
 	}
 	for rows.Next() {
-		err = rows.Scan(&p.ID, &p.Name, &p.Song, &p.Status, &p.OpenshotURL, &p.OpenshotID)
+		err = rows.Scan(&p.ID, &p.Name, &p.Song, &p.Created, &p.Status, &p.OpenshotURL, &p.OpenshotID)
 		if err != nil {
 			// handle this error
 			fmt.Println("error querying by row")
-			panic(err)
+			return nil, err
 		}
 		projects = append(projects, p)
 	}
