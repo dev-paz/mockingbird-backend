@@ -1,0 +1,4 @@
+package: github.com/mockingbird-backend
+import:
+- package: github.com/google/uuid
+- package: github.com/lib/pq

@@ -1,0 +1,11 @@
+hash: b7d4ada3becdcf5712d5c79a81f531c3b6a135b35b9e3d192ceb519962a0785a
+updated: 2020-04-09T11:42:04.315824118+01:00
+imports:
+- name: github.com/google/uuid
+  version: bd451584982ecf4ca5b1e5938cf168e17e30d837
+- name: github.com/lib/pq
+  version: 356e267cd3f45ee1303b7d8765e3583cb949950e
+  subpackages:
+  - oid
+  - scram
+testImports: []
