@@ -1,0 +1,112 @@
+package handler
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	guuid "github.com/google/uuid"
+
+	"github.com/mockingbird-backend/dto"
+	"github.com/mockingbird-backend/models"
+)
+
+func handleCreateProject(w http.ResponseWriter, req *http.Request) {
+	createProjReq := dto.CreateProjectRequest{}
+
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&createProjReq)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
+
+	openShotResp, err := createOpenShotProject()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	project := dto.Project{
+		ID:          "proj_" + guuid.New().String(),
+		Song:        createProjReq.SongID,
+		Name:        "Example name",
+		Created:     "time",
+		Status:      "started",
+		OpenshotURL: openShotResp.URL,
+		OpenshotID:  openShotResp.ID,
+	}
+
+	err = models.CreateProject(&project)
+	if err != nil {
+		panic(err)
+	}
+
+	clips := []dto.Clip{}
+	for userID, part := range createProjReq.UsersToClips {
+		clip := dto.Clip{
+			ID:                 "clip_" + guuid.New().String(),
+			ProjectID:          project.ID,
+			SongID:             project.Song,
+			UserID:             userID,
+			Part:               part,
+			OpenshotProjectID:  project.OpenshotID,
+			OpenshotProjectURL: project.OpenshotURL,
+		}
+		clips = append(clips, clip)
+	}
+
+	err = models.CreateClips(clips)
+	if err != nil {
+		panic(err)
+	}
+
+	resp, err := json.Marshal(&project)
+	if err != nil {
+		panic(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(resp)
+}
+
+// creates a project on the openshot api
+func createOpenShotProject() (dto.CreateProjectResponse, error) {
+	data := dto.CreateProjectResponse{}
+	username := "cloud-admin"
+	passwd := "UZTWLVEr6n"
+
+	requestData := []byte(`{
+		"name": "Example lakweufiluqwh",
+		"width": 1920,
+		"height": 1080,
+		"fps_num": 30,
+		"fps_den": 1,
+		"sample_rate": 44100,
+		"channels": 2,
+		"channel_layout": 3,
+		"json": {}
+}`)
+
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", "http://18.234.56.20/projects/", bytes.NewBuffer(requestData))
+	if err != nil {
+		return data, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.SetBasicAuth(username, passwd)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return data, err
+	}
+
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&data)
+	if err != nil {
+		return data, err
+	}
+	return data, nil
+}
