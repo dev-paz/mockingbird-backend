@@ -33,6 +33,7 @@ func ReadProjectsforUser() (*[]dto.Project, error) {
 		err = rows.Scan(&p.ID, &p.Name, &p.Song, &p.Created, &p.Status, &p.OpenshotURL, &p.OpenshotID)
 		if err != nil {
 			// handle this error
+			fmt.Println("error querying by row")
 			panic(err)
 		}
 		projects = append(projects, p)

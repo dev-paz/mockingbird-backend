@@ -12,6 +12,7 @@ func handleGetProjects(w http.ResponseWriter, req *http.Request) {
 
 	projects, err := models.ReadProjectsforUser()
 	if err != nil {
+		fmt.Println("Error reading from db")
 		fmt.Println(err.Error())
 		panic(err)
 	}
@@ -19,7 +20,7 @@ func handleGetProjects(w http.ResponseWriter, req *http.Request) {
 	resp, err := json.Marshal(&projects)
 	if err != nil {
 		fmt.Println(err.Error())
-
+		fmt.Println("Error marshalling")
 		panic(err)
 	}
 
