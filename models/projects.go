@@ -22,7 +22,6 @@ func CreateProject(p *dto.Project) error {
 }
 
 func ReadProjectsforUser() (*[]dto.Project, error) {
-	//
 	var p dto.Project
 	var projects []dto.Project
 	rows, err := db.Query(`SELECT id, name, song, created, status, url, openshot_id FROM projects`)
