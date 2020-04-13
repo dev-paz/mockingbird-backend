@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	guuid "github.com/google/uuid"
 	"github.com/mockingbird-backend/dto"
 	"github.com/mockingbird-backend/models"
 )
@@ -18,6 +19,8 @@ func handleCreateSong(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 		panic(err)
 	}
+
+	song.ID = "song_" + guuid.New().String()
 
 	err = models.CreateSong(&song)
 	if err != nil {
