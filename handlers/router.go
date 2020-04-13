@@ -10,5 +10,6 @@ func HandleRequests() {
 	http.HandleFunc("/create_clip", handleUpdateClip)
 	http.HandleFunc("/get_projects", handleGetProjects)
 	http.HandleFunc("/get_songs", handleGetSongs)
+	http.HandleFunc("/create_song", handleCreateSong)
 
 }
