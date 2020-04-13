@@ -31,7 +31,7 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 	project := dto.Project{
 		ID:          "proj_" + guuid.New().String(),
 		Song:        createProjReq.SongID,
-		Name:        "Example name",
+		Name:        createProjReq.Name,
 		Created:     "time",
 		Status:      "started",
 		OpenshotURL: openShotResp.URL,
@@ -91,7 +91,7 @@ func createOpenShotProject() (dto.CreateProjectResponse, error) {
 }`)
 
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", "http://18.234.56.20/projects/", bytes.NewBuffer(requestData))
+	req, err := http.NewRequest("POST", "http://"+OpenShotIP+"/projects/", bytes.NewBuffer(requestData))
 	if err != nil {
 		return data, err
 	}

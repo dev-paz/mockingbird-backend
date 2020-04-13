@@ -13,3 +13,5 @@ func HandleRequests() {
 	http.HandleFunc("/create_song", handleCreateSong)
 
 }
+
+var OpenShotIP = "52.91.155.8"
