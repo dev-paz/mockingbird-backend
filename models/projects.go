@@ -16,6 +16,7 @@ func CreateProject(p *dto.Project) error {
 	id := ""
 	err := db.QueryRow(sqlStatement, p.ID, p.Name, p.Song, p.Created, p.Status, p.OpenshotURL, p.OpenshotID).Scan(&id)
 	if err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 	return nil

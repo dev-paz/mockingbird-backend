@@ -17,6 +17,7 @@ func ReadSongs() (*[]dto.Song, error) {
 	for rows.Next() {
 		err = rows.Scan(&s.ID, &s.Title, &s.Parts, &s.Difficulty)
 		if err != nil {
+			fmt.Println(err.Error())
 			// handle this error
 			panic(err)
 		}
@@ -33,6 +34,7 @@ func CreateSong(s *dto.Song) error {
 	id := ""
 	err := db.QueryRow(sqlStatement, s.ID, s.Title, s.Parts, s.Difficulty).Scan(&id)
 	if err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 	return nil

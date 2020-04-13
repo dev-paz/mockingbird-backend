@@ -40,6 +40,7 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 
 	err = models.CreateProject(&project)
 	if err != nil {
+		fmt.Println(err.Error())
 		panic(err)
 	}
 
@@ -59,11 +60,13 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 
 	err = models.CreateClips(clips)
 	if err != nil {
+		fmt.Println(err.Error())
 		panic(err)
 	}
 
 	resp, err := json.Marshal(&project)
 	if err != nil {
+		fmt.Println(err.Error())
 		panic(err)
 	}
 
