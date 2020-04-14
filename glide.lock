@@ -1,8 +1,8 @@
-hash: ef1f9b5b2e31828e180b4ced71462a55847f9d6757519f86fd1ea53acfaa3b7a
-updated: 2020-04-13T21:47:53.656534402+01:00
+hash: c42e743514635700fa7572da3639c53b54319c3d7a960d8fcd80aaf542c45d9d
+updated: 2020-04-14T15:23:53.895527853+01:00
 imports:
 - name: cloud.google.com/go
-  version: 51eb5ee54e44743973ca6a638660fd1067b17365
+  version: ad364eb9b4aeeab478e83ee0e2dcb9dfe9f27c10
   subpackages:
   - compute/metadata
   - firestore
@@ -26,6 +26,8 @@ imports:
   - storage
 - name: github.com/BurntSushi/toml
   version: 3012a1dbe2e4bd1391d42b32f0577cb7bbc7f005
+- name: github.com/dgrijalva/jwt-go
+  version: dc14462fd58732591c7fa58cc8496d6824316a82
 - name: github.com/golang/groupcache
   version: 8c9f03a8e57eb486e42badaed3fb287da51807ba
   subpackages:
@@ -126,7 +128,7 @@ imports:
   - unicode/bidi
   - unicode/norm
 - name: golang.org/x/tools
-  version: 250b2131eb8b6093aad664eb9012cf44c9f66b68
+  version: 0037cb7812fa1343616f77d5e8457b530a8f5bcc
   subpackages:
   - cmd/goimports
   - go/analysis
@@ -195,7 +197,7 @@ imports:
   - googleapis/type/expr
   - googleapis/type/latlng
 - name: google.golang.org/grpc
-  version: a783b25fe5e65c3d4eb0281d835ed1fa88b08365
+  version: 8e6052a06fef1de81aadcb5ba3feed6faf6d07df
   subpackages:
   - attributes
   - backoff

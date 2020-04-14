@@ -1,6 +1,7 @@
 package: github.com/mockingbird-backend
 import:
 - package: firebase.google.com/go
+- package: github.com/dgrijalva/jwt-go
 - package: github.com/google/uuid
 - package: github.com/lib/pq
 - package: google.golang.org/api
