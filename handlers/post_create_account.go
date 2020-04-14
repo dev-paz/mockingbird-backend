@@ -17,15 +17,12 @@ import (
 func handleCreateAccount(w http.ResponseWriter, req *http.Request) {
 	createAccountRequest := dto.CreateAccountRequest{}
 
-	fmt.Println(req.Body)
-
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&createAccountRequest)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
 	}
-	fmt.Println(createAccountRequest)
 
 	opt := option.WithCredentialsFile("credentials.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
@@ -46,10 +43,10 @@ func handleCreateAccount(w http.ResponseWriter, req *http.Request) {
 	}
 
 	firebaseUser := firebaseIDToken.Claims
-	fmt.Println(firebaseUser)
 
 	if createAccountRequest.GoogleIDTokenID != "" {
 		googleUser, err := getGoogleUser(createAccountRequest.GoogleIDTokenID)
+		fmt.Println(googleUser)
 		if err != nil {
 			fmt.Println(err.Error())
 			return
@@ -60,15 +57,18 @@ func handleCreateAccount(w http.ResponseWriter, req *http.Request) {
 			FamilyName:      googleUser.FamilyName,
 			GivenName:       googleUser.GivenName,
 			ProfilePhotoURL: googleUser.Picture,
-			Email:           googleUser.Email,
+			Email:           fmt.Sprintf("%v", firebaseUser["poo"]),
 			GoogleUserID:    googleUser.Sub,
 			FirebaseUserID:  firebaseIDToken.UID,
 		}
 	}
 
 	_ = dto.User{
-		ID:             "user_" + guuid.New().String(),
-		FirebaseUserID: firebaseIDToken.UID,
+		ID:              "user_" + guuid.New().String(),
+		FirebaseUserID:  firebaseIDToken.UID,
+		Email:           fmt.Sprintf("%v", firebaseUser["email"]),
+		Name:            fmt.Sprintf("%v", firebaseUser["name"]),
+		ProfilePhotoURL: fmt.Sprintf("%v", firebaseUser["picture"]),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
