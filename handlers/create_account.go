@@ -27,6 +27,7 @@ func handleCreateAccount(w http.ResponseWriter, req *http.Request) {
 	// check whether user already exists
 	existingUser, _ := models.ReadUser(createAccountRequest.FirebaseUserID)
 	if existingUser != nil {
+		fmt.Println("user exists, returning")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		return

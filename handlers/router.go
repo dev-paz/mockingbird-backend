@@ -11,8 +11,9 @@ func HandleRequests() {
 	http.HandleFunc("/get_projects", handleGetProjects)
 	http.HandleFunc("/get_songs", handleGetSongs)
 	http.HandleFunc("/create_song", handleCreateSong)
-	http.HandleFunc("/post_create_account", handleCreateAccount)
-
+	http.HandleFunc("/create_account", handleCreateAccount)
 }
+
+//// TODO: secure the routes by checking the firebase token
 
 var OpenShotIP = "52.91.155.8"
