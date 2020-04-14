@@ -11,7 +11,7 @@ func HandleRequests() {
 	http.HandleFunc("/get_projects", handleGetProjects)
 	http.HandleFunc("/get_songs", handleGetSongs)
 	http.HandleFunc("/create_song", handleCreateSong)
-	http.HandleFunc("/sign_in", handleSignIn)
+	http.HandleFunc("/post_create_account", handleCreateAccount)
 
 }
 
