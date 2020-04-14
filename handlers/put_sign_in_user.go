@@ -12,7 +12,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func hangleSignIn(w http.ResponseWriter, req *http.Request) {
+func handleSignIn(w http.ResponseWriter, req *http.Request) {
 
 	signInRequest := dto.SignInRequest{}
 
@@ -34,11 +34,15 @@ func hangleSignIn(w http.ResponseWriter, req *http.Request) {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
-	_, err = client.VerifyIDToken(context.Background(), signInRequest.TokenID)
+	result, err := client.VerifyIDToken(context.Background(), signInRequest.TokenID)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+
+	fmt.Println("checked token successfully")
+	fmt.Println(result.UID)
+	fmt.Println(result)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
