@@ -15,7 +15,7 @@ import (
 func handleSignIn(w http.ResponseWriter, req *http.Request) {
 
 	signInRequest := dto.SignInRequest{}
-
+	fmt.Println(req.Body)
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&signInRequest)
 	if err != nil {
