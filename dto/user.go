@@ -6,3 +6,7 @@ type User struct {
 	Name  string
 	Email string
 }
+
+type SignInRequest struct {
+	TokenID string
+}

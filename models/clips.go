@@ -9,6 +9,7 @@ import (
 )
 
 func CreateClips(clips []dto.Clip) error {
+	fmt.Println("printing clips")
 	fmt.Println(clips)
 	sqlStatement := `
 	INSERT INTO clips (id, song_id, project_id, user_id, part, file, openshot_project_id, openshot_project_url)
