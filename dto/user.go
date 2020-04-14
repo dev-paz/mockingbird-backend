@@ -15,8 +15,8 @@ type User struct {
 }
 
 type CreateAccountRequest struct {
-	FirebaseTokenID string `json:"firebase_token_id"`
-	GoogleTokenID   string `json:"google_token_id"`
+	FirebaseIDTokenID string `json:"firebase_id_token"`
+	GoogleIDTokenID   string `json:"google_id_token"`
 }
 
 // TokenInfo struct

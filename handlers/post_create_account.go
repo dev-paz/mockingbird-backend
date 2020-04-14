@@ -39,17 +39,17 @@ func handleCreateAccount(w http.ResponseWriter, req *http.Request) {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
-	firebaseIdToken, err := client.VerifyIDToken(context.Background(), createAccountRequest.FirebaseTokenID)
+	firebaseIDToken, err := client.VerifyIDToken(context.Background(), createAccountRequest.FirebaseIDTokenID)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	firebaseUser := firebaseIdToken.Claims
+	firebaseUser := firebaseIDToken.Claims
 	fmt.Println(firebaseUser)
 
-	if createAccountRequest.GoogleTokenID != "" {
-		googleUser, err := getGoogleUser(createAccountRequest.GoogleTokenID)
+	if createAccountRequest.GoogleIDTokenID != "" {
+		googleUser, err := getGoogleUser(createAccountRequest.GoogleIDTokenID)
 		if err != nil {
 			fmt.Println(err.Error())
 			return
@@ -62,13 +62,13 @@ func handleCreateAccount(w http.ResponseWriter, req *http.Request) {
 			ProfilePhotoURL: googleUser.Picture,
 			Email:           googleUser.Email,
 			GoogleUserID:    googleUser.Sub,
-			FirebaseUserID:  firebaseIdToken.UID,
+			FirebaseUserID:  firebaseIDToken.UID,
 		}
 	}
 
 	_ = dto.User{
 		ID:             "user_" + guuid.New().String(),
-		FirebaseUserID: firebaseIdToken.UID,
+		FirebaseUserID: firebaseIDToken.UID,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
