@@ -8,5 +8,5 @@ type User struct {
 }
 
 type SignInRequest struct {
-	TokenID string
+	TokenID string `json:"token_id"`
 }

@@ -22,6 +22,7 @@ func handleSignIn(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 		panic(err)
 	}
+	fmt.Println(signInRequest)
 
 	opt := option.WithCredentialsFile("path/to/serviceAccountKey.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
@@ -31,6 +32,7 @@ func handleSignIn(w http.ResponseWriter, req *http.Request) {
 	}
 	client, err := app.Auth(context.Background())
 	if err != nil {
+		fmt.Println(err.Error())
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
