@@ -24,7 +24,7 @@ func handleSignIn(w http.ResponseWriter, req *http.Request) {
 	}
 	fmt.Println(signInRequest)
 
-	opt := option.WithCredentialsFile("path/to/serviceAccountKey.json")
+	opt := option.WithCredentialsFile("credentials.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		fmt.Println(err.Error())
