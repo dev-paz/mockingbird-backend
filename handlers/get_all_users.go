@@ -14,7 +14,7 @@ func handlegetUsers(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	resp, err := json.Marshal(&songs)
+	resp, err := json.Marshal(&users)
 	if err != nil {
 		panic(err)
 	}
