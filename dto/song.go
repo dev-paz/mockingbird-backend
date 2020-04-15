@@ -7,3 +7,10 @@ type Song struct {
 	Parts      string `json:"parts"`
 	Difficulty int64  `json:"difficulty"`
 }
+
+type SongPart struct {
+	ID       string `json:"id"`
+	Part     int64  `json:"part"`
+	MusicURL string `json:"music_url"`
+	SongID   string `json:"song_id"`
+}
