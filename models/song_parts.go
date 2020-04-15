@@ -6,10 +6,11 @@ import (
 	"github.com/mockingbird-backend/dto"
 )
 
-func ReadSongParts() (*[]dto.SongPart, error) {
+func ReadSongParts(songID string) (*[]dto.SongPart, error) {
 	var p dto.SongPart
 	var parts []dto.SongPart
-	rows, err := db.Query(`SELECT id, song_id, part, music_url FROM songs`)
+	query := `SELECT id, song_id, part, music_url FROM song_parts WHERE song_id=` + songID + `;`
+	rows, err := db.Query(query)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
@@ -28,7 +29,7 @@ func ReadSongParts() (*[]dto.SongPart, error) {
 
 func CreateSongParts(sp []dto.SongPart) error {
 	sqlStatement := `
-	INSERT INTO songs (id, song_id, part, music_url)
+	INSERT INTO song_parts (id, song_id, part, music_url)
 	VALUES ($1, $2, $3, $4)
 	RETURNING id`
 	for _, p := range sp {
