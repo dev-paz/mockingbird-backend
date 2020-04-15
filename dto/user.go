@@ -2,11 +2,11 @@ package dto
 
 //User struct does a thing
 type User struct {
-	ID              string
-	FirebaseUserID  string
-	ProfilePhotoURL string
-	Email           string
-	Name            string
+	ID              string `json:"id"`
+	FirebaseUserID  string `json:"firebase_user_id"`
+	ProfilePhotoURL string `json:"profile_photo_url"`
+	Email           string `json:"email"`
+	Name            string `json:"name"`
 }
 
 type CreateAccountRequest struct {

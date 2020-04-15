@@ -31,3 +31,23 @@ func ReadUser(firebaseUserId string) (*dto.User, error) {
 	}
 	return &u, nil
 }
+
+func ReadAllUsers() (*[]dto.User, error) {
+	var u dto.User
+	var users []dto.User
+	rows, err := db.Query(`SELECT id, firebase_user_id, profile_photo_url, email, name FROM users`)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
+	for rows.Next() {
+		err = rows.Scan(&u.ID, &u.FirebaseUserID, &u.ProfilePhotoURL, &u.Email, &u.Name)
+		if err != nil {
+			fmt.Println(err.Error())
+			// handle this error
+			panic(err)
+		}
+		users = append(users, u)
+	}
+	return &users, nil
+}
