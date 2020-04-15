@@ -22,8 +22,8 @@ func handleCreateSongParts(w http.ResponseWriter, req *http.Request) {
 
 	fmt.Println(songParts)
 
-	for _, song := range songParts {
-		song.ID = "sp_" + guuid.New().String()
+	for n, _ := range songParts {
+		songParts[n].ID = "sp_" + guuid.New().String()
 	}
 
 	err = models.CreateSongParts(songParts)
