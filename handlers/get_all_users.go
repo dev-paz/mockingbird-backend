@@ -7,7 +7,7 @@ import (
 	"github.com/mockingbird-backend/models"
 )
 
-func handlegetUsers(w http.ResponseWriter, req *http.Request) {
+func handleGetAllUsers(w http.ResponseWriter, req *http.Request) {
 
 	users, err := models.ReadAllUsers()
 	if err != nil {
