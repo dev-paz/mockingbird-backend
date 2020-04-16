@@ -17,7 +17,7 @@ func handleGetSongParts(w http.ResponseWriter, req *http.Request) {
 	}
 
 	songID := params[0]
-	if songID != "" {
+	if songID == "" {
 		fmt.Println("Missing param song id")
 		return
 	}
