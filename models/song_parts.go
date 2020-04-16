@@ -9,14 +9,14 @@ import (
 func ReadSongParts(songID string) (*[]dto.SongPart, error) {
 	var p dto.SongPart
 	var parts []dto.SongPart
-	query := `SELECT id, song_id, part, music_url FROM song_parts WHERE song_id=` + songID + `;`
+	query := `SELECT id, song_id, part, music_url, type FROM song_parts WHERE song_id=` + songID + `;`
 	rows, err := db.Query(query)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
 	}
 	for rows.Next() {
-		err = rows.Scan(&p.ID, &p.SongID, &p.Part, &p.MusicURL)
+		err = rows.Scan(&p.ID, &p.SongID, &p.Part, &p.MusicURL, &p.Type)
 		if err != nil {
 			fmt.Println(err.Error())
 			// handle this error
@@ -29,12 +29,12 @@ func ReadSongParts(songID string) (*[]dto.SongPart, error) {
 
 func CreateSongParts(sp []dto.SongPart) error {
 	sqlStatement := `
-	INSERT INTO song_parts (id, song_id, part, music_url)
-	VALUES ($1, $2, $3, $4)
+	INSERT INTO song_parts (id, song_id, part, music_url, type)
+	VALUES ($1, $2, $3, $, $5)
 	RETURNING id`
 	for _, p := range sp {
 		id := ""
-		err := db.QueryRow(sqlStatement, p.ID, p.SongID, p.Part, p.MusicURL).Scan(&id)
+		err := db.QueryRow(sqlStatement, p.ID, p.SongID, p.Part, p.MusicURL, p.Type).Scan(&id)
 		if err != nil {
 			fmt.Println(err.Error())
 			return err

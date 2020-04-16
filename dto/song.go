@@ -13,4 +13,5 @@ type SongPart struct {
 	Part     int64  `json:"part"`
 	MusicURL string `json:"music_url"`
 	SongID   string `json:"song_id"`
+	Type     string `json:"type"`
 }
