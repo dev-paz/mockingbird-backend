@@ -9,8 +9,10 @@ import (
 func ReadSongParts(songID string) (*[]dto.SongPart, error) {
 	var p dto.SongPart
 	var parts []dto.SongPart
-	query := `SELECT id, song_id, part, music_url, type FROM song_parts WHERE song_id=` + songID + `;`
-	rows, err := db.Query(query)
+	fmt.Println(songID)
+	query := `SELECT id, song_id, part, music_url, type FROM song_parts WHERE song_id=$1;`
+	fmt.Println(query)
+	rows, err := db.Query(query, songID)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)

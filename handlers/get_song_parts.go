@@ -10,7 +10,7 @@ import (
 
 func handleGetSongParts(w http.ResponseWriter, req *http.Request) {
 
-	params, ok := req.URL.Query()["song_id"]
+	params, ok := req.URL.Query()["id"]
 	if !ok {
 		fmt.Println("something went wrong")
 		return
@@ -35,6 +35,8 @@ func handleGetSongParts(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 		panic(err)
 	}
+
+	fmt.Println(resp)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
