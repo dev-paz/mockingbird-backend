@@ -10,7 +10,13 @@ import (
 
 func handleGetSongParts(w http.ResponseWriter, req *http.Request) {
 
-	songID := req.URL.Query().Get("song_id")
+	params, ok := req.URL.Query()["song_id"]
+	if !ok {
+		fmt.Println("something went wrong")
+		return
+	}
+
+	songID := params[0]
 	if songID != "" {
 		fmt.Println("Missing param song id")
 		return
