@@ -6,7 +6,7 @@ type Clip struct {
 	SongID             string `json:"song_id"`
 	ProjectID          string `json:"project_id"`
 	UserID             string `json:"user_id"`
-	Part               int64  `json:"part"`
+	PartID             string `json:"part_id"`
 	File               string `json:"file"`
 	OpenshotProjectID  int64  `json:"openshot_project_id"`
 	OpenshotProjectURL string `json:"openshot_project_url"`

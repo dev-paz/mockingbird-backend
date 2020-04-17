@@ -13,9 +13,9 @@ type Project struct {
 
 //CreateProjectRequest struct for sending data to openshot api
 type CreateProjectRequest struct {
-	SongID       string           `json:"song_id"`
-	UsersToClips map[string]int64 `json:"users_to_clips"`
-	Name         string           `json:"name"`
+	SongID       string            `json:"song_id"`
+	ClipsToUsers map[string]string `json:"clips_to_users"`
+	Name         string            `json:"name"`
 }
 
 //CreateProjectResponse struct for sending data to openshot api

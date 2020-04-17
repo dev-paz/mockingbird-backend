@@ -45,13 +45,13 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 	}
 
 	clips := []dto.Clip{}
-	for userID, part := range createProjReq.UsersToClips {
+	for partID, userID := range createProjReq.ClipsToUsers {
 		clip := dto.Clip{
 			ID:                 "clip_" + guuid.New().String(),
 			ProjectID:          project.ID,
 			SongID:             project.Song,
 			UserID:             userID,
-			Part:               part,
+			PartID:             partID,
 			OpenshotProjectID:  project.OpenshotID,
 			OpenshotProjectURL: project.OpenshotURL,
 		}

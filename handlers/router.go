@@ -18,6 +18,6 @@ func HandleRequests() {
 
 }
 
-//// TODO: secure the routes by checking the firebase token
+// TODO: secure the routes by checking the firebase token
 
-var OpenShotIP = "52.91.155.8"
+var OpenShotIP = "35.172.138.162"
