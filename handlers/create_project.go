@@ -22,6 +22,8 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
+	fmt.Println(createProjReq)
+
 	openShotResp, err := createOpenShotProject()
 	if err != nil {
 		fmt.Println(err.Error())
