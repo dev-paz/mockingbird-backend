@@ -2,13 +2,15 @@ package dto
 
 //Project struct does a thing
 type Project struct {
-	Song        string `json:"song"`
-	Name        string `json:"name"`
-	ID          string `json:"id"`
-	Created     string `json:"created"`
-	Status      string `json:"status"`
-	OpenshotID  int64  `json:"openshot_id"`
-	OpenshotURL string `json:"openshot_url"`
+	Song        Song      `json:"song" db:"song"`
+	Clips       ClipSlice `json:"clips" db:"clips"`
+	Name        string    `json:"name" db:"name"`
+	Users       UserSlice `json:"users" db:"users"`
+	ID          string    `json:"id" db:"id"`
+	Created     string    `json:"created" db:"created"`
+	Status      string    `json:"status" db:"status"`
+	OpenshotID  string    `json:"openshot_id" db:"openshot_id"`
+	OpenshotURL string    `json:"openshot_url" db:"openshot_url"`
 }
 
 //CreateProjectRequest struct for sending data to openshot api
@@ -21,6 +23,14 @@ type CreateProjectRequest struct {
 //CreateProjectResponse struct for sending data to openshot api
 type CreateProjectResponse struct {
 	URL  string `json:"url"`
-	ID   int64  `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+type GetAllProjectsResponse struct {
+	Projects []Project `json:"projects"`
+}
+
+type GetAllProjectsRequest struct {
+	UserID string `json:"user_id"`
 }

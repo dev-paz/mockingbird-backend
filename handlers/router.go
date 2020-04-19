@@ -15,7 +15,7 @@ func HandleRequests() {
 	http.HandleFunc("/create_song_parts", handleCreateSongParts)
 	http.HandleFunc("/get_all_users", handleGetAllUsers)
 	http.HandleFunc("/get_song_parts", handleGetSongParts)
-
+	http.HandleFunc("/get_all_projects", handleGetAllProjects)
 }
 
 // TODO: secure the routes by checking the firebase token

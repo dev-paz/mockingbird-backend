@@ -32,7 +32,6 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 
 	project := dto.Project{
 		ID:          "proj_" + guuid.New().String(),
-		Song:        createProjReq.SongID,
 		Name:        createProjReq.Name,
 		Created:     "time",
 		Status:      "started",
@@ -51,7 +50,6 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 		clip := dto.Clip{
 			ID:                 "clip_" + guuid.New().String(),
 			ProjectID:          project.ID,
-			SongID:             project.Song,
 			UserID:             userID,
 			PartID:             partID,
 			OpenshotProjectID:  project.OpenshotID,

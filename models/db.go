@@ -23,6 +23,7 @@ func InitDB() {
 	}
 }
 
+//
 // func InitDB(psqlInfo string) {
 // 	var err error
 // 	db, err = sql.Open("postgres", psqlInfo)

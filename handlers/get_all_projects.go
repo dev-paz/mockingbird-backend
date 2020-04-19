@@ -8,14 +8,27 @@ import (
 	"github.com/mockingbird-backend/models"
 )
 
-func handleGetProjects(w http.ResponseWriter, req *http.Request) {
+func handleGetAllProjects(w http.ResponseWriter, req *http.Request) {
 
-	projects, err := models.ReadProjectsforUser()
+	params, ok := req.URL.Query()["user_id"]
+	if !ok {
+		fmt.Println("Error parsing url query")
+		return
+	}
+	fmt.Println(params)
+	userID := params[0]
+	if userID == "" {
+		fmt.Println("Missing param user id")
+		return
+	}
+
+	projects, err := models.ReadAllProjects(userID)
 	if err != nil {
 		fmt.Println("Error reading from db")
 		fmt.Println(err.Error())
 		panic(err)
 	}
+	fmt.Println(projects)
 
 	resp, err := json.Marshal(&projects)
 	if err != nil {

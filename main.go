@@ -10,12 +10,14 @@ import (
 )
 
 func main() {
+
 	port := os.Getenv("PORT")
 
 	models.InitDB()
 
 	handler.HandleRequests()
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+
 }
 
 // const (
@@ -23,7 +25,7 @@ func main() {
 // 	port     = 5432
 // 	user     = "paz"
 // 	password = "password"
-// 	dbname   = "mockingbird-heroku"
+// 	dbname   = "mockingbirdheroku"
 // )
 //
 // func main() {
@@ -35,3 +37,4 @@ func main() {
 //
 // 	handler.HandleRequests()
 // 	log.Fatal(http.ListenAndServe(":8881", nil))
+// }
