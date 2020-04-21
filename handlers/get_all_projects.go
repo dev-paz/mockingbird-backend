@@ -13,17 +13,20 @@ func handleGetAllProjects(w http.ResponseWriter, req *http.Request) {
 	params, ok := req.URL.Query()["user_id"]
 	if !ok {
 		fmt.Println("Error parsing url query")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	fmt.Println(params)
 	userID := params[0]
 	if userID == "" {
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Println("Missing param user id")
 		return
 	}
 
 	projects, err := models.ReadAllProjects(userID)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Println("Error reading from db")
 		fmt.Println(err.Error())
 		panic(err)
@@ -32,6 +35,7 @@ func handleGetAllProjects(w http.ResponseWriter, req *http.Request) {
 
 	resp, err := json.Marshal(&projects)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Println(err.Error())
 		fmt.Println("Error marshalling")
 		panic(err)

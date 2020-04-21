@@ -19,6 +19,11 @@ type Clip struct {
 	Status             string `json:"status"`
 }
 
+type UpdateClipRequest struct {
+	ID   string `json:"id"`
+	File string `json:"file"`
+}
+
 type ClipSlice []Clip
 
 func (u Clip) Value() (driver.Value, error) {

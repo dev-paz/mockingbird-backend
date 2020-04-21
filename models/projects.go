@@ -22,6 +22,22 @@ func CreateProject(p *dto.Project) error {
 	return nil
 }
 
+func ReadProject(projectID string) (*dto.Project, error) {
+	sqlStatement :=
+		`SELECT  id, name, status, users, clips, song
+		 FROM projects_view
+		 WHERE id=$1
+		`
+	var p dto.Project
+	row := db.QueryRow(sqlStatement, projectID)
+	err := row.Scan(&p.ID, &p.Name, &p.Status, &p.Users, &p.Clips, &p.Song)
+	if err != nil {
+		fmt.Printf(err.Error())
+		return nil, err
+	}
+	return &p, nil
+}
+
 func ReadAllProjects(userID string) (*[]dto.Project, error) {
 	var p dto.Project
 	var projects []dto.Project
@@ -36,9 +52,6 @@ func ReadAllProjects(userID string) (*[]dto.Project, error) {
 			FROM user_projects as up
 			INNER JOIN projects_view AS pv ON pv.id=up.id;
 		`
-
-	// u := dto.UserSlice{}
-
 	rows, err := db.Query(sqlStatement, userID)
 	if err != nil {
 		fmt.Println("error querying")

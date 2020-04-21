@@ -26,6 +26,16 @@ func CreateClips(clips []dto.Clip) error {
 	return nil
 }
 
-func UpdateClip(id string) error {
+func UpdateClip(id string, file string) error {
+	sqlStatement := `
+	UPDATE clips
+	SET file = $2
+	WHERE id=$1`
+
+	_, err := db.Exec(sqlStatement, id, file)
+	if err != nil {
+		panic(err)
+	}
+
 	return nil
 }

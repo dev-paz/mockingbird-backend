@@ -10,22 +10,20 @@ import (
 )
 
 func handleUpdateClip(w http.ResponseWriter, req *http.Request) {
-	clip := dto.Clip{}
+	clipsReq := dto.UpdateClipRequest{}
 
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&clip)
+	err := decoder.Decode(&clipsReq)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
 	}
 
-	err = models.UpdateClip(clip.ID)
+	err = models.UpdateClip(clipsReq.ID, clipsReq.File)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-
-	// TODO: check whether thsi was the last file to be uploaded
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
