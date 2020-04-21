@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func CreateProject(p *dto.Project) error {
+func CreateProject(p *dto.ProjectDB) error {
 	sqlStatement := `
 	INSERT INTO projects (id, name, song, created, status, url, openshot_id)
 	VALUES ($1, $2, $3, $4, $5, $6, $7)

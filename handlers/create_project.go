@@ -30,13 +30,14 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	project := dto.Project{
+	project := dto.ProjectDB{
 		ID:          "proj_" + guuid.New().String(),
+		Song:        createProjReq.SongID,
 		Name:        createProjReq.Name,
 		Created:     "time",
 		Status:      "started",
 		OpenshotURL: openShotResp.URL,
-		OpenshotID:  openShotResp.ID,
+		OpenshotID:  fmt.Sprintf("%v", openShotResp.ID),
 	}
 
 	err = models.CreateProject(&project)
