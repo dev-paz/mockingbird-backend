@@ -9,7 +9,7 @@ func HandleRequests() {
 	http.HandleFunc("/create_project", handleCreateProject)
 	http.HandleFunc("/get_project", handleGetProject)
 	http.HandleFunc("/get_all_projects", handleGetAllProjects)
-	//	http.HandleFunc("/render_video", handleRenderVideo)
+	http.HandleFunc("/render_video", handleRenderVideo)
 
 	http.HandleFunc("/update_clip", handleUpdateClip)
 
@@ -21,8 +21,11 @@ func HandleRequests() {
 
 	http.HandleFunc("/create_account", handleCreateAccount)
 	http.HandleFunc("/get_all_users", handleGetAllUsers)
+
+	http.HandleFunc("/create_music_video", handleCreateMusicVideo)
+
 }
 
 // TODO: secure the routes by checking the firebase token
 
-var OpenShotIP = "18.232.108.210"
+var OpenShotIP = "54.196.98.251"
