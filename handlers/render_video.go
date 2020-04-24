@@ -23,7 +23,6 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 		panic(err)
 	}
-	fmt.Println(project)
 
 	requestData := map[string]interface{}{
 		"file":     "",
@@ -36,7 +35,7 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 	}
 
 	for layer, clip := range project.Clips {
-		configData, err := fetchSongConfig(clip)
+		configData, err := fetchSongConfig(clip, project.Song.ID)
 		if err != nil {
 			panic(err)
 		}
@@ -86,7 +85,7 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 	w.Write(exportResp)
 }
 
-func fetchSongConfig(clip dto.Clip) ([]byte, error) {
+func fetchSongConfig(clip dto.Clip, projectID string) ([]byte, error) {
 	ctx := context.Background()
 	sa := option.WithCredentialsFile("credentials.json")
 	app, err := firebase.NewApp(ctx, nil, sa)
@@ -100,9 +99,10 @@ func fetchSongConfig(clip dto.Clip) ([]byte, error) {
 		log.Fatalln(err)
 		return nil, err
 	}
+
 	defer client.Close()
 
-	ref, err := client.Collection("song_config").Doc(clip.SongID).Get(ctx)
+	ref, err := client.Collection("song_config").Doc(projectID).Get(ctx)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
