@@ -14,9 +14,6 @@ import (
 	"google.golang.org/api/option"
 )
 
-var username = "cloud-admin"
-var passwd = "UZTWLVEr6n"
-
 func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 
 	project := dto.Project{}

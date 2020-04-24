@@ -79,8 +79,6 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 // creates a project on the openshot api
 func createOpenShotProject() (dto.CreateProjectResponse, error) {
 	data := dto.CreateProjectResponse{}
-	username := "cloud-admin"
-	passwd := "UZTWLVEr6n"
 
 	requestData := []byte(`{
 		"name": "Example lakweufiluqwh",
