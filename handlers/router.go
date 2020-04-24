@@ -23,6 +23,7 @@ func HandleRequests() {
 	http.HandleFunc("/get_all_users", handleGetAllUsers)
 
 	http.HandleFunc("/create_music_video", handleCreateMusicVideo)
+	http.HandleFunc("/get_music_videos", handleGetMusicVideos)
 
 }
 

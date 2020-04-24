@@ -9,14 +9,12 @@ import (
 )
 
 func handleGetAllProjects(w http.ResponseWriter, req *http.Request) {
-
 	params, ok := req.URL.Query()["user_id"]
 	if !ok {
 		fmt.Println("Error parsing url query")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	fmt.Println(params)
 	userID := params[0]
 	if userID == "" {
 		w.WriteHeader(http.StatusBadRequest)

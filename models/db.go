@@ -18,11 +18,11 @@ func InitDB() {
 	}
 
 	if err = db.Ping(); err != nil {
-
 		log.Panic(err)
 	}
 }
 
+//
 // func InitDB(psqlInfo string) {
 // 	var err error
 // 	db, err = sql.Open("postgres", psqlInfo)

@@ -7,7 +7,16 @@ type MusicVideo struct {
 	SongID  string `json:"song_id"`
 }
 
-// type CreateMusicVideoRequest struct {
-// 	Status string
-// 	Webhook
-// }
+type CreateMusicVideoRequest struct {
+	ExportURL   string      `json:"url"`
+	ExportID    int64       `json:"id"`
+	OutputURL   string      `json:"output"`
+	ProjectURL  string      `json:"project"`
+	Created     string      `json:"date_created"`
+	ProjectData ProjectData `json:"json"`
+}
+
+type ProjectData struct {
+	SongID    string `json:"song_id"`
+	ProjectID string `json:"project_id"`
+}
