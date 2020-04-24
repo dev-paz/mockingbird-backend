@@ -29,6 +29,6 @@ func HandleRequests() {
 
 // TODO: secure the routes by checking the firebase token
 
-var OpenShotIP = "3.92.160.40"
+var OpenShotIP = "18.232.120.78"
 var username = "cloud-admin"
 var passwd = "UZTWLVEr6n"
