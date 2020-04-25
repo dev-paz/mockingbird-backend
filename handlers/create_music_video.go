@@ -23,7 +23,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	bucketLocation := "gs://mockingbird-287ec.appspot.com"
 
 	body, _ := ioutil.ReadAll(req.Body)
-	fmt.Println(string(body))
+	fmt.Println(json.Marshal(body))
 
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&createVideoReq)
