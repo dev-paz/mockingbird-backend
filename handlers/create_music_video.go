@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gorilla/schema"
@@ -34,7 +35,11 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 	}
 
-	fmt.Println(createVideoReq.OutputURL)
+	u, err := url.Parse(createVideoReq.OutputURL)
+	if err != nil {
+		panic(err)
+	}
+	downloadURL := "http://" + OpenShotIP + u.Path
 
 	videoID := "mv_" + guuid.New().String()
 	fileName := videoID + ".mp4"
@@ -51,7 +56,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 	}
 
-	go downloadFileToFirebase(createVideoReq.OutputURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
+	go downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
 
 	err = models.CreateMusicVideo(&musicVideo)
 	if err != nil {
