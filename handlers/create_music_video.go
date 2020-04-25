@@ -19,15 +19,16 @@ import (
 )
 
 func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
-	createVideoReq := dto.CreateMusicVideoRequest{}
+	createVideoReq := new(dto.CreateMusicVideoRequest)
 	bucketLocation := "gs://mockingbird-287ec.appspot.com"
 
 	err := req.ParseForm()
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	decoder := schema.NewDecoder()
+	fmt.Println(req.Form)
 
+	decoder := schema.NewDecoder()
 	err = decoder.Decode(createVideoReq, req.Form)
 	if err != nil {
 		fmt.Println(err.Error())

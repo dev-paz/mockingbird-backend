@@ -9,7 +9,7 @@ import (
 func CreateMusicVideo(mv *dto.MusicVideo) error {
 	sqlStatement := `
 	INSERT INTO music_videos (id, url, created, song_id, status)
-	VALUES ($1, $2, $3, $4)
+	VALUES ($1, $2, $3, $4, $5)
 	RETURNING id`
 	id := ""
 	err := db.QueryRow(sqlStatement, mv.ID, mv.URL, mv.Created, mv.SongID, mv.Status).Scan(&id)
