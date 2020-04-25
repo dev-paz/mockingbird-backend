@@ -25,6 +25,8 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
+	fmt.Println(project)
+
 	requestData := map[string]interface{}{
 		"file":     "",
 		"position": 0.0,
@@ -54,6 +56,10 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
+
+		fmt.Println("POST",
+			"http://"+OpenShotIP+"/projects/"+project.OpenshotID+"/clips/")
+		fmt.Println(songConfig)
 
 		client := &http.Client{}
 		req, err := http.NewRequest("POST",
