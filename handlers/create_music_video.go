@@ -21,7 +21,7 @@ import (
 
 func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	createVideoReq := new(dto.CreateMusicVideoRequest)
-	bucketLocation := "gs://mockingbird-287ec.appspot.com"
+	bucketLocation := "mockingbird-287ec.appspot.com"
 
 	err := req.ParseForm()
 	if err != nil {
@@ -56,7 +56,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 	}
 
-	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
+	go downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
 
 	err = models.CreateMusicVideo(&musicVideo)
 	if err != nil {
@@ -71,7 +71,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName string, videoID string, projectID string) error {
 	fmt.Println("starting download...")
 	config := &firebase.Config{
-		StorageBucket: "gs://mockingbird-287ec.appspot.com",
+		StorageBucket: "mockingbird-287ec.appspot.com",
 	}
 	opt := option.WithCredentialsFile("credentials.json")
 	app, err := firebase.NewApp(context.Background(), config, opt)
@@ -79,7 +79,6 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
-	fmt.Println("made it here")
 
 	ctx := context.Background()
 	client, err := app.Storage(ctx)
@@ -87,21 +86,18 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
-	fmt.Println("made it here")
 
 	bucket, err := client.Bucket(bucketLocation)
 	if err != nil {
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
-	fmt.Println("made it here")
 
 	resp, err := http.Get(openShotURL)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
-	fmt.Println("made it here")
 
 	defer resp.Body.Close()
 
@@ -109,24 +105,23 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 	defer cancel()
 	wc := bucket.Object(fileName).NewWriter(ctx)
 	if _, err = io.Copy(wc, resp.Body); err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 	if err := wc.Close(); err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
-	fmt.Println("made it here")
 
 	err = models.UpdateProjectStatus(projectID, "completed", "")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	fmt.Println("made it here")
 
 	err = models.UpdateVideoStatus(videoID, "completed")
 	if err != nil {
 		fmt.Println("error updating video status")
 	}
-	fmt.Println("made it here")
 
 	return nil
 }
