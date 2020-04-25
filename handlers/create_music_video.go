@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -20,6 +21,9 @@ import (
 func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	createVideoReq := dto.CreateMusicVideoRequest{}
 	bucketLocation := "gs://mockingbird-287ec.appspot.com"
+
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println(body)
 
 	decoder := json.NewDecoder(req.Body)
 	err := decoder.Decode(&createVideoReq)
