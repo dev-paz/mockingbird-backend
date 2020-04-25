@@ -17,9 +17,16 @@ import (
 
 func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 
+	details, err := models.ReadOpenshotDetails()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	OpenShotIP = details.IP
+
 	project := dto.Project{}
 	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&project)
+	err = decoder.Decode(&project)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
