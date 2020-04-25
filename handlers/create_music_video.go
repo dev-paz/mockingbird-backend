@@ -2,13 +2,13 @@ package handler
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/schema"
 
 	firebase "firebase.google.com/go"
 	guuid "github.com/google/uuid"
@@ -22,19 +22,18 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	createVideoReq := dto.CreateMusicVideoRequest{}
 	bucketLocation := "gs://mockingbird-287ec.appspot.com"
 
-	fmt.Println(req.Body)
-	body, _ := ioutil.ReadAll(req.Body)
-	fmt.Println(body)
-	jsonBody, _ := json.Marshal(body)
-	fmt.Println(jsonBody)
-	fmt.Println(string(jsonBody))
-
-	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&createVideoReq)
+	err := req.ParseForm()
 	if err != nil {
 		fmt.Println(err.Error())
-		panic(err)
 	}
+	decoder := schema.NewDecoder()
+
+	err = decoder.Decode(createVideoReq, req.Form)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	fmt.Println(createVideoReq.OutputURL)
 
 	videoID := "mv_" + guuid.New().String()
 	fileName := videoID + ".mp4"
