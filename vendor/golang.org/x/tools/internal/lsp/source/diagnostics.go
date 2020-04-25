@@ -13,10 +13,10 @@ import (
 
 	"golang.org/x/mod/modfile"
 	"golang.org/x/tools/go/analysis"
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/lsp/debug/tag"
 	"golang.org/x/tools/internal/lsp/protocol"
 	"golang.org/x/tools/internal/span"
-	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
 
@@ -168,7 +168,7 @@ type diagnosticSet struct {
 }
 
 func diagnostics(ctx context.Context, snapshot Snapshot, reports map[FileIdentity][]*Diagnostic, pkg Package, hasMissingDeps bool) (bool, bool, error) {
-	ctx, done := event.StartSpan(ctx, "source.diagnostics", tag.Package.Of(pkg.ID()))
+	ctx, done := event.Start(ctx, "source.diagnostics", tag.Package.Of(pkg.ID()))
 	_ = ctx // circumvent SA4006
 	defer done()
 
@@ -350,9 +350,7 @@ func addReports(snapshot Snapshot, reports map[FileIdentity][]*Diagnostic, uri s
 			return nil
 		}
 	}
-	for _, diag := range diagnostics {
-		reports[fh.Identity()] = append(reports[fh.Identity()], diag)
-	}
+	reports[fh.Identity()] = append(reports[fh.Identity()], diagnostics...)
 	return nil
 }
 

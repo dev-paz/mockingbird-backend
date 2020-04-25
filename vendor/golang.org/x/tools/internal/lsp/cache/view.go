@@ -19,6 +19,8 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/tools/internal/event"
+	"golang.org/x/tools/internal/event/keys"
 	"golang.org/x/tools/internal/gocommand"
 	"golang.org/x/tools/internal/imports"
 	"golang.org/x/tools/internal/lsp/debug"
@@ -26,7 +28,6 @@ import (
 	"golang.org/x/tools/internal/lsp/source"
 	"golang.org/x/tools/internal/memoize"
 	"golang.org/x/tools/internal/span"
-	"golang.org/x/tools/internal/telemetry/event"
 	"golang.org/x/tools/internal/xcontext"
 	errors "golang.org/x/xerrors"
 )
@@ -342,9 +343,9 @@ func (v *view) refreshProcessEnv() {
 	v.importsMu.Unlock()
 
 	// We don't have a context handy to use for logging, so use the stdlib for now.
-	event.Print(v.baseCtx, "background imports cache refresh starting")
+	event.Log(v.baseCtx, "background imports cache refresh starting")
 	err := imports.PrimeCache(context.Background(), env)
-	event.Print(v.baseCtx, fmt.Sprintf("background refresh finished after %v", time.Since(start)), event.Err.Of(err))
+	event.Log(v.baseCtx, fmt.Sprintf("background refresh finished after %v", time.Since(start)), keys.Err.Of(err))
 
 	v.importsMu.Lock()
 	v.cacheRefreshDuration = time.Since(start)
@@ -365,7 +366,7 @@ func (v *view) buildProcessEnv(ctx context.Context) (*imports.ProcessEnv, error)
 	}
 	if verboseOutput {
 		processEnv.Logf = func(format string, args ...interface{}) {
-			event.Print(ctx, fmt.Sprintf(format, args...))
+			event.Log(ctx, fmt.Sprintf(format, args...))
 		}
 	}
 	for _, kv := range env {
@@ -387,6 +388,9 @@ func (v *view) buildProcessEnv(ctx context.Context) (*imports.ProcessEnv, error)
 		case "GOSUMDB":
 			processEnv.GOSUMDB = split[1]
 		}
+	}
+	if processEnv.GOPATH == "" {
+		return nil, fmt.Errorf("no GOPATH for view %s", v.folder)
 	}
 	return processEnv, nil
 }

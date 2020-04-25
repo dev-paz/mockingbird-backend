@@ -53,8 +53,8 @@ func TestSingle(t *testing.T) {
 		t.Fatalf("Second acquire for single use, got %v, want %v.", e, wantErr)
 	}
 
-	// Only one CreateSessionRequest is sent.
-	if _, err := shouldHaveReceived(server.TestSpanner, []interface{}{&sppb.CreateSessionRequest{}}); err != nil {
+	// Only one BatchCreateSessionsRequest is sent.
+	if _, err := shouldHaveReceived(server.TestSpanner, []interface{}{&sppb.BatchCreateSessionsRequest{}}); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -159,7 +159,7 @@ func TestApply_Single(t *testing.T) {
 	}
 
 	if _, err := shouldHaveReceived(server.TestSpanner, []interface{}{
-		&sppb.CreateSessionRequest{},
+		&sppb.BatchCreateSessionsRequest{},
 		&sppb.CommitRequest{},
 	}); err != nil {
 		t.Fatal(err)
@@ -188,7 +188,7 @@ func TestApply_RetryOnAbort(t *testing.T) {
 	}
 
 	if _, err := shouldHaveReceived(server.TestSpanner, []interface{}{
-		&sppb.CreateSessionRequest{},
+		&sppb.BatchCreateSessionsRequest{},
 		&sppb.BeginTransactionRequest{},
 		&sppb.CommitRequest{}, // First commit fails.
 		&sppb.BeginTransactionRequest{},
@@ -245,8 +245,8 @@ func TestTransaction_SessionNotFound(t *testing.T) {
 	_, got := client.Apply(ctx, ms, ApplyAtLeastOnce())
 	if !cmp.Equal(wantErr, got,
 		cmp.AllowUnexported(Error{}), cmp.FilterPath(func(path cmp.Path) bool {
-			// Ignore statusError Details and Error.trailers.
-			if strings.Contains(path.GoString(), "{*spanner.Error}.err.(*status.statusError).Details") {
+			// Ignore Error Details and Error.trailers.
+			if strings.Contains(path.GoString(), "{*spanner.Error}.err.(*status.Error).Details") {
 				return true
 			}
 			if strings.Contains(path.GoString(), "{*spanner.Error}.trailers") {
@@ -275,7 +275,7 @@ func TestReadWriteTransaction_ErrorReturned(t *testing.T) {
 	}
 	requests := drainRequestsFromServer(server.TestSpanner)
 	if err := compareRequests([]interface{}{
-		&sppb.CreateSessionRequest{},
+		&sppb.BatchCreateSessionsRequest{},
 		&sppb.BeginTransactionRequest{},
 		&sppb.RollbackRequest{}}, requests); err != nil {
 		// TODO: remove this once the session pool maintainer has been changed
@@ -285,7 +285,7 @@ func TestReadWriteTransaction_ErrorReturned(t *testing.T) {
 		// a fourth request. If this request is DeleteSession, that's OK and
 		// expected.
 		if err := compareRequests([]interface{}{
-			&sppb.CreateSessionRequest{},
+			&sppb.BatchCreateSessionsRequest{},
 			&sppb.BeginTransactionRequest{},
 			&sppb.RollbackRequest{},
 			&sppb.DeleteSessionRequest{}}, requests); err != nil {
@@ -318,7 +318,7 @@ func TestBatchDML_WithMultipleDML(t *testing.T) {
 	}
 
 	gotReqs, err := shouldHaveReceived(server.TestSpanner, []interface{}{
-		&sppb.CreateSessionRequest{},
+		&sppb.BatchCreateSessionsRequest{},
 		&sppb.BeginTransactionRequest{},
 		&sppb.ExecuteSqlRequest{},
 		&sppb.ExecuteBatchDmlRequest{},

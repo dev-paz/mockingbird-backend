@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 
 	testpb "google.golang.org/protobuf/internal/testprotos/test"
 )
@@ -19,6 +20,7 @@ import (
 func TestNil(t *testing.T) {
 	nilMsg := (*testpb.TestAllExtensions)(nil)
 	extType := testpb.E_OptionalBool
+	extRanger := func(protoreflect.ExtensionType, interface{}) bool { return true }
 
 	tests := []struct {
 		label string
@@ -27,14 +29,12 @@ func TestNil(t *testing.T) {
 	}{{
 		label: "Size",
 		test:  func() { proto.Size(nil) },
-		panic: true,
 	}, {
 		label: "Size",
 		test:  func() { proto.Size(nilMsg) },
 	}, {
 		label: "Marshal",
 		test:  func() { proto.Marshal(nil) },
-		panic: true,
 	}, {
 		label: "Marshal",
 		test:  func() { proto.Marshal(nilMsg) },
@@ -91,15 +91,12 @@ func TestNil(t *testing.T) {
 	}, {
 		label: "HasExtension",
 		test:  func() { proto.HasExtension(nil, nil) },
-		panic: true,
 	}, {
 		label: "HasExtension",
 		test:  func() { proto.HasExtension(nil, extType) },
-		panic: true,
 	}, {
 		label: "HasExtension",
 		test:  func() { proto.HasExtension(nilMsg, nil) },
-		panic: true,
 	}, {
 		label: "HasExtension",
 		test:  func() { proto.HasExtension(nilMsg, extType) },
@@ -110,7 +107,6 @@ func TestNil(t *testing.T) {
 	}, {
 		label: "GetExtension",
 		test:  func() { proto.GetExtension(nil, extType) },
-		panic: true,
 	}, {
 		label: "GetExtension",
 		test:  func() { proto.GetExtension(nilMsg, nil) },
@@ -150,6 +146,18 @@ func TestNil(t *testing.T) {
 		label: "ClearExtension",
 		test:  func() { proto.ClearExtension(nilMsg, extType) },
 		panic: true,
+	}, {
+		label: "RangeExtensions",
+		test:  func() { proto.RangeExtensions(nil, nil) },
+	}, {
+		label: "RangeExtensions",
+		test:  func() { proto.RangeExtensions(nil, extRanger) },
+	}, {
+		label: "RangeExtensions",
+		test:  func() { proto.RangeExtensions(nilMsg, nil) },
+	}, {
+		label: "RangeExtensions",
+		test:  func() { proto.RangeExtensions(nilMsg, extRanger) },
 	}}
 
 	for _, tt := range tests {

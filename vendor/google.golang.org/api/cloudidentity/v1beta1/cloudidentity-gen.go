@@ -171,52 +171,9 @@ type GroupsMembershipsService struct {
 // AndroidAttributes: Resource representing the Android specific
 // attributes of a Device.
 type AndroidAttributes struct {
-	// BasebandVersion: Baseband version of Android device.
-	BasebandVersion string `json:"basebandVersion,omitempty"`
-
-	// BootloaderVersion: Device bootloader version. Example: 0.6.7.
-	BootloaderVersion string `json:"bootloaderVersion,omitempty"`
-
-	// BuildNumber: Build number of Android device.
-	BuildNumber string `json:"buildNumber,omitempty"`
-
-	// EnabledDeveloperOptions: Whether developer options is enabled on
-	// device.
-	EnabledDeveloperOptions bool `json:"enabledDeveloperOptions,omitempty"`
-
 	// EnabledUnknownSources: Whether applications from unknown sources can
 	// be installed on device.
 	EnabledUnknownSources bool `json:"enabledUnknownSources,omitempty"`
-
-	// EnabledUsbDebugging: Whether adb (USB debugging) is enabled on
-	// device.
-	EnabledUsbDebugging bool `json:"enabledUsbDebugging,omitempty"`
-
-	// EncryptionState: Device encryption state.
-	//
-	// Possible values:
-	//   "ENCRYPTION_STATE_UNSPECIFIED" - Encryption Status is not set.
-	//   "UNSUPPORTED_BY_DEVICE" - Device doesn't support encryption.
-	//   "ENCRYPTED" - Device is encrypted.
-	//   "NOT_ENCRYPTED" - Device is not encrypted.
-	EncryptionState string `json:"encryptionState,omitempty"`
-
-	// Hardware: Device hardware. Example: Sprout.
-	Hardware string `json:"hardware,omitempty"`
-
-	// KernelVersion: Kernel version of Android device.
-	KernelVersion string `json:"kernelVersion,omitempty"`
-
-	// OtherAccounts: Domain name for Google accounts on device. Type for
-	// other accounts on
-	// device. Will only be populated if |ownership_privilege|
-	// is
-	// |PROFILE_OWNER| or |DEVICE_OWNER|. Does not include the account
-	// signed in
-	// to the device policy app if that account's domain has only one
-	// account.
-	// Examples: "com.example", "xyz.com".
-	OtherAccounts []string `json:"otherAccounts,omitempty"`
 
 	// OwnerProfileAccount: Whether this account is on an owner/primary
 	// profile.
@@ -235,9 +192,6 @@ type AndroidAttributes struct {
 	//   "DEVICE_OWNER" - Device Owner privileges on the device.
 	OwnershipPrivilege string `json:"ownershipPrivilege,omitempty"`
 
-	// SecurityPatchTime: OS security patch update time on device.
-	SecurityPatchTime string `json:"securityPatchTime,omitempty"`
-
 	// SupportsWorkProfile: Whether device supports Android work profiles.
 	// If false, this service
 	// will not block access to corp data even if an administrator turns on
@@ -245,15 +199,16 @@ type AndroidAttributes struct {
 	// "Enforce Work Profile" policy.
 	SupportsWorkProfile bool `json:"supportsWorkProfile,omitempty"`
 
-	// ForceSendFields is a list of field names (e.g. "BasebandVersion") to
-	// unconditionally include in API requests. By default, fields with
-	// empty values are omitted from API requests. However, any non-pointer,
-	// non-interface field appearing in ForceSendFields will be sent to the
-	// server regardless of whether the field is empty or not. This may be
-	// used to include empty fields in Patch requests.
+	// ForceSendFields is a list of field names (e.g.
+	// "EnabledUnknownSources") to unconditionally include in API requests.
+	// By default, fields with empty values are omitted from API requests.
+	// However, any non-pointer, non-interface field appearing in
+	// ForceSendFields will be sent to the server regardless of whether the
+	// field is empty or not. This may be used to include empty fields in
+	// Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "BasebandVersion") to
+	// NullFields is a list of field names (e.g. "EnabledUnknownSources") to
 	// include in API requests with the JSON null value. By default, fields
 	// with empty values are omitted from API requests. However, any field
 	// with an empty value appearing in NullFields will be sent to the
@@ -387,6 +342,162 @@ func (s *CancelWipeDeviceUserResponse) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// ClientState: Resource representing ClientState and supports updates
+// from API users
+type ClientState struct {
+	// AssetTags: The caller can specify asset tags for this resource
+	AssetTags []string `json:"assetTags,omitempty"`
+
+	// ComplianceState: The compliance state of the resource as specified by
+	// the API client.
+	//
+	// Possible values:
+	//   "COMPLIANCE_STATE_UNSPECIFIED" - The compliance state of the
+	// resource is unknown or unspecified.
+	//   "COMPLIANT" - Device is compliant with third party policies
+	//   "NON_COMPLIANT" - Device is not compliant with third party policies
+	ComplianceState string `json:"complianceState,omitempty"`
+
+	// CreateTime: Output only. The time the client state data was created.
+	CreateTime string `json:"createTime,omitempty"`
+
+	// CustomId: This field may be used to store a unique identifier for the
+	// API resource
+	// within which these CustomAttributes are a field.
+	CustomId string `json:"customId,omitempty"`
+
+	// Etag: The token that needs to be passed back for
+	// concurrency control in updates. Token needs to be passed back
+	// in UpdateRequest
+	Etag string `json:"etag,omitempty"`
+
+	// HealthScore: The Health score of the resource
+	//
+	// Possible values:
+	//   "HEALTH_SCORE_UNSPECIFIED" - Default value
+	//   "VERY_POOR" - The object is in very poor health as defined by the
+	// caller.
+	//   "POOR" - The object is in poor health as defined by the caller.
+	//   "NEUTRAL" - The object health is neither good nor poor, as defined
+	// by the caller.
+	//   "GOOD" - The object is in good health as defined by the caller.
+	//   "VERY_GOOD" - The object is in very good health as defined by the
+	// caller.
+	HealthScore string `json:"healthScore,omitempty"`
+
+	// KeyValuePairs: The map of key-value attributes stored by callers
+	// specific to a
+	// device. The total serialized length of this map may not exceed 10KB.
+	// No
+	// limit is placed on the number of attributes in a map.
+	KeyValuePairs map[string]CustomAttributeValue `json:"keyValuePairs,omitempty"`
+
+	// LastUpdateTime: Output only. The time the client state data was last
+	// updated.
+	LastUpdateTime string `json:"lastUpdateTime,omitempty"`
+
+	// Managed: The management state of the resource as specified by the API
+	// client.
+	//
+	// Possible values:
+	//   "MANAGED_STATE_UNSPECIFIED" - The management state of the resource
+	// is unknown or unspecified.
+	//   "MANAGED" - The resource is managed.
+	//   "UNMANAGED" - The resource is not managed.
+	Managed string `json:"managed,omitempty"`
+
+	// Name: Output only. [Resource
+	// name](https://cloud.google.com/apis/design/resource_names) of
+	// the ClientState in
+	// format:
+	// `devices/{device_id}/deviceUsers/{device_user_id}/clientState/
+	// {partner_id}`,
+	// where partner_id corresponds to the partner storing the data.
+	Name string `json:"name,omitempty"`
+
+	// OwnerType: Output only. The owner of the ClientState
+	//
+	// Possible values:
+	//   "OWNER_TYPE_UNSPECIFIED" - Unknown owner type
+	//   "OWNER_TYPE_CUSTOMER" - Customer is the owner
+	//   "OWNER_TYPE_PARTNER" - Partner is the owner
+	OwnerType string `json:"ownerType,omitempty"`
+
+	// ScoreReason: A descriptive cause of the health score.
+	ScoreReason string `json:"scoreReason,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "AssetTags") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "AssetTags") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ClientState) MarshalJSON() ([]byte, error) {
+	type NoMethod ClientState
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// CustomAttributeValue: Additional custom attribute values may be one
+// of these types
+type CustomAttributeValue struct {
+	// BoolValue: Represents a boolean value.
+	BoolValue bool `json:"boolValue,omitempty"`
+
+	// NumberValue: Represents a double value.
+	NumberValue float64 `json:"numberValue,omitempty"`
+
+	// StringValue: Represents a string value.
+	StringValue string `json:"stringValue,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "BoolValue") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "BoolValue") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *CustomAttributeValue) MarshalJSON() ([]byte, error) {
+	type NoMethod CustomAttributeValue
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *CustomAttributeValue) UnmarshalJSON(data []byte) error {
+	type NoMethod CustomAttributeValue
+	var s1 struct {
+		NumberValue gensupport.JSONFloat64 `json:"numberValue"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.NumberValue = float64(s1.NumberValue)
+	return nil
+}
+
 // Device: Represents a Device known to Google Cloud, independent of the
 // device
 // ownership, type, and whether it is assigned or in use by a user.
@@ -398,8 +509,18 @@ type Device struct {
 	// AssetTag: Asset tag of the device.
 	AssetTag string `json:"assetTag,omitempty"`
 
+	// BasebandVersion: Output only. Baseband version of the device.
+	BasebandVersion string `json:"basebandVersion,omitempty"`
+
+	// BootloaderVersion: Output only. Device bootloader version. Example:
+	// 0.6.7.
+	BootloaderVersion string `json:"bootloaderVersion,omitempty"`
+
 	// Brand: Output only. Device brand. Example: Samsung.
 	Brand string `json:"brand,omitempty"`
+
+	// BuildNumber: Output only. Build number of the device.
+	BuildNumber string `json:"buildNumber,omitempty"`
 
 	// CompromisedState: Output only. Represents whether the Device is
 	// compromised.
@@ -431,9 +552,29 @@ type Device struct {
 	//   "CHROME_OS" - Device is a ChromeOS device.
 	DeviceType string `json:"deviceType,omitempty"`
 
+	// EnabledDeveloperOptions: Output only. Whether developer options is
+	// enabled on device.
+	EnabledDeveloperOptions bool `json:"enabledDeveloperOptions,omitempty"`
+
+	// EnabledUsbDebugging: Output only. Whether USB debugging is enabled on
+	// device.
+	EnabledUsbDebugging bool `json:"enabledUsbDebugging,omitempty"`
+
+	// EncryptionState: Output only. Device encryption state.
+	//
+	// Possible values:
+	//   "ENCRYPTION_STATE_UNSPECIFIED" - Encryption Status is not set.
+	//   "UNSUPPORTED_BY_DEVICE" - Device doesn't support encryption.
+	//   "ENCRYPTED" - Device is encrypted.
+	//   "NOT_ENCRYPTED" - Device is not encrypted.
+	EncryptionState string `json:"encryptionState,omitempty"`
+
 	// Imei: Output only. IMEI number of device if GSM device; empty
 	// otherwise.
 	Imei string `json:"imei,omitempty"`
+
+	// KernelVersion: Output only. Kernel version of the device.
+	KernelVersion string `json:"kernelVersion,omitempty"`
 
 	// LastSyncTime: Most recent time when device synced with this service.
 	LastSyncTime string `json:"lastSyncTime,omitempty"`
@@ -478,6 +619,17 @@ type Device struct {
 	// 8.1.0.
 	OsVersion string `json:"osVersion,omitempty"`
 
+	// OtherAccounts: Output only. Domain name for Google accounts on
+	// device. Type for other accounts on
+	// device. On Android, will only be populated if |ownership_privilege|
+	// is
+	// |PROFILE_OWNER| or |DEVICE_OWNER|. Does not include the account
+	// signed in
+	// to the device policy app if that account's domain has only one
+	// account.
+	// Examples: "com.example", "xyz.com".
+	OtherAccounts []string `json:"otherAccounts,omitempty"`
+
 	// OwnerType: Whether the device is owned by the company or an
 	// individual
 	//
@@ -490,6 +642,10 @@ type Device struct {
 
 	// ReleaseVersion: Output only. OS release version. Example: 6.0.
 	ReleaseVersion string `json:"releaseVersion,omitempty"`
+
+	// SecurityPatchTime: Output only. OS security patch update time on
+	// device.
+	SecurityPatchTime string `json:"securityPatchTime,omitempty"`
 
 	// SerialNumber: Serial Number of device. Example: HT82V1A01076.
 	SerialNumber string `json:"serialNumber,omitempty"`
@@ -1691,7 +1847,7 @@ func (c *GroupsCreateCall) Header() http.Header {
 
 func (c *GroupsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -1828,7 +1984,7 @@ func (c *GroupsDeleteCall) Header() http.Header {
 
 func (c *GroupsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -1970,7 +2126,7 @@ func (c *GroupsGetCall) Header() http.Header {
 
 func (c *GroupsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2169,7 +2325,7 @@ func (c *GroupsListCall) Header() http.Header {
 
 func (c *GroupsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2387,7 +2543,7 @@ func (c *GroupsLookupCall) Header() http.Header {
 
 func (c *GroupsLookupCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2531,7 +2687,7 @@ func (c *GroupsPatchCall) Header() http.Header {
 
 func (c *GroupsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2747,7 +2903,7 @@ func (c *GroupsSearchCall) Header() http.Header {
 
 func (c *GroupsSearchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2918,7 +3074,7 @@ func (c *GroupsMembershipsCreateCall) Header() http.Header {
 
 func (c *GroupsMembershipsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3057,7 +3213,7 @@ func (c *GroupsMembershipsDeleteCall) Header() http.Header {
 
 func (c *GroupsMembershipsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3199,7 +3355,7 @@ func (c *GroupsMembershipsGetCall) Header() http.Header {
 
 func (c *GroupsMembershipsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3390,7 +3546,7 @@ func (c *GroupsMembershipsListCall) Header() http.Header {
 
 func (c *GroupsMembershipsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3616,7 +3772,7 @@ func (c *GroupsMembershipsLookupCall) Header() http.Header {
 
 func (c *GroupsMembershipsLookupCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3764,7 +3920,7 @@ func (c *GroupsMembershipsModifyMembershipRolesCall) Header() http.Header {
 
 func (c *GroupsMembershipsModifyMembershipRolesCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200410")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}

@@ -37,6 +37,11 @@ type microgenConfig struct {
 	// releaseLevel is the release level of this target. Values incl ga,
 	// beta, alpha.
 	releaseLevel string
+
+	// stopGeneration is used to stop generating a given client. This might be
+	// useful if a client needs to be deprecated, but retained in the repo
+	// metadata.
+	stopGeneration bool
 }
 
 var microgenGapicConfigs = []*microgenConfig{
@@ -142,6 +147,14 @@ var microgenGapicConfigs = []*microgenConfig{
 		importPath:            "cloud.google.com/go/bigquery/connection/apiv1beta1",
 		gRPCServiceConfigPath: "google/cloud/bigquery/connection/v1beta1/bigqueryconnection_grpc_service_config.json",
 		apiServiceConfigPath:  "google/cloud/bigquery/connection/v1beta1/bigqueryconnection_v1beta1.yaml",
+		releaseLevel:          "beta",
+	},
+	{
+		inputDirectoryPath:    "google/cloud/bigquery/connection/v1",
+		pkg:                   "connection",
+		importPath:            "cloud.google.com/go/bigquery/connection/apiv1",
+		gRPCServiceConfigPath: "google/cloud/bigquery/connection/v1/bigqueryconnection_grpc_service_config.json",
+		apiServiceConfigPath:  "google/cloud/bigquery/connection/v1/bigqueryconnection_v1.yaml",
 		releaseLevel:          "beta",
 	},
 	{
@@ -553,14 +566,6 @@ var microgenGapicConfigs = []*microgenConfig{
 		releaseLevel:          "alpha",
 	},
 	{
-		inputDirectoryPath:    "google/api/expr/v1alpha1",
-		pkg:                   "expr",
-		importPath:            "cloud.google.com/go/expr/apiv1alpha1",
-		gRPCServiceConfigPath: "google/api/expr/v1alpha1/cel_grpc_service_config.json",
-		apiServiceConfigPath:  "google/api/expr/v1alpha1/cel.yaml",
-		releaseLevel:          "alpha",
-	},
-	{
 		inputDirectoryPath:    "google/devtools/containeranalysis/v1beta1",
 		pkg:                   "containeranalysis",
 		importPath:            "cloud.google.com/go/containeranalysis/apiv1beta1",
@@ -617,6 +622,8 @@ var microgenGapicConfigs = []*microgenConfig{
 		gRPCServiceConfigPath: "google/monitoring/v3/monitoring_grpc_service_config.json",
 		apiServiceConfigPath:  "google/monitoring/v3/monitoring.yaml",
 		releaseLevel:          "ga",
+		//TODO(codyoss): re-enable generation under v2 -- https://github.com/googleapis/google-cloud-go/issues/1930
+		stopGeneration: true,
 	},
 	{
 		inputDirectoryPath:    "google/cloud/vision/v1p1beta1",
@@ -682,16 +689,4 @@ var microgenGapicConfigs = []*microgenConfig{
 		apiServiceConfigPath:  "google/cloud/servicedirectory/v1beta1/servicedirectory_v1beta1.yaml",
 		releaseLevel:          "beta",
 	},
-}
-
-// Relative to gocloud dir.
-var gapicsWithManual = []string{
-	"errorreporting/apiv1beta1",
-	"firestore/apiv1beta1",
-	"firestore/apiv1",
-	"logging/apiv2",
-	"longrunning/autogen",
-	"pubsub/apiv1",
-	"spanner/apiv1",
-	"trace/apiv1",
 }

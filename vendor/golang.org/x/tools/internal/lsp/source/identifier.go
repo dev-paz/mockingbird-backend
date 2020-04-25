@@ -13,8 +13,8 @@ import (
 	"strconv"
 
 	"golang.org/x/tools/go/ast/astutil"
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/lsp/protocol"
-	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
 
@@ -49,7 +49,7 @@ type Declaration struct {
 // Identifier returns identifier information for a position
 // in a file, accounting for a potentially incomplete selector.
 func Identifier(ctx context.Context, snapshot Snapshot, fh FileHandle, pos protocol.Position) (*IdentifierInfo, error) {
-	ctx, done := event.StartSpan(ctx, "source.Identifier")
+	ctx, done := event.Start(ctx, "source.Identifier")
 	defer done()
 
 	pkg, pgh, err := getParsedFile(ctx, snapshot, fh, NarrowestPackageHandle)

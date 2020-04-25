@@ -21,10 +21,12 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
 	"cloud.google.com/go/storage"
+	"google.golang.org/api/googleapi"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 )
@@ -680,9 +682,23 @@ func ExampleObjectHandle_If() {
 	if err != nil {
 		// TODO: handle error.
 	}
-	defer rc.Close()
+
 	if _, err := io.Copy(os.Stdout, rc); err != nil {
 		// TODO: handle error.
+	}
+	if err := rc.Close(); err != nil {
+		switch ee := err.(type) {
+		case *googleapi.Error:
+			if ee.Code == http.StatusPreconditionFailed {
+				// The condition presented in the If failed.
+				// TODO: handle error.
+			}
+
+			// TODO: handle other status codes here.
+
+		default:
+			// TODO: handle error.
+		}
 	}
 }
 
@@ -823,4 +839,40 @@ func ExampleClient_ListHMACKeys_forServiceAccountEmail() {
 		}
 		_ = key // TODO: Use the key.
 	}
+}
+
+func ExampleBucketHandle_exists() {
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		// TODO: handle error.
+	}
+
+	attrs, err := client.Bucket("my-bucket").Attrs(ctx)
+	if err == storage.ErrBucketNotExist {
+		fmt.Println("The bucket does not exist")
+		return
+	}
+	if err != nil {
+		// TODO: handle error.
+	}
+	fmt.Printf("The bucket exists and has attributes: %#v\n", attrs)
+}
+
+func ExampleObjectHandle_exists() {
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		// TODO: handle error.
+	}
+
+	attrs, err := client.Bucket("my-bucket").Object("my-object").Attrs(ctx)
+	if err == storage.ErrObjectNotExist {
+		fmt.Println("The object does not exist")
+		return
+	}
+	if err != nil {
+		// TODO: handle error.
+	}
+	fmt.Printf("The object exists and has attributes: %#v\n", attrs)
 }

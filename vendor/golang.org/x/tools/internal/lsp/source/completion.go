@@ -20,11 +20,11 @@ import (
 	"time"
 
 	"golang.org/x/tools/go/ast/astutil"
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/imports"
 	"golang.org/x/tools/internal/lsp/fuzzy"
 	"golang.org/x/tools/internal/lsp/protocol"
 	"golang.org/x/tools/internal/lsp/snippet"
-	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
 
@@ -425,7 +425,7 @@ func (e ErrIsDefinition) Error() string {
 // the client to score the quality of the completion. For instance, some clients
 // may tolerate imperfect matches as valid completion results, since users may make typos.
 func Completion(ctx context.Context, snapshot Snapshot, fh FileHandle, protoPos protocol.Position) ([]CompletionItem, *Selection, error) {
-	ctx, done := event.StartSpan(ctx, "source.Completion")
+	ctx, done := event.Start(ctx, "source.Completion")
 	defer done()
 
 	startTime := time.Now()
@@ -1734,8 +1734,7 @@ func (ci candidateInference) applyTypeNameModifiers(typ types.Type) types.Type {
 // matchesVariadic returns true if we are completing a variadic
 // parameter and candType is a compatible slice type.
 func (ci candidateInference) matchesVariadic(candType types.Type) bool {
-	return ci.variadicType != nil && types.AssignableTo(ci.objType, candType)
-
+	return ci.variadicType != nil && types.AssignableTo(candType, ci.objType)
 }
 
 // findSwitchStmt returns an *ast.CaseClause's corresponding *ast.SwitchStmt or

@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"golang.org/x/tools/internal/telemetry/event"
+	"golang.org/x/tools/internal/event/core"
+	"golang.org/x/tools/internal/event/keys"
+	"golang.org/x/tools/internal/event/label"
 	"golang.org/x/tools/internal/xcontext"
 )
 
@@ -18,7 +20,7 @@ func WithClient(ctx context.Context, client Client) context.Context {
 	return context.WithValue(ctx, clientKey, client)
 }
 
-func LogEvent(ctx context.Context, ev event.Event, tags event.TagMap) context.Context {
+func LogEvent(ctx context.Context, ev core.Event, tags label.Map) context.Context {
 	if !ev.IsLog() {
 		return ctx
 	}
@@ -27,7 +29,7 @@ func LogEvent(ctx context.Context, ev event.Event, tags event.TagMap) context.Co
 		return ctx
 	}
 	msg := &LogMessageParams{Type: Info, Message: fmt.Sprint(ev)}
-	if event.Err.Get(tags) != nil {
+	if keys.Err.Get(tags) != nil {
 		msg.Type = Error
 	}
 	go client.LogMessage(xcontext.Detach(ctx), msg)

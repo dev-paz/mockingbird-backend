@@ -15,6 +15,7 @@ import (
 
 	"golang.org/x/mod/modfile"
 	"golang.org/x/tools/go/packages"
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/gocommand"
 	"golang.org/x/tools/internal/lsp/debug/tag"
 	"golang.org/x/tools/internal/lsp/protocol"
@@ -22,7 +23,6 @@ import (
 	"golang.org/x/tools/internal/memoize"
 	"golang.org/x/tools/internal/packagesinternal"
 	"golang.org/x/tools/internal/span"
-	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
 
@@ -145,7 +145,7 @@ func (s *snapshot) ModHandle(ctx context.Context, fh source.FileHandle) source.M
 		view:      folder,
 	}
 	h := s.view.session.cache.store.Bind(key, func(ctx context.Context) interface{} {
-		ctx, done := event.StartSpan(ctx, "cache.ModHandle", tag.URI.Of(uri))
+		ctx, done := event.Start(ctx, "cache.ModHandle", tag.URI.Of(uri))
 		defer done()
 
 		contents, _, err := fh.Read(ctx)
@@ -319,7 +319,7 @@ func (s *snapshot) ModTidyHandle(ctx context.Context, realfh source.FileHandle) 
 			return &modData{}
 		}
 
-		ctx, done := event.StartSpan(ctx, "cache.ModTidyHandle", tag.URI.Of(realURI))
+		ctx, done := event.Start(ctx, "cache.ModTidyHandle", tag.URI.Of(realURI))
 		defer done()
 
 		realContents, _, err := realfh.Read(ctx)

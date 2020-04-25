@@ -17,11 +17,11 @@ import (
 	"sync"
 
 	"golang.org/x/tools/go/packages"
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/lsp/debug/tag"
 	"golang.org/x/tools/internal/lsp/source"
 	"golang.org/x/tools/internal/memoize"
 	"golang.org/x/tools/internal/span"
-	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
 
@@ -262,7 +262,7 @@ func (s *snapshot) parseGoHandles(ctx context.Context, files []span.URI, mode so
 }
 
 func typeCheck(ctx context.Context, fset *token.FileSet, m *metadata, mode source.ParseMode, goFiles, compiledGoFiles []*parseGoHandle, deps map[packagePath]*packageHandle) (*pkg, error) {
-	ctx, done := event.StartSpan(ctx, "cache.importer.typeCheck", tag.Package.Of(string(m.id)))
+	ctx, done := event.Start(ctx, "cache.importer.typeCheck", tag.Package.Of(string(m.id)))
 	defer done()
 
 	var rawErrors []error

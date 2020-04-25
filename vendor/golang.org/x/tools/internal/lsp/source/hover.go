@@ -14,8 +14,8 @@ import (
 	"go/types"
 	"strings"
 
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/lsp/protocol"
-	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
 
@@ -71,7 +71,7 @@ func Hover(ctx context.Context, snapshot Snapshot, fh FileHandle, position proto
 }
 
 func (i *IdentifierInfo) Hover(ctx context.Context) (*HoverInformation, error) {
-	ctx, done := event.StartSpan(ctx, "source.Hover")
+	ctx, done := event.Start(ctx, "source.Hover")
 	defer done()
 
 	h, err := i.Declaration.hover(ctx)
@@ -201,7 +201,7 @@ func objectString(obj types.Object, qf types.Qualifier) string {
 }
 
 func (d Declaration) hover(ctx context.Context) (*HoverInformation, error) {
-	_, done := event.StartSpan(ctx, "source.hover")
+	_, done := event.Start(ctx, "source.hover")
 	defer done()
 
 	obj := d.obj
@@ -291,9 +291,8 @@ func formatVar(node ast.Spec, obj types.Object, decl *ast.GenDecl) *HoverInforma
 			if field.Pos() <= obj.Pos() && obj.Pos() <= field.End() {
 				if field.Doc.Text() != "" {
 					return &HoverInformation{source: obj, comment: field.Doc}
-				} else if field.Comment.Text() != "" {
-					return &HoverInformation{source: obj, comment: field.Comment}
 				}
+				return &HoverInformation{source: obj, comment: field.Comment}
 			}
 		}
 	}
@@ -308,7 +307,10 @@ func formatVar(node ast.Spec, obj types.Object, decl *ast.GenDecl) *HoverInforma
 }
 
 func FormatHover(h *HoverInformation, options Options) (string, error) {
-	signature := formatSignature(h.Signature, options)
+	signature := h.Signature
+	if options.PreferredContentFormat == protocol.Markdown {
+		signature = fmt.Sprintf("```go\n%s\n```", signature)
+	}
 	switch options.HoverKind {
 	case SingleLine:
 		return h.SingleLine, nil
@@ -346,13 +348,6 @@ func formatLink(h *HoverInformation, options Options) string {
 	default:
 		return plainLink
 	}
-}
-
-func formatSignature(signature string, options Options) string {
-	if options.PreferredContentFormat == protocol.Markdown {
-		signature = fmt.Sprintf("```go\n%s\n```", signature)
-	}
-	return signature
 }
 
 func formatDoc(doc string, options Options) string {

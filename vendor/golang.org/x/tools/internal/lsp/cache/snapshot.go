@@ -17,11 +17,11 @@ import (
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/packages"
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/lsp/debug/tag"
 	"golang.org/x/tools/internal/lsp/source"
 	"golang.org/x/tools/internal/packagesinternal"
 	"golang.org/x/tools/internal/span"
-	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
 
@@ -113,7 +113,7 @@ func (s *snapshot) Config(ctx context.Context) *packages.Config {
 		},
 		Logf: func(format string, args ...interface{}) {
 			if verboseOutput {
-				event.Print(ctx, fmt.Sprintf(format, args...))
+				event.Log(ctx, fmt.Sprintf(format, args...))
 			}
 		},
 		Tests: true,

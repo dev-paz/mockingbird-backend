@@ -10,10 +10,10 @@ import (
 	"math/rand"
 	"strconv"
 
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/gocommand"
 	"golang.org/x/tools/internal/lsp/debug/tag"
 	"golang.org/x/tools/internal/lsp/protocol"
-	"golang.org/x/tools/internal/telemetry/event"
 	"golang.org/x/xerrors"
 )
 
@@ -61,7 +61,7 @@ type eventWriter struct {
 }
 
 func (ew *eventWriter) Write(p []byte) (n int, err error) {
-	event.Print(ew.ctx, string(p), tag.Operation.Of("generate"))
+	event.Log(ew.ctx, string(p), tag.Operation.Of("generate"))
 	return len(p), nil
 }
 

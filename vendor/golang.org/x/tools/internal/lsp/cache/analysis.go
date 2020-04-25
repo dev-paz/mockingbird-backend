@@ -16,10 +16,10 @@ import (
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/internal/analysisinternal"
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/lsp/debug/tag"
 	"golang.org/x/tools/internal/lsp/source"
 	"golang.org/x/tools/internal/memoize"
-	"golang.org/x/tools/internal/telemetry/event"
 	errors "golang.org/x/xerrors"
 )
 
@@ -208,7 +208,7 @@ func runAnalysis(ctx context.Context, fset *token.FileSet, analyzer *analysis.An
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			event.Print(ctx, fmt.Sprintf("analysis panicked: %s", r), tag.Package.Of(pkg.PkgPath()))
+			event.Log(ctx, fmt.Sprintf("analysis panicked: %s", r), tag.Package.Of(pkg.PkgPath()))
 			data.err = errors.Errorf("analysis %s for package %s panicked: %v", analyzer.Name, pkg.PkgPath(), r)
 		}
 	}()

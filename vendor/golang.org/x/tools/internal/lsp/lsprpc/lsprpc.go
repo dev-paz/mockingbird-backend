@@ -18,12 +18,12 @@ import (
 	"time"
 
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/tools/internal/event"
 	"golang.org/x/tools/internal/jsonrpc2"
 	"golang.org/x/tools/internal/lsp"
 	"golang.org/x/tools/internal/lsp/cache"
 	"golang.org/x/tools/internal/lsp/debug"
 	"golang.org/x/tools/internal/lsp/protocol"
-	"golang.org/x/tools/internal/telemetry/event"
 )
 
 // AutoNetwork is the pseudo network type used to signal that gopls should use
@@ -378,7 +378,7 @@ func (f *Forwarder) connectToRemote(ctx context.Context) (net.Conn, error) {
 		if err == nil {
 			return netConn, nil
 		}
-		event.Print(ctx, fmt.Sprintf("failed attempt #%d to connect to remote: %v\n", retry+2, err))
+		event.Log(ctx, fmt.Sprintf("failed attempt #%d to connect to remote: %v\n", retry+2, err))
 		// In case our failure was a fast-failure, ensure we wait at least
 		// f.dialTimeout before trying again.
 		if retry != f.retries-1 {
@@ -416,10 +416,10 @@ func OverrideExitFuncsForTest() func() {
 // instance from exiting. In the future it may also intercept 'shutdown' to
 // provide more graceful shutdown of the client connection.
 func forwarderHandler(handler jsonrpc2.Handler) jsonrpc2.Handler {
-	return func(ctx context.Context, reply jsonrpc2.Replier, r *jsonrpc2.Request) error {
+	return func(ctx context.Context, reply jsonrpc2.Replier, r jsonrpc2.Request) error {
 		// TODO(golang.org/issues/34111): we should more gracefully disconnect here,
 		// once that process exists.
-		if r.Method == "exit" {
+		if r.Method() == "exit" {
 			ForwarderExitFunc(0)
 			// reply nil here to consume the message: in
 			// tests, ForwarderExitFunc may be overridden to something that doesn't
@@ -486,12 +486,12 @@ const (
 )
 
 func handshaker(client *debugClient, goplsPath string, handler jsonrpc2.Handler) jsonrpc2.Handler {
-	return func(ctx context.Context, reply jsonrpc2.Replier, r *jsonrpc2.Request) error {
-		switch r.Method {
+	return func(ctx context.Context, reply jsonrpc2.Replier, r jsonrpc2.Request) error {
+		switch r.Method() {
 		case handshakeMethod:
 			var req handshakeRequest
-			if err := json.Unmarshal(*r.Params, &req); err != nil {
-				sendError(ctx, reply, r, err)
+			if err := json.Unmarshal(r.Params(), &req); err != nil {
+				sendError(ctx, reply, err)
 				return nil
 			}
 			client.debugAddress = req.DebugAddr
@@ -532,7 +532,7 @@ func handshaker(client *debugClient, goplsPath string, handler jsonrpc2.Handler)
 	}
 }
 
-func sendError(ctx context.Context, reply jsonrpc2.Replier, req *jsonrpc2.Request, err error) {
+func sendError(ctx context.Context, reply jsonrpc2.Replier, err error) {
 	err = fmt.Errorf("%w: %v", jsonrpc2.ErrParse, err)
 	if err := reply(ctx, nil, err); err != nil {
 		event.Error(ctx, "", err)
