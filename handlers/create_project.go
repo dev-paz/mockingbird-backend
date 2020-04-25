@@ -94,6 +94,7 @@ func createOpenShotProject() (dto.CreateProjectResponse, error) {
 }`)
 
 	client := &http.Client{}
+	fmt.Println(OpenShotIP)
 	req, err := http.NewRequest("POST", "http://"+OpenShotIP+"/projects/", bytes.NewBuffer(requestData))
 	if err != nil {
 		return data, err

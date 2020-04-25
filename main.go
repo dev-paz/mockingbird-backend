@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +15,13 @@ func main() {
 	port := os.Getenv("PORT")
 
 	models.InitDB()
+
+	details, err := models.ReadOpenshotDetails()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	handler.OpenShotIP = details.IP
 
 	handler.HandleRequests()
 	log.Fatal(http.ListenAndServe(":"+port, nil))
@@ -34,6 +42,13 @@ func main() {
 // 		"password=%s dbname=%s sslmode=disable",
 // 		host, port, user, password, dbname)
 // 	models.InitDB(psqlInfo)
+//
+// 	details, err := models.ReadOpenshotDetails()
+// 	if err != nil {
+// 		fmt.Println(err.Error())
+// 		return
+// 	}
+// 	handler.OpenShotIP = details.IP
 //
 // 	handler.HandleRequests()
 // 	log.Fatal(http.ListenAndServe(":8881", nil))
