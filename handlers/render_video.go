@@ -41,6 +41,8 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 			panic(err)
 		}
 
+		fmt.Println(clip)
+
 		configMap := map[string]interface{}{}
 		json.Unmarshal(configData, &configMap)
 
