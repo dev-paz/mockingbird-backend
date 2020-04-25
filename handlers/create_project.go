@@ -50,6 +50,7 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 	for partID, userID := range createProjReq.ClipsToUsers {
 		clip := dto.Clip{
 			ID:                 "clip_" + guuid.New().String(),
+			SongID:             project.Song,
 			ProjectID:          project.ID,
 			UserID:             userID,
 			PartID:             partID,

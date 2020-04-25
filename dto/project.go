@@ -13,6 +13,11 @@ type Project struct {
 	OpenshotURL string    `json:"openshot_url" db:"openshot_url"`
 }
 
+// Projects status
+// 1. started
+// 2. rendering
+// 3. uploading
+// 4. completed
 type ProjectDB struct {
 	Song        string `json:"song" db:"song"`
 	Name        string `json:"name" db:"name"`
@@ -35,6 +40,13 @@ type CreateProjectResponse struct {
 	URL  string `json:"url"`
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
+}
+
+type ExportProjectResponse struct {
+	URL      string  `json:"url"`
+	ID       int64   `json:"id"`
+	Status   string  `json:"status"`
+	Progress float64 `json:"progress"`
 }
 
 type GetAllProjectsResponse struct {

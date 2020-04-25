@@ -11,6 +11,7 @@ import (
 
 	firebase "firebase.google.com/go"
 	"github.com/mockingbird-backend/dto"
+	"github.com/mockingbird-backend/models"
 	"google.golang.org/api/option"
 )
 
@@ -80,9 +81,13 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 	}
 
+	err = models.UpdateProjectStatus(project.ID, "rendering", fmt.Sprintf("%v", exportResp.ID))
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(exportResp)
 }
 
 func fetchSongConfig(clip dto.Clip, projectID string) ([]byte, error) {
@@ -123,7 +128,8 @@ func fetchSongConfig(clip dto.Clip, projectID string) ([]byte, error) {
 	return content, nil
 }
 
-func exportProject(projectID string) ([]byte, error) {
+func exportProject(projectID string) (dto.ExportProjectResponse, error) {
+	expResp := dto.ExportProjectResponse{}
 	data := map[string]interface{}{
 		"export_type":   "video",
 		"video_format":  "mp4",
@@ -157,14 +163,14 @@ func exportProject(projectID string) ([]byte, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println(err.Error())
-		return nil, err
+		return expResp, err
 	}
 
-	jsonResp, err := ioutil.ReadAll(resp.Body)
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&expResp)
 	if err != nil {
-		log.Fatal(err)
-		return nil, err
+		fmt.Println(err.Error())
+		panic(err)
 	}
-
-	return jsonResp, nil
+	return expResp, nil
 }

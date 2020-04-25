@@ -22,6 +22,18 @@ func CreateProject(p *dto.ProjectDB) error {
 	return nil
 }
 
+func UpdateProjectStatus(id string, status string, exportID string) error {
+	sqlStatement := `
+	UPDATE projects
+	SET status = $2, export_id = $3
+	WHERE id=$1`
+	_, err := db.Exec(sqlStatement, id, status, exportID)
+	if err != nil {
+		panic(err)
+	}
+	return nil
+}
+
 func ReadProject(projectID string) (*dto.Project, error) {
 	sqlStatement :=
 		`SELECT  id, name, status, users, clips, song

@@ -38,7 +38,12 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		Status:  "uploading",
 	}
 
-	go downloadFileToFirebase(createVideoReq.OutputURL, bucketLocation, fileName, videoID)
+	err = models.UpdateProjectStatus(createVideoReq.ProjectData.ProjectID, "uploading", "")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	go downloadFileToFirebase(createVideoReq.OutputURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
 
 	err = models.CreateMusicVideo(&musicVideo)
 	if err != nil {
@@ -50,7 +55,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName string, videoID string) error {
+func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName string, videoID string, projectID string) error {
 	fmt.Println("starting download...")
 	config := &firebase.Config{
 		StorageBucket: "gs://mockingbird-287ec.appspot.com",
@@ -88,6 +93,11 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 	}
 	if err := wc.Close(); err != nil {
 		return err
+	}
+
+	err = models.UpdateProjectStatus(projectID, "completed", "")
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 
 	err = models.UpdateVideoStatus(videoID, "completed")
