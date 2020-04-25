@@ -60,7 +60,7 @@ func ReadAllProjects(userID string) (*[]dto.Project, error) {
 			WHERE c.user_id=$1
 		)
 
-		SELECT pv.id, pv.name, pv.status, pv.users, pv.clips, pv.song
+		SELECT pv.id, pv.name, pv.status, pv.users, pv.clips, pv.song, pv.openshot_id
 			FROM user_projects as up
 			INNER JOIN projects_view AS pv ON pv.id=up.id;
 		`
@@ -70,7 +70,7 @@ func ReadAllProjects(userID string) (*[]dto.Project, error) {
 		return nil, err
 	}
 	for rows.Next() {
-		err = rows.Scan(&p.ID, &p.Name, &p.Status, &p.Users, &p.Clips, &p.Song)
+		err = rows.Scan(&p.ID, &p.Name, &p.Status, &p.Users, &p.Clips, &p.Song, &p.OpenshotID)
 		if err != nil {
 			// handle this error
 			fmt.Println("error querying by row")

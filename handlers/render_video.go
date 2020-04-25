@@ -58,7 +58,8 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		}
 
 		fmt.Println("POST",
-			"http://"+OpenShotIP+"/projects/"+project.OpenshotID+"/clips/")
+			"http://"+OpenShotIP+"/projects/"+project.OpenshotID+"/clips/"
+		)
 		fmt.Println(songConfig)
 
 		client := &http.Client{}
