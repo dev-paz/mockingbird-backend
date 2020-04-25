@@ -5,6 +5,7 @@ CREATE VIEW projects_view AS
   projects.id,
   projects.name,
   projects.status,
+  projects.openshot_id,
   json_agg(json_build_object(
     'firebase_user_id', users.firebase_user_id,
     'id', users.id,
@@ -39,6 +40,7 @@ CREATE VIEW projects_view AS
   GROUP BY
   projects.id,
   projects.name,
+  projects.openshot_id,
   projects.status;
 
 
