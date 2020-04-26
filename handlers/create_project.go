@@ -13,6 +13,7 @@ import (
 )
 
 func handleCreateProject(w http.ResponseWriter, req *http.Request) {
+	checkOpenshotIP()
 	createProjReq := dto.CreateProjectRequest{}
 
 	decoder := json.NewDecoder(req.Body)

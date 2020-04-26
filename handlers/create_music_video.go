@@ -20,6 +20,7 @@ import (
 )
 
 func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
+	checkOpenshotIP()
 	createVideoReq := new(dto.CreateMusicVideoRequest)
 	bucketLocation := "mockingbird-287ec.appspot.com"
 
