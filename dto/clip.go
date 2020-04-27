@@ -17,6 +17,8 @@ type Clip struct {
 	OpenshotProjectID  string `json:"openshot_project_id"`
 	OpenshotProjectURL string `json:"openshot_project_url"`
 	Status             string `json:"status"`
+	Username           string `json:"username"`
+	Picture            string `json:"profile_photo_url"`
 }
 
 type UpdateClipRequest struct {

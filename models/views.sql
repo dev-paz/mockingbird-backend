@@ -1,5 +1,10 @@
-
 CREATE VIEW projects_view AS
+
+
+  WITH user_clips AS (
+    SELECT c*, u.name, u.profile_photo_url FROM clips AS c
+    INNER JOIN users AS u ON c.user_id = u.id
+  )
 
   SELECT
   projects.id,
@@ -7,21 +12,16 @@ CREATE VIEW projects_view AS
   projects.status,
   projects.openshot_id,
   json_agg(json_build_object(
-    'firebase_user_id', users.firebase_user_id,
-    'id', users.id,
-    'email', users.email,
-    'name', users.name,
-    'profile_photo_url', users.profile_photo_url
-  )) as users,
-  json_agg(json_build_object(
-    'id', clips.id,
-    'user_id', clips.user_id,
-    'file', clips.file,
-    'part_id', clips.part_id,
-    'song_id', clips.song_id,
-    'project_id', clips.project_id,
-    'openshot_project_id', clips.openshot_project_id,
-    'openshot_project_url', clips.openshot_project_url
+    'id', user_clips.id,
+    'user_id', user_clips.user_id,
+    'username', user_clips.name,
+    'profile_photo_url', user_clips.profile_photo_url,
+    'file', user_clips.file,
+    'part_id', user_clips.part_id,
+    'song_id', user_clips.song_id,
+    'project_id', user_clips.project_id,
+    'openshot_project_id', user_clips.openshot_project_id,
+    'openshot_project_url', user_clips.openshot_project_url
   )) as clips,
   json_agg(
     DISTINCT(
@@ -34,13 +34,13 @@ CREATE VIEW projects_view AS
       ) AS x))->0
       AS song
   FROM projects
-  INNER JOIN clips ON clips.project_id = projects.id
-  INNER JOIN users ON firebase_user_id = clips.user_id
+  INNER JOIN user_clips ON user_clips.project_id = projects.id
   INNER JOIN songs ON songs.id = projects.song
   GROUP BY
   projects.id,
   projects.name,
   projects.openshot_id,
+  users.id,
   projects.status;
 
 

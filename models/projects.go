@@ -55,12 +55,12 @@ func ReadAllProjects(userID string) (*[]dto.Project, error) {
 	var projects []dto.Project
 	sqlStatement := `
 		WITH user_projects AS (
-			SELECT p.* FROM clips AS c
+			SELECT distinct p.* FROM clips AS c
 			INNER JOIN projects AS p ON c.project_id = p.id
 			WHERE c.user_id=$1
 		)
 
-		SELECT pv.id, pv.name, pv.status, pv.users, pv.clips, pv.song, pv.openshot_id
+		SELECT pv.id, pv.name, pv.status, pv.clips, pv.song, pv.openshot_id
 			FROM user_projects as up
 			INNER JOIN projects_view AS pv ON pv.id=up.id;
 		`
@@ -70,7 +70,7 @@ func ReadAllProjects(userID string) (*[]dto.Project, error) {
 		return nil, err
 	}
 	for rows.Next() {
-		err = rows.Scan(&p.ID, &p.Name, &p.Status, &p.Users, &p.Clips, &p.Song, &p.OpenshotID)
+		err = rows.Scan(&p.ID, &p.Name, &p.Status, &p.Clips, &p.Song, &p.OpenshotID)
 		if err != nil {
 			// handle this error
 			fmt.Println("error querying by row")

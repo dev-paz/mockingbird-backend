@@ -5,7 +5,6 @@ type Project struct {
 	Song        Song      `json:"song" db:"song"`
 	Clips       ClipSlice `json:"clips" db:"clips"`
 	Name        string    `json:"name" db:"name"`
-	Users       UserSlice `json:"users" db:"users"`
 	ID          string    `json:"id" db:"id"`
 	Created     string    `json:"created" db:"created"`
 	Status      string    `json:"status" db:"status"`
@@ -13,11 +12,6 @@ type Project struct {
 	OpenshotURL string    `json:"openshot_url" db:"openshot_url"`
 }
 
-// Projects status
-// 1. started
-// 2. rendering
-// 3. uploading
-// 4. completed
 type ProjectDB struct {
 	Song        string `json:"song" db:"song"`
 	Name        string `json:"name" db:"name"`
