@@ -15,11 +15,12 @@ type Song struct {
 }
 
 type SongPart struct {
-	ID       string `json:"id" db:"difficulty"`
-	Part     int64  `json:"part" db:"part"`
-	MusicURL string `json:"music_url" db:"music_url"`
-	SongID   string `json:"song_id" db:"song_id"`
-	Type     string `json:"type" db:"type"`
+	ID          string  `json:"id" db:"difficulty"`
+	Part        int64   `json:"part" db:"part"`
+	MusicURL    string  `json:"music_url" db:"music_url"`
+	SongID      string  `json:"song_id" db:"song_id"`
+	Type        string  `json:"type" db:"type"`
+	AspectRatio float64 `json:"aspect_ratio" db:"aspect_ratio"`
 }
 
 func (u Song) Value() (driver.Value, error) {

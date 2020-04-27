@@ -2,8 +2,8 @@ CREATE VIEW projects_view AS
 
 
   WITH user_clips AS (
-    SELECT c*, u.name, u.profile_photo_url FROM clips AS c
-    INNER JOIN users AS u ON c.user_id = u.id
+    SELECT c.*, u.name, u.profile_photo_url FROM clips AS c
+    INNER JOIN users AS u ON c.user_id = u.firebase_user_id
   )
 
   SELECT
@@ -40,7 +40,6 @@ CREATE VIEW projects_view AS
   projects.id,
   projects.name,
   projects.openshot_id,
-  users.id,
   projects.status;
 
 
