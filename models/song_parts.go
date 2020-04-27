@@ -32,7 +32,7 @@ func ReadSongParts(songID string) (*[]dto.SongPart, error) {
 func CreateSongParts(sp []dto.SongPart) error {
 	sqlStatement := `
 	INSERT INTO song_parts (id, song_id, part, music_url, type)
-	VALUES ($1, $2, $3, $, $5)
+	VALUES ($1, $2, $3, $4, $5)
 	RETURNING id`
 	for _, p := range sp {
 		id := ""

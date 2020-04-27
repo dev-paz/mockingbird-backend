@@ -57,7 +57,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 	}
 
-	go downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
+	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
 
 	err = models.CreateMusicVideo(&musicVideo)
 	if err != nil {
@@ -80,19 +80,22 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
-
+	fmt.Println("made it here")
 	ctx := context.Background()
 	client, err := app.Storage(ctx)
 	if err != nil {
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
+	fmt.Println("made it here")
 
 	bucket, err := client.Bucket(bucketLocation)
 	if err != nil {
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
+	fmt.Println("made it here")
+	fmt.Println(openShotURL)
 
 	resp, err := http.Get(openShotURL)
 	if err != nil {
@@ -101,6 +104,7 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 	}
 
 	defer resp.Body.Close()
+	fmt.Println("made it here")
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
@@ -113,16 +117,19 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 		fmt.Println(err.Error())
 		return err
 	}
+	fmt.Println("made it here")
 
 	err = models.UpdateProjectStatus(projectID, "completed", "")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	fmt.Println("made it here")
 
 	err = models.UpdateVideoStatus(videoID, "completed")
 	if err != nil {
 		fmt.Println("error updating video status")
 	}
+	fmt.Println("made it here")
 
 	return nil
 }
