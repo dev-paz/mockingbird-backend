@@ -32,7 +32,7 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		"file":     "",
 		"position": 0.0,
 		"start":    0.0,
-		"end":      10.0,
+		"end":      120.0,
 		"layer":    1,
 		"project":  "http://" + OpenShotIP + "/projects/" + project.OpenshotID + "/",
 		"json":     "{}",
@@ -146,7 +146,7 @@ func exportProject(projectID string) (dto.ExportProjectResponse, error) {
 		"audio_codec":   "libfdk_aac",
 		"audio_bitrate": 1920000,
 		"start_frame":   1,
-		"end_frame":     300,
+		"end_frame":     3600,
 		"project":       "http://" + OpenShotIP + "/projects/" + projectID + "/",
 		"webhook":       "https://mockingbird-backend.herokuapp.com/create_music_video",
 		"json": map[string]string{
