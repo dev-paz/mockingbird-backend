@@ -1,0 +1,59 @@
+{
+	"part": "sp_707a0505-2cc3-4fda-99c7-f624a77d6ab5",
+	"json": {
+		"crop_width": {
+			"Points": [{
+				"co": {
+					"X": 0.75,
+					"Y": 0.75
+				},
+				"interpolation": 2
+			}]
+		},
+		"crop_x": {
+			"Points": [{
+				"co": {
+					"X": -0.25,
+					"Y": -0.25
+				},
+				"interpolation": 2
+			}]
+		},
+		"location_x": {
+			"Points": [{
+				"co": {
+					"X": -0.35,
+					"Y": -0.35
+				},
+				"interpolation": 2
+			}]
+		},
+    "location_y": {
+      "Points": [{
+        "co": {
+          "X": -0.25,
+          "Y": -0.25
+        },
+        "interpolation": 2
+      }]
+    },
+		"scale_x": {
+			"Points": [{
+				"co": {
+					"X": 0.56,
+					"Y": 0.56
+				},
+				"interpolation": 2
+			}]
+		},
+		"scale_y": {
+			"Points": [{
+				"co": {
+					"X": 0.56,
+					"Y": 0.56
+				},
+				"interpolation": 2
+			}]
+		}
+	}
+}

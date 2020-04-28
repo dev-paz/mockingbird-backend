@@ -21,6 +21,7 @@ type SongPart struct {
 	SongID      string  `json:"song_id" db:"song_id"`
 	Type        string  `json:"type" db:"type"`
 	AspectRatio float64 `json:"aspect_ratio" db:"aspect_ratio"`
+	Config      string  `json:"config" db:"config"`
 }
 
 func (u Song) Value() (driver.Value, error) {
