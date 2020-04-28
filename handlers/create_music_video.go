@@ -46,7 +46,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	fileName := videoID + ".mp4"
 	musicVideo := dto.MusicVideo{
 		ID:      videoID,
-		URL:     bucketLocation + "/" + fileName,
+		URL:     fileName,
 		SongID:  createVideoReq.ProjectData.SongID,
 		Created: createVideoReq.Created,
 		Status:  "uploading",
