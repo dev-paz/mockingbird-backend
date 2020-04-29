@@ -2,17 +2,14 @@ package handler
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 
-	firebase "firebase.google.com/go"
 	"github.com/mockingbird-backend/dto"
 	"github.com/mockingbird-backend/models"
-	"google.golang.org/api/option"
 )
 
 func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
@@ -26,8 +23,6 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	fmt.Println(project)
-
 	requestData := map[string]interface{}{
 		"file":     "",
 		"position": 0.0,
@@ -37,14 +32,17 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		"project":  "http://" + OpenShotIP + "/projects/" + project.OpenshotID + "/",
 		"json":     "{}",
 	}
+	songParts, err := models.ReadSongParts(project.Song.ID)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 
 	for layer, clip := range project.Clips {
-		configData, err := fetchSongConfig(clip, project.Song.ID)
+		configData, err := fetchSongConfig((*songParts)[layer])
 		if err != nil {
 			panic(err)
 		}
-
-		fmt.Println(clip)
 
 		configMap := map[string]interface{}{}
 		json.Unmarshal(configData, &configMap)
@@ -59,7 +57,6 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		}
 
 		fmt.Println("POST", "http://"+OpenShotIP+"/projects/"+project.OpenshotID+"/clips/")
-		fmt.Println(songConfig)
 
 		client := &http.Client{}
 		req, err := http.NewRequest("POST",
@@ -98,41 +95,28 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func fetchSongConfig(clip dto.Clip, projectID string) ([]byte, error) {
-	ctx := context.Background()
-	sa := option.WithCredentialsFile("credentials.json")
-	app, err := firebase.NewApp(ctx, nil, sa)
-	if err != nil {
-		log.Fatalln(err)
-		return nil, err
-	}
-
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-		return nil, err
-	}
-
-	defer client.Close()
-
-	ref, err := client.Collection("song_config").Doc(projectID).Get(ctx)
+func fetchSongConfig(songPart dto.SongPart) ([]byte, error) {
+	fmt.Println(songPart.Config)
+	resp, err := http.Get(songPart.Config)
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
-	}
+		fmt.Println(err.Error())
+		fmt.Println("made it here e1")
 
-	songFile := ref.Data()[clip.PartID].(string)
-	resp, err := http.Get(songFile)
-	if err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
+	fmt.Println("made it here")
+
 	defer resp.Body.Close()
+	fmt.Println("made it here")
 
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Println("made it here e")
+		fmt.Println(err.Error())
 		log.Fatal(err)
 	}
+	fmt.Println("made it here")
 	return content, nil
 }
 
