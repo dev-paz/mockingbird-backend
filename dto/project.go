@@ -29,6 +29,10 @@ type CreateProjectRequest struct {
 	Name         string            `json:"name"`
 }
 
+type DeleteProjectRequest struct {
+	ProjectID string `json:"project_id"`
+}
+
 //CreateProjectResponse struct for sending data to openshot api
 type CreateProjectResponse struct {
 	URL  string `json:"url"`

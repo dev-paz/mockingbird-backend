@@ -7,6 +7,7 @@ import (
 //HandleRequests routes incoming requests
 func HandleRequests() {
 	http.HandleFunc("/create_project", handleCreateProject)
+	http.HandleFunc("/delete_project", handleDeleteProject)
 	http.HandleFunc("/get_project", handleGetProject)
 	http.HandleFunc("/get_all_projects", handleGetAllProjects)
 	http.HandleFunc("/render_video", handleRenderVideo)

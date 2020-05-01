@@ -39,3 +39,16 @@ func UpdateClip(id string, file string) error {
 
 	return nil
 }
+
+func DeleteClips(projectID string) error {
+	sqlStatement :=
+		`DELETE
+		 FROM clips
+		 WHERE project_id=$1
+		`
+	_, err := db.Exec(sqlStatement, projectID)
+	if err != nil {
+		panic(err)
+	}
+	return nil
+}

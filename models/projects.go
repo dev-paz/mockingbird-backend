@@ -50,6 +50,19 @@ func ReadProject(projectID string) (*dto.Project, error) {
 	return &p, nil
 }
 
+func DeleteProject(projectID string) error {
+	sqlStatement :=
+		`DELETE
+		 FROM projects
+		 WHERE id=$1
+		`
+	_, err := db.Exec(sqlStatement, projectID)
+	if err != nil {
+		panic(err)
+	}
+	return nil
+}
+
 func ReadAllProjects(userID string) (*[]dto.Project, error) {
 	var p dto.Project
 	var projects []dto.Project

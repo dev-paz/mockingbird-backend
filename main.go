@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/mockingbird-backend/handlers"
+	handler "github.com/mockingbird-backend/handlers"
 	"github.com/mockingbird-backend/models"
 )
 
