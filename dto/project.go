@@ -10,6 +10,7 @@ type Project struct {
 	Status      string    `json:"status" db:"status"`
 	OpenshotID  string    `json:"openshot_id" db:"openshot_id"`
 	OpenshotURL string    `json:"openshot_url" db:"openshot_url"`
+	ExportID    string    `json:"export_id" db:"export_id"`
 }
 
 type ProjectDB struct {
@@ -20,6 +21,7 @@ type ProjectDB struct {
 	Status      string `json:"status" db:"status"`
 	OpenshotID  string `json:"openshot_id" db:"openshot_id"`
 	OpenshotURL string `json:"openshot_url" db:"openshot_url"`
+	ExportID    string `json:"export_id" db:"export_id"`
 }
 
 //CreateProjectRequest struct for sending data to openshot api

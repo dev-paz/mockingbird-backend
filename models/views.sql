@@ -11,6 +11,7 @@ CREATE VIEW projects_view AS
   projects.name,
   projects.status,
   projects.openshot_id,
+  projects.export_id,
   json_agg(json_build_object(
     'id', user_clips.id,
     'user_id', user_clips.user_id,
@@ -40,6 +41,7 @@ CREATE VIEW projects_view AS
   projects.id,
   projects.name,
   projects.openshot_id,
+  projects.export_id,
   projects.status;
 
 

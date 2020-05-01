@@ -39,6 +39,7 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 		Status:      "started",
 		OpenshotURL: openShotResp.URL,
 		OpenshotID:  fmt.Sprintf("%v", openShotResp.ID),
+		ExportID:    "Not exported",
 	}
 
 	err = models.CreateProject(&project)
