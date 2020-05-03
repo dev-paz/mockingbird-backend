@@ -25,7 +25,6 @@ func main() {
 
 	handler.HandleRequests()
 	log.Fatal(http.ListenAndServe(":"+port, nil))
-
 }
 
 //
