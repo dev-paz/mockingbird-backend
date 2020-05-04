@@ -27,7 +27,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-//
 // const (
 // 	host     = "localhost"
 // 	port     = 5432

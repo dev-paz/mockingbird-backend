@@ -46,12 +46,13 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	musicVideo := dto.MusicVideo{
 		ID:      videoID,
 		URL:     fileName,
-		SongID:  createVideoReq.ProjectData.SongID,
+		SongID:  createVideoReq.ProjectData["song_id"],
 		Created: createVideoReq.Created,
 		Status:  "uploading",
 	}
 
-	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
+	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData["project_id"])
+	fmt.Println("made it here")
 
 	err = models.CreateMusicVideo(&musicVideo)
 	if err != nil {
@@ -59,7 +60,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = models.UpdateProjectStatus(createVideoReq.ProjectData.ProjectID, "completed", "")
+	err = models.UpdateProjectStatus(createVideoReq.ProjectData["project_id"], "completed", "")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -79,22 +80,18 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
-	fmt.Println("made it here")
 	ctx := context.Background()
 	client, err := app.Storage(ctx)
 	if err != nil {
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
-	fmt.Println("made it here")
 
 	bucket, err := client.Bucket(bucketLocation)
 	if err != nil {
 		fmt.Println(err.Error())
 		log.Fatalln(err)
 	}
-	fmt.Println("made it here")
-	fmt.Println(openShotURL)
 
 	resp, err := http.Get(openShotURL)
 	if err != nil {
@@ -103,7 +100,6 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 	}
 
 	defer resp.Body.Close()
-	fmt.Println("made it here")
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
@@ -116,19 +112,11 @@ func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName 
 		fmt.Println(err.Error())
 		return err
 	}
-	fmt.Println("made it here")
-
-	err = models.UpdateProjectStatus(projectID, "completed", "")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	fmt.Println("made it here")
 
 	err = models.UpdateVideoStatus(videoID, "completed")
 	if err != nil {
 		fmt.Println("error updating video status")
 	}
-	fmt.Println("made it here")
 
 	return nil
 }

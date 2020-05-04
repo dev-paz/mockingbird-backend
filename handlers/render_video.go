@@ -134,8 +134,9 @@ func exportProject(projectID string) (dto.ExportProjectResponse, error) {
 		"project":       "http://" + OpenShotIP + "/projects/" + projectID + "/",
 		"webhook":       "https://mockingbird-backend.herokuapp.com/create_music_video",
 		"json": map[string]string{
-			"hostname": "ip-172-31-42-80",
-			"webhook":  projectID,
+			"hostname":   "ip-172-31-42-80",
+			"project_id": projectID,
+			"song_id": "song_123"
 		},
 	}
 
