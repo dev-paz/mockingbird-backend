@@ -35,11 +35,6 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 	}
 
-	err = models.UpdateProjectStatus(createVideoReq.ProjectData.ProjectID, "uploading", "")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
 	u, err := url.Parse(createVideoReq.OutputURL)
 	if err != nil {
 		panic(err)
@@ -62,6 +57,11 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		fmt.Println(err.Error())
 		return
+	}
+
+	err = models.UpdateProjectStatus(createVideoReq.ProjectData.ProjectID, "completed", "")
+	if err != nil {
+		fmt.Println(err.Error())
 	}
 
 	w.Header().Set("Content-Type", "application/json")
