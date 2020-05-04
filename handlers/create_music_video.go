@@ -31,6 +31,11 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 
 	fmt.Println(req.Form)
 
+	for e, i := range req.Form["json"] {
+		fmt.Println(i)
+		fmt.Println(e)
+	}
+
 	decoder := schema.NewDecoder()
 	err = decoder.Decode(createVideoReq, req.Form)
 	if err != nil {
@@ -51,12 +56,12 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	musicVideo := dto.MusicVideo{
 		ID:      videoID,
 		URL:     fileName,
-		SongID:  createVideoReq.ProjectData["song_id"],
+		SongID:  createVideoReq.ProjectData.SongID,
 		Created: createVideoReq.Created,
 		Status:  "uploading",
 	}
 
-	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData["project_id"])
+	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
 	fmt.Println("made it here")
 
 	err = models.CreateMusicVideo(&musicVideo)
@@ -65,7 +70,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = models.UpdateProjectStatus(createVideoReq.ProjectData["project_id"], "completed", "")
+	err = models.UpdateProjectStatus(createVideoReq.ProjectData.ProjectID, "completed", "")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
