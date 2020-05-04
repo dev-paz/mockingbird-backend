@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -21,6 +22,7 @@ import (
 
 func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	checkOpenshotIP()
+	projectData := dto.ProjectData{}
 	createVideoReq := new(dto.CreateMusicVideoRequest)
 	bucketLocation := "mockingbird-287ec.appspot.com"
 
@@ -31,10 +33,14 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 
 	fmt.Println(req.Form)
 
-	for e, i := range req.Form["json"] {
-		fmt.Println(i)
-		fmt.Println(e)
+	for _, str := range req.Form["json"] {
+		if str == "hostname" || str == "status" {
+			continue
+		}
+		json.Unmarshal([]byte(str), &projectData)
 	}
+
+	createVideoReq.ProjectData = projectData
 
 	decoder := schema.NewDecoder()
 	err = decoder.Decode(createVideoReq, req.Form)
