@@ -34,12 +34,14 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	fmt.Println(req.Form)
 
 	for _, str := range req.Form["json"] {
+		fmt.Println(str)
 		if str == "hostname" || str == "status" {
 			continue
 		}
 		json.Unmarshal([]byte(str), &projectData)
 	}
 
+	fmt.Println(projectData)
 	createVideoReq.ProjectData = projectData
 
 	decoder := schema.NewDecoder()

@@ -81,7 +81,7 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	exportResp, err := exportProject(project.OpenshotID)
+	exportResp, err := exportProject(project.OpenshotID, project.Song.ID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -120,10 +120,10 @@ func fetchSongConfig(songPart dto.SongPart) ([]byte, error) {
 	return content, nil
 }
 
-func exportProject(projectID string) (dto.ExportProjectResponse, error) {
+func exportProject(projectID string, songID string) (dto.ExportProjectResponse, error) {
 	expResp := dto.ExportProjectResponse{}
 
-	projectJSON := fmt.Sprintf("{'project_id':'%s'}", projectID)
+	projectJSON := fmt.Sprintf(`{"ProjectID": "%s","SongID": "%s"}`, projectID, songID)
 	data := map[string]interface{}{
 		"export_type":   "video",
 		"video_format":  "mp4",

@@ -18,6 +18,6 @@ type CreateMusicVideoRequest struct {
 }
 
 type ProjectData struct {
-	SongID    string `json:"song_id"`
-	ProjectID string `json:"project_id"`
+	SongID    string
+	ProjectID string
 }
