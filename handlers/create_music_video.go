@@ -29,11 +29,16 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 	}
 
+	fmt.Println(req.Form)
+
 	decoder := schema.NewDecoder()
 	err = decoder.Decode(createVideoReq, req.Form)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+
+	fmt.Println(createVideoReq)
+	fmt.Println(createVideoReq.ProjectData)
 
 	u, err := url.Parse(createVideoReq.OutputURL)
 	if err != nil {
