@@ -132,7 +132,7 @@ func exportProject(projectID string, songID string, openshotID string) (dto.Expo
 		"audio_codec":   "libfdk_aac",
 		"audio_bitrate": 1920000,
 		"start_frame":   1,
-		"end_frame":     3600,
+		"end_frame":     1500,
 		"project":       "http://" + OpenShotIP + "/projects/" + openshotID + "/",
 		"webhook":       "https://mockingbird-backend.herokuapp.com/create_music_video",
 		"json": map[string]string{
