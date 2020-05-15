@@ -15,7 +15,7 @@ func ReadSongs() (*[]dto.Song, error) {
 		panic(err)
 	}
 	for rows.Next() {
-		err = rows.Scan(&s.ID, &s.Title, &s.Parts, &s.Difficulty, s.LengthSeconds)
+		err = rows.Scan(&s.ID, &s.Title, &s.Parts, &s.Difficulty, &s.LengthSeconds)
 		if err != nil {
 			fmt.Println(err.Error())
 			// handle this error
