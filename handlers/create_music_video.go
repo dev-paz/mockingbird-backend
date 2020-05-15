@@ -70,7 +70,6 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	}
 
 	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
-	fmt.Println("made it here")
 
 	err = models.CreateMusicVideo(&musicVideo)
 	if err != nil {

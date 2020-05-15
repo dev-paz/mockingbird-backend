@@ -8,10 +8,11 @@ import (
 
 //Song struct does a thing
 type Song struct {
-	Title      string `json:"title" db:"title"`
-	ID         string `json:"id" db:"id"`
-	Parts      int64  `json:"parts" db:"parts"`
-	Difficulty int64  `json:"difficulty" db:"difficulty"`
+	Title         string `json:"title" db:"title"`
+	ID            string `json:"id" db:"id"`
+	Parts         int64  `json:"parts" db:"parts"`
+	Difficulty    int64  `json:"difficulty" db:"difficulty"`
+	LengthSeconds int64  `json:"length_seconds" db:"length_seconds"`
 }
 
 type SongPart struct {

@@ -27,7 +27,7 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		"file":     "",
 		"position": 0.0,
 		"start":    0.0,
-		"end":      120.0,
+		"end":      project.Song.LengthSeconds,
 		"layer":    1,
 		"project":  "http://" + OpenShotIP + "/projects/" + project.OpenshotID + "/",
 		"json":     "{}",
@@ -81,7 +81,7 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	exportResp, err := exportProject(project.ID, project.Song.ID, project.OpenshotID)
+	exportResp, err := exportProject(project.ID, project.Song.ID, project.OpenshotID, project.Song.LengthSeconds)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -120,7 +120,7 @@ func fetchSongConfig(songPart dto.SongPart) ([]byte, error) {
 	return content, nil
 }
 
-func exportProject(projectID string, songID string, openshotID string) (dto.ExportProjectResponse, error) {
+func exportProject(projectID string, songID string, openshotID string, length int64) (dto.ExportProjectResponse, error) {
 	expResp := dto.ExportProjectResponse{}
 
 	projectJSON := fmt.Sprintf(`{"ProjectID": "%s","SongID": "%s"}`, projectID, songID)
@@ -132,7 +132,7 @@ func exportProject(projectID string, songID string, openshotID string) (dto.Expo
 		"audio_codec":   "libfdk_aac",
 		"audio_bitrate": 1920000,
 		"start_frame":   1,
-		"end_frame":     1500,
+		"end_frame":     length * 30,
 		"project":       "http://" + OpenShotIP + "/projects/" + openshotID + "/",
 		"webhook":       "https://mockingbird-backend.herokuapp.com/create_music_video",
 		"json": map[string]string{
