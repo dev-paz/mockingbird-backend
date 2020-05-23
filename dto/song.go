@@ -13,6 +13,7 @@ type Song struct {
 	Parts         int64  `json:"parts" db:"parts"`
 	Difficulty    int64  `json:"difficulty" db:"difficulty"`
 	LengthSeconds int64  `json:"length_seconds" db:"length_seconds"`
+	BackingTrack  string `json:"backing_track" db:"backing_track"`
 }
 
 type SongPart struct {

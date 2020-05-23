@@ -36,7 +36,6 @@ func UpdateClip(id string, file string) error {
 	if err != nil {
 		panic(err)
 	}
-
 	return nil
 }
 

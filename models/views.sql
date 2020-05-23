@@ -31,7 +31,8 @@ CREATE VIEW projects_view AS
         songs.id,
         songs.title,
         songs.difficulty,
-        songs.parts
+        songs.parts,
+        songs.length_seconds
       ) AS x))->0
       AS song
   FROM projects
