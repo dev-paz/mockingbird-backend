@@ -32,7 +32,7 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		"end":      project.Song.LengthSeconds,
 		"layer":    1,
 		"project":  "http://" + OpenShotIP + "/projects/" + project.OpenshotID + "/",
-		"json": map[string]string{
+		"json": map[string]interface{}{
 			"media_type": "audio",
 		},
 	}
@@ -221,6 +221,12 @@ func addBackingTrack(backingURL string, OpenShotIP string, requestData map[strin
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+
+	jsonFile, err := os.Open("song_edit.json")
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+	configMap := map[string]interface{}{}
+	json.Unmarshal(byteValue, &configMap)
+	requestData["json"] = configMap["json"]
 
 	req, err = http.NewRequest("POST", uploadResponse.Project+"clips/", bytes.NewBuffer(songConfig))
 	if err != nil {

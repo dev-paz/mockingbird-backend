@@ -1,0 +1,15 @@
+{
+	"json": {
+		"volume": {
+			"Points": [{
+				"co": {
+					"X": 1.0,
+					"Y": 1.0
+				},
+				"interpolation": 2
+			}]
+		},
+		"position": 0.5,
+		"media_type": "audio"
+	}
+}
