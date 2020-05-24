@@ -214,19 +214,19 @@ func addBackingTrack(backingURL string, OpenShotIP string, requestData map[strin
 		panic(err)
 	}
 
-	fmt.Println(uploadResponse.URL)
-	requestData["file"] = uploadResponse.URL
-	requestData["layer"] = layer
-	songConfig, err := json.Marshal(requestData)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
 	jsonFile, err := os.Open("song_edit.json")
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	configMap := map[string]interface{}{}
 	json.Unmarshal(byteValue, &configMap)
+
 	requestData["json"] = configMap["json"]
+	requestData["file"] = uploadResponse.URL
+	requestData["layer"] = layer
+
+	songConfig, err := json.Marshal(requestData)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	req, err = http.NewRequest("POST", uploadResponse.Project+"clips/", bytes.NewBuffer(songConfig))
 	if err != nil {
