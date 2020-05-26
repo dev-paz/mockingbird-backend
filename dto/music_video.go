@@ -1,14 +1,16 @@
 package dto
 
 type MusicVideo struct {
-	ID      string `json:"id"`
-	URL     string `json:"url"`
-	Created string `json:"created"`
-	SongID  string `json:"song_id"`
-	Status  string `json:"status"`
-	Name    string `json:"name"`
-	Owner   string `json:"owner"`
-	Title   string `json:"title"`
+	ID         string `json:"id"`
+	URL        string `json:"url"`
+	Created    string `json:"created"`
+	SongID     string `json:"song_id"`
+	Status     string `json:"status"`
+	Name       string `json:"name"`
+	Owner      string `json:"owner"`
+	Title      string `json:"title"`
+	OwnerName  string `json:"owner_name"`
+	OwnerPhoto string `json:"owner_photo"`
 }
 
 type CreateMusicVideoRequest struct {
