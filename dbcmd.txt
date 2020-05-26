@@ -1,0 +1,2 @@
+heroku pg:pull postgresql-symmetrical-62426 mockingbirdheroku --app mockingbird-backend
+

@@ -214,11 +214,14 @@ func addBackingTrack(backingURL string, OpenShotIP string, requestData map[strin
 		panic(err)
 	}
 
-	jsonFile, err := os.Open("song_edit.json")
+	jsonFile, err := os.Open("./song_edit.json")
+	fmt.Println(jsonFile)
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	configMap := map[string]interface{}{}
 	json.Unmarshal(byteValue, &configMap)
+
+	fmt.Println(configMap["json"])
 
 	requestData["json"] = configMap["json"]
 	requestData["file"] = uploadResponse.URL
