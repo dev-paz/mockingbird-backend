@@ -41,7 +41,6 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 		return
 	}
-		"position": 0.0,
 
 	fmt.Println(project.Song.BackingTrack)
 	if project.Song.BackingTrack != "" {
@@ -60,6 +59,7 @@ func handleRenderVideo(w http.ResponseWriter, req *http.Request) {
 		requestData["json"] = configMap["json"]
 		requestData["file"] = clip.File
 		requestData["layer"] = layer
+		requestData["position"] = 0.0
 
 		songConfig, err := json.Marshal(requestData)
 		if err != nil {
@@ -238,7 +238,6 @@ func addBackingTrack(backingURL string, OpenShotIP string, requestData map[strin
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	requestData["position"] = 0.0
 
 	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth(username, passwd)
