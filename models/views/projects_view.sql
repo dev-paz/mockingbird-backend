@@ -1,6 +1,5 @@
 CREATE VIEW projects_view AS
 
-
   WITH user_clips AS (
     SELECT c.*, u.name, u.profile_photo_url FROM clips AS c
     INNER JOIN users AS u ON c.user_id = u.firebase_user_id
@@ -12,6 +11,7 @@ CREATE VIEW projects_view AS
   projects.status,
   projects.openshot_id,
   projects.export_id,
+  projects.owner,
   json_agg(json_build_object(
     'id', user_clips.id,
     'user_id', user_clips.user_id,
@@ -44,11 +44,5 @@ CREATE VIEW projects_view AS
   projects.name,
   projects.openshot_id,
   projects.export_id,
+  projects.owner,
   projects.status;
-
-
-  WITH user_projects AS (
-    SELECT p.* FROM clips AS c
-    INNER JOIN projects AS p ON c.project_id = p.id
-    WHERE c.user_id = '3QQFkG3sqlMjJKu5FDC1eFrFdFq1'
-  )

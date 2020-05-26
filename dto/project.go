@@ -11,6 +11,7 @@ type Project struct {
 	OpenshotID  string    `json:"openshot_id" db:"openshot_id"`
 	OpenshotURL string    `json:"openshot_url" db:"openshot_url"`
 	ExportID    string    `json:"export_id" db:"export_id"`
+	Owner       string    `json:"owner" db:"owner"`
 }
 
 type ProjectDB struct {
@@ -22,6 +23,7 @@ type ProjectDB struct {
 	OpenshotID  string `json:"openshot_id" db:"openshot_id"`
 	OpenshotURL string `json:"openshot_url" db:"openshot_url"`
 	ExportID    string `json:"export_id" db:"export_id"`
+	Owner       string `json:"owner" db:"owner"`
 }
 
 //CreateProjectRequest struct for sending data to openshot api
@@ -29,6 +31,7 @@ type CreateProjectRequest struct {
 	SongID       string            `json:"song_id"`
 	ClipsToUsers map[string]string `json:"clips_to_users"`
 	Name         string            `json:"name"`
+	Owner        string            `json:"owner" db:"owner"`
 }
 
 type DeleteProjectRequest struct {

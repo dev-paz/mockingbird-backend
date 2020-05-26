@@ -23,13 +23,13 @@ func CreateMusicVideo(mv *dto.MusicVideo) error {
 func ReadMusicVideos() (*[]dto.MusicVideo, error) {
 	var mv dto.MusicVideo
 	var musicVideos []dto.MusicVideo
-	rows, err := db.Query(`SELECT id, url, created, song_id, status FROM music_videos`)
+	rows, err := db.Query(`SELECT id, url, created, song_id, status, name, owner, title FROM music_video_view`)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
 	}
 	for rows.Next() {
-		err = rows.Scan(&mv.ID, &mv.URL, &mv.Created, &mv.SongID, &mv.Status)
+		err = rows.Scan(&mv.ID, &mv.URL, &mv.Created, &mv.SongID, &mv.Status, &mv.Name, &mv.Owner, &mv.Title)
 		if err != nil {
 			fmt.Println(err.Error())
 			// handle this error

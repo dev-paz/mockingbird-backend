@@ -10,11 +10,11 @@ import (
 
 func CreateProject(p *dto.ProjectDB) error {
 	sqlStatement := `
-	INSERT INTO projects (id, name, song, created, status, url, openshot_id, export_id)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	INSERT INTO projects (id, name, song, created, status, url, openshot_id, export_id, owner)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	RETURNING id`
 	id := ""
-	err := db.QueryRow(sqlStatement, p.ID, p.Name, p.Song, p.Created, p.Status, p.OpenshotURL, p.OpenshotID, p.ExportID).Scan(&id)
+	err := db.QueryRow(sqlStatement, p.ID, p.Name, p.Song, p.Created, p.Status, p.OpenshotURL, p.OpenshotID, p.ExportID, p.Owner).Scan(&id)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
@@ -39,13 +39,13 @@ func UpdateProjectStatus(id string, status string, exportID string) error {
 
 func ReadProject(projectID string) (*dto.Project, error) {
 	sqlStatement :=
-		`SELECT  id, name, status, clips, song, openshot_id, export_id
+		`SELECT  id, name, status, clips, song, openshot_id, export_id, owner
 		 FROM projects_view
 		 WHERE id=$1
 		`
 	var p dto.Project
 	row := db.QueryRow(sqlStatement, projectID)
-	err := row.Scan(&p.ID, &p.Name, &p.Status, &p.Clips, &p.Song, &p.OpenshotID, &p.ExportID)
+	err := row.Scan(&p.ID, &p.Name, &p.Status, &p.Clips, &p.Song, &p.OpenshotID, &p.ExportID, &p.Owner)
 	if err != nil {
 		fmt.Printf(err.Error())
 		return nil, err

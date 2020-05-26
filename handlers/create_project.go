@@ -40,6 +40,7 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 		OpenshotURL: openShotResp.URL,
 		OpenshotID:  fmt.Sprintf("%v", openShotResp.ID),
 		ExportID:    "Not exported",
+		Owner:       createProjReq.Owner,
 	}
 
 	err = models.CreateProject(&project)

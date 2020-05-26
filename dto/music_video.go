@@ -6,6 +6,9 @@ type MusicVideo struct {
 	Created string `json:"created"`
 	SongID  string `json:"song_id"`
 	Status  string `json:"status"`
+	Name    string `json:"name"`
+	Owner   string `json:"owner"`
+	Title   string `json:"title"`
 }
 
 type CreateMusicVideoRequest struct {
