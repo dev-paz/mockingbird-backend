@@ -19,6 +19,7 @@ type Clip struct {
 	Status             string `json:"status"`
 	Username           string `json:"username"`
 	Picture            string `json:"profile_photo_url"`
+	PartType           string `json:"part_type"`
 }
 
 type UpdateClipRequest struct {
