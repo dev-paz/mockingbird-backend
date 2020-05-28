@@ -23,13 +23,24 @@ func CreateProject(p *dto.ProjectDB) error {
 }
 
 func UpdateProjectStatus(id string, status string, exportID string) error {
-	fmt.Println("updating status")
-	fmt.Println(status)
 	sqlStatement := `
 	UPDATE projects
 	SET status=$2, export_id = $3
 	WHERE id=$1`
 	_, err := db.Exec(sqlStatement, id, status, exportID)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
+	return nil
+}
+
+func UpdateProjectMusicVideo(id string, music_video string) error {
+	sqlStatement := `
+	UPDATE projects
+	SET music_video=$2
+	WHERE id=$1`
+	_, err := db.Exec(sqlStatement, id, music_video)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)

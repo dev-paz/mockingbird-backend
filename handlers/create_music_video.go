@@ -82,6 +82,11 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 	}
 
+	err = models.UpdateProjectMusicVideo(createVideoReq.ProjectData.ProjectID, videoID)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
