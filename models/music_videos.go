@@ -53,3 +53,15 @@ func UpdateVideoStatus(id string, status string) error {
 	}
 	return nil
 }
+
+func UpdateVideoPublic(id string, public bool) error {
+	sqlStatement := `
+	UPDATE music_videos
+	SET public = $2
+	WHERE id=$1`
+	_, err := db.Exec(sqlStatement, id, public)
+	if err != nil {
+		panic(err)
+	}
+	return nil
+}

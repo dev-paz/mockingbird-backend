@@ -12,7 +12,7 @@ create view music_video_view as
     inner join users on projects.owner = users.firebase_user_id
   )
 
-select mv.id, mv.url, mv.created, mv.song_id, mv.status, mv.project, p.project_name, p.owner, s.title, p.profile_photo_url as owner_photo, p.owner_name, s.album_art,
+select mv.id, mv.url, mv.created, mv.song_id, mv.status, mv.project, mv.public, p.project_name, p.owner, s.title, p.profile_photo_url as owner_photo, p.owner_name, s.album_art,
 json_agg(json_build_object(
   'username', user_clips.name,
   'profile_photo_url', user_clips.profile_photo_url,
@@ -24,4 +24,4 @@ inner join projects_users as p on mv.project = p.id
 inner join songs as s on mv.song_id = s.id
 INNER JOIN user_clips ON user_clips.project_id = mv.project
 group by mv.id, mv.url, mv.created, mv.song_id, mv.status, mv.project,
-p.project_name, p.owner, s.title, p.profile_photo_url, p.owner_name, s.album_art;
+p.project_name, p.owner, s.title, p.profile_photo_url, p.owner_name, s.album_art, mv.public;

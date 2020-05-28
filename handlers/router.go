@@ -25,6 +25,7 @@ func HandleRequests() {
 
 	http.HandleFunc("/create_music_video", handleCreateMusicVideo)
 	http.HandleFunc("/get_music_videos", handleGetMusicVideos)
+	http.HandleFunc("/post_music_video", handlePostMusicVideo)
 
 }
 
