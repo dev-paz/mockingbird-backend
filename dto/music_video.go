@@ -13,6 +13,7 @@ type MusicVideo struct {
 	OwnerPhoto string    `json:"owner_photo"`
 	Clips      ClipSlice `json:"clip"`
 	AlbumArt   string    `json:"album_art"`
+	Public     bool      `json:"public"`
 }
 
 type CreateMusicVideoRequest struct {
