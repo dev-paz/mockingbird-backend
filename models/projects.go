@@ -50,13 +50,13 @@ func UpdateProjectMusicVideo(id string, music_video string) error {
 
 func ReadProject(projectID string) (*dto.Project, error) {
 	sqlStatement :=
-		`SELECT  id, name, status, clips, song, openshot_id, export_id, owner
+		`SELECT  id, name, status, clips, song, openshot_id, export_id, owner, music_video
 		 FROM projects_view
 		 WHERE id=$1
 		`
 	var p dto.Project
 	row := db.QueryRow(sqlStatement, projectID)
-	err := row.Scan(&p.ID, &p.Name, &p.Status, &p.Clips, &p.Song, &p.OpenshotID, &p.ExportID, &p.Owner)
+	err := row.Scan(&p.ID, &p.Name, &p.Status, &p.Clips, &p.Song, &p.OpenshotID, &p.ExportID, &p.Owner, &p.MusicVideo)
 	if err != nil {
 		fmt.Printf(err.Error())
 		return nil, err
