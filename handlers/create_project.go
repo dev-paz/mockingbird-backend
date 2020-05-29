@@ -41,6 +41,7 @@ func handleCreateProject(w http.ResponseWriter, req *http.Request) {
 		OpenshotID:  fmt.Sprintf("%v", openShotResp.ID),
 		ExportID:    "Not exported",
 		Owner:       createProjReq.Owner,
+		MusicVideo: ""
 	}
 
 	err = models.CreateProject(&project)

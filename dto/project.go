@@ -25,6 +25,7 @@ type ProjectDB struct {
 	OpenshotURL string `json:"openshot_url" db:"openshot_url"`
 	ExportID    string `json:"export_id" db:"export_id"`
 	Owner       string `json:"owner" db:"owner"`
+	MusicVideo  string `json:"music_video" db:"music_video"`
 }
 
 //CreateProjectRequest struct for sending data to openshot api
