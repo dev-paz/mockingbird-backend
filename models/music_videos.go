@@ -20,6 +20,24 @@ func CreateMusicVideo(mv *dto.MusicVideo) error {
 	return nil
 }
 
+func ReadMusicVideo(musicVideoID string) (*dto.MusicVideo, error) {
+	sqlStatement :=
+		`SELECT id, url, created, song_id, status,
+			project_name, owner, title, owner_photo, owner_name, album_art, clips, public
+		 FROM music_video_view
+		 WHERE id=$1
+		`
+	var mv dto.MusicVideo
+	row := db.QueryRow(sqlStatement, musicVideoID)
+	err := row.Scan(&mv.ID, &mv.URL, &mv.Created, &mv.SongID, &mv.Status,
+		&mv.Name, &mv.Owner, &mv.Title, &mv.OwnerPhoto, &mv.OwnerName, &mv.AlbumArt, &mv.Clips, &mv.Public)
+	if err != nil {
+		fmt.Printf(err.Error())
+		return nil, err
+	}
+	return &mv, nil
+}
+
 func ReadMusicVideos() (*[]dto.MusicVideo, error) {
 	var mv dto.MusicVideo
 	var musicVideos []dto.MusicVideo
