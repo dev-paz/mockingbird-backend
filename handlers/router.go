@@ -34,4 +34,4 @@ func HandleRequests() {
 
 var OpenShotIP = ""
 var username = "cloud-admin"
-var passwd = "UZTWLVEr6n"
+var passwd = "F6N3XOwLmD"
