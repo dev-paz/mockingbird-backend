@@ -67,6 +67,8 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		SongID:  createVideoReq.ProjectData.SongID,
 		Created: createVideoReq.Created,
 		Status:  "uploading",
+		Public:  false,
+		Project: projectData.ProjectID,
 	}
 
 	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)

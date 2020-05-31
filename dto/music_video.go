@@ -14,6 +14,7 @@ type MusicVideo struct {
 	Clips      ClipSlice `json:"clip"`
 	AlbumArt   string    `json:"album_art"`
 	Public     bool      `json:"public"`
+	Project    string    `json:"project"`
 }
 
 type CreateMusicVideoRequest struct {
