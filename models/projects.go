@@ -10,11 +10,11 @@ import (
 
 func CreateProject(p *dto.ProjectDB) error {
 	sqlStatement := `
-	INSERT INTO projects (id, name, song, created, status, url, openshot_id, export_id, owner)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	INSERT INTO projects (id, name, song, created, status, url, openshot_id, export_id, owner, music_video)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 	RETURNING id`
 	id := ""
-	err := db.QueryRow(sqlStatement, p.ID, p.Name, p.Song, p.Created, p.Status, p.OpenshotURL, p.OpenshotID, p.ExportID, p.Owner).Scan(&id)
+	err := db.QueryRow(sqlStatement, p.ID, p.Name, p.Song, p.Created, p.Status, p.OpenshotURL, p.OpenshotID, p.ExportID, p.Owner, p.MusicVideo).Scan(&id)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err

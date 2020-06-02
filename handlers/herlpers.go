@@ -17,6 +17,7 @@ func checkOpenshotIP() {
 		return
 	}
 	OpenShotIP = details.IP
+
 }
 
 func createMultipartFormData(fieldName, fileName string, OpenShotID string) (bytes.Buffer, *multipart.Writer) {

@@ -17,15 +17,15 @@ func handleGetRenderStatus(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	openshotID := params[0]
-	if openshotID == "" {
+	exportID := params[0]
+	if exportID == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Println("Missing param openshotID")
 		return
 	}
 
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", "http://"+OpenShotIP+"/exports/"+openshotID+"/", nil)
+	req, err := http.NewRequest("GET", "http://"+OpenShotIP+"/exports/"+exportID+"/", nil)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
