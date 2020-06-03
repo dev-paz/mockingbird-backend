@@ -13,6 +13,7 @@ func HandleRequests() {
 	http.HandleFunc("/get_project", handleGetProject)
 	http.HandleFunc("/get_all_projects", handleGetAllProjects)
 	http.HandleFunc("/render_video", handleRenderVideo)
+	http.HandleFunc("/get_render_status", handleGetRenderStatus)
 
 	http.HandleFunc("/update_clip", handleUpdateClip)
 
