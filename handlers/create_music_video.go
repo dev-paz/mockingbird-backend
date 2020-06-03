@@ -79,7 +79,7 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = models.UpdateProjectStatus(createVideoReq.ProjectData.ProjectID, "completed", "")
+	err = models.UpdateProjectStatus(createVideoReq.ProjectData.ProjectID, "completed", string(createVideoReq.ExportID))
 	if err != nil {
 		fmt.Println(err.Error())
 	}

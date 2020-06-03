@@ -8,11 +8,11 @@ import (
 
 func CreateMusicVideo(mv *dto.MusicVideo) error {
 	sqlStatement := `
-	INSERT INTO music_videos (id, url, created, song_id, status, project)
-	VALUES ($1, $2, $3, $4, $5, $6)
+	INSERT INTO music_videos (id, url, created, song_id, status, project, public)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING id`
 	id := ""
-	err := db.QueryRow(sqlStatement, mv.ID, mv.URL, mv.Created, mv.SongID, mv.Status, mv.Project).Scan(&id)
+	err := db.QueryRow(sqlStatement, mv.ID, mv.URL, mv.Created, mv.SongID, mv.Status, mv.Project, mv.Public).Scan(&id)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
