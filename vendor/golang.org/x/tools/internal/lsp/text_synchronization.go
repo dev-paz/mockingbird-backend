@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"sync"
 
 	"golang.org/x/tools/internal/jsonrpc2"
 	"golang.org/x/tools/internal/lsp/protocol"
@@ -15,6 +16,40 @@ import (
 	"golang.org/x/tools/internal/span"
 	errors "golang.org/x/xerrors"
 )
+
+// ModificationSource identifies the originating cause of a file modification.
+type ModificationSource int
+
+const (
+	// FromDidOpen is a file modification caused by opening a file.
+	FromDidOpen = ModificationSource(iota)
+	// FromDidChange is a file modification caused by changing a file.
+	FromDidChange
+	// FromDidChangeWatchedFiles is a file modification caused by a change to a watched file.
+	FromDidChangeWatchedFiles
+	// FromDidSave is a file modification caused by a file save.
+	FromDidSave
+	// FromDidClose is a file modification caused by closing a file.
+	FromDidClose
+	FromRegenerateCgo
+)
+
+func (m ModificationSource) String() string {
+	switch m {
+	case FromDidOpen:
+		return "opened files"
+	case FromDidChange:
+		return "changed files"
+	case FromDidChangeWatchedFiles:
+		return "files changed on disk"
+	case FromDidSave:
+		return "saved files"
+	case FromRegenerateCgo:
+		return "regenerate cgo"
+	default:
+		return "unknown file modification"
+	}
+}
 
 func (s *Server) didOpen(ctx context.Context, params *protocol.DidOpenTextDocumentParams) error {
 	uri := params.TextDocument.URI.SpanURI()
@@ -30,7 +65,7 @@ func (s *Server) didOpen(ctx context.Context, params *protocol.DidOpenTextDocume
 			Text:       []byte(params.TextDocument.Text),
 			LanguageID: params.TextDocument.LanguageID,
 		},
-	})
+	}, FromDidOpen)
 	return err
 }
 
@@ -50,7 +85,7 @@ func (s *Server) didChange(ctx context.Context, params *protocol.DidChangeTextDo
 		Version: params.TextDocument.Version,
 		Text:    text,
 	}
-	snapshots, err := s.didModifyFiles(ctx, []source.FileModification{c})
+	snapshots, err := s.didModifyFiles(ctx, []source.FileModification{c}, FromDidChange)
 	if err != nil {
 		return err
 	}
@@ -96,11 +131,11 @@ func (s *Server) didChangeWatchedFiles(ctx context.Context, params *protocol.Did
 			delete(deletions, uri)
 		}
 	}
-	snapshots, err := s.didModifyFiles(ctx, modifications)
+	snapshots, err := s.didModifyFiles(ctx, modifications, FromDidChangeWatchedFiles)
 	if err != nil {
 		return err
 	}
-	// Clear the diagnostics for any deleted files.
+	// Clear the diagnostics for any deleted files that are not open in the editor.
 	for uri := range deletions {
 		if snapshot := snapshots[uri]; snapshot == nil || snapshot.IsOpen(uri) {
 			continue
@@ -129,7 +164,7 @@ func (s *Server) didSave(ctx context.Context, params *protocol.DidSaveTextDocume
 	if params.Text != nil {
 		c.Text = []byte(*params.Text)
 	}
-	_, err := s.didModifyFiles(ctx, []source.FileModification{c})
+	_, err := s.didModifyFiles(ctx, []source.FileModification{c}, FromDidSave)
 	return err
 }
 
@@ -145,7 +180,7 @@ func (s *Server) didClose(ctx context.Context, params *protocol.DidCloseTextDocu
 			Version: -1,
 			Text:    nil,
 		},
-	})
+	}, FromDidClose)
 	if err != nil {
 		return err
 	}
@@ -168,7 +203,19 @@ func (s *Server) didClose(ctx context.Context, params *protocol.DidCloseTextDocu
 	return nil
 }
 
-func (s *Server) didModifyFiles(ctx context.Context, modifications []source.FileModification) (map[span.URI]source.Snapshot, error) {
+func (s *Server) didModifyFiles(ctx context.Context, modifications []source.FileModification, cause ModificationSource) (map[span.URI]source.Snapshot, error) {
+	// diagnosticWG tracks outstanding diagnostic work as a result of this file
+	// modification.
+	var diagnosticWG sync.WaitGroup
+	if s.session.Options().VerboseWorkDoneProgress {
+		work := s.StartWork(ctx, DiagnosticWorkTitle(cause), "Calculating file diagnostics...", nil)
+		defer func() {
+			go func() {
+				diagnosticWG.Wait()
+				work.End(ctx, "Done.")
+			}()
+		}()
+	}
 	snapshots, err := s.session.DidModifyFiles(ctx, modifications)
 	if err != nil {
 		return nil, err
@@ -228,9 +275,19 @@ func (s *Server) didModifyFiles(ctx context.Context, modifications []source.File
 				}
 			}
 		}
-		go s.diagnoseSnapshot(snapshot)
+		diagnosticWG.Add(1)
+		go func(snapshot source.Snapshot) {
+			defer diagnosticWG.Done()
+			s.diagnoseSnapshot(snapshot)
+		}(snapshot)
 	}
 	return snapshotByURI, nil
+}
+
+// DiagnosticWorkTitle returns the title of the diagnostic work resulting from a
+// file change originating from the given cause.
+func DiagnosticWorkTitle(cause ModificationSource) string {
+	return fmt.Sprintf("diagnosing %v", cause)
 }
 
 func (s *Server) wasFirstChange(uri span.URI) bool {

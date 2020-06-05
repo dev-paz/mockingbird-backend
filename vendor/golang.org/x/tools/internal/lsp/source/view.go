@@ -17,8 +17,8 @@ import (
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/internal/imports"
 	"golang.org/x/tools/internal/lsp/protocol"
-	"golang.org/x/tools/internal/packagesinternal"
 	"golang.org/x/tools/internal/span"
+	errors "golang.org/x/xerrors"
 )
 
 // Snapshot represents the current state for the given view.
@@ -31,8 +31,12 @@ type Snapshot interface {
 	// Config returns the configuration for the view.
 	Config(ctx context.Context) *packages.Config
 
-	// GetFile returns the file object for a given URI, initializing it
-	// if it is not already part of the view.
+	// FindFile returns the FileHandle for the given URI, if it is already
+	// in the given snapshot.
+	FindFile(uri span.URI) FileHandle
+
+	// GetFile returns the FileHandle for a given URI, initializing it
+	// if it is not already part of the snapshot.
 	GetFile(uri span.URI) (FileHandle, error)
 
 	// IsOpen returns whether the editor currently has a file open.
@@ -148,6 +152,10 @@ type View interface {
 	// user's workspace. In particular, if they are both outside of a module
 	// and their GOPATH.
 	ValidBuildConfiguration() bool
+
+	// IsGoPrivatePath reports whether target is a private import path, as identified
+	// by the GOPRIVATE environment variable.
+	IsGoPrivatePath(path string) bool
 }
 
 // Session represents a single connection from a client.
@@ -181,6 +189,9 @@ type Session interface {
 	// It returns the resulting snapshots, a guaranteed one per view.
 	DidModifyFiles(ctx context.Context, changes []FileModification) ([]Snapshot, error)
 
+	// UnsavedFiles returns a slice of open but unsaved files in the session.
+	UnsavedFiles() []span.URI
+
 	// Options returns a copy of the SessionOptions for this session.
 	Options() Options
 
@@ -209,13 +220,14 @@ type FileModification struct {
 type FileAction int
 
 const (
-	Open = FileAction(iota)
+	UnknownFileAction = FileAction(iota)
+	Open
 	Change
 	Close
 	Save
 	Create
 	Delete
-	UnknownFileAction
+	InvalidateMetadata
 )
 
 // Cache abstracts the core logic of dealing with the environment from the
@@ -353,9 +365,13 @@ func (fileID FileIdentity) String() string {
 type FileKind int
 
 const (
+	// Go is a normal go source file.
 	Go = FileKind(iota)
+	// Mod is a go.mod file.
 	Mod
+	// Sum is a go.sum file.
 	Sum
+	// UnknownKind is a file type we don't know about.
 	UnknownKind
 )
 
@@ -398,7 +414,7 @@ type Package interface {
 	ForTest() string
 	GetImport(pkgPath string) (Package, error)
 	Imports() []Package
-	Module() *packagesinternal.Module
+	Module() *packages.Module
 }
 
 type Error struct {
@@ -424,3 +440,5 @@ const (
 func (e *Error) Error() string {
 	return fmt.Sprintf("%s:%s: %s", e.URI, e.Range, e.Message)
 }
+
+var InconsistentVendoring = errors.New("inconsistent vendoring")

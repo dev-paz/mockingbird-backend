@@ -54,7 +54,7 @@ func Identifier(ctx context.Context, snapshot Snapshot, fh FileHandle, pos proto
 
 	pkg, pgh, err := getParsedFile(ctx, snapshot, fh, NarrowestPackageHandle)
 	if err != nil {
-		return nil, fmt.Errorf("getting file for Identifier: %v", err)
+		return nil, fmt.Errorf("getting file for Identifier: %w", err)
 	}
 	file, _, m, _, err := pgh.Cached()
 	if err != nil {
@@ -84,15 +84,50 @@ func findIdentifier(ctx context.Context, s Snapshot, pkg Package, file *ast.File
 	}
 
 	view := s.View()
+	qf := qualifier(file, pkg.GetTypes(), pkg.GetTypesInfo())
 
 	ident, _ := path[0].(*ast.Ident)
 	if ident == nil {
 		return nil, ErrNoIdentFound
 	}
+	// Special case for package declarations, since they have no
+	// corresponding types.Object.
+	if ident == file.Name {
+		rng, err := posToMappedRange(view, pkg, file.Name.Pos(), file.Name.End())
+		if err != nil {
+			return nil, err
+		}
+		var declAST *ast.File
+		for _, f := range pkg.GetSyntax() {
+			if f.Doc != nil {
+				declAST = f
+			}
+		}
+		// If there's no package documentation, just use current file.
+		if declAST == nil {
+			declAST = file
+		}
+		declRng, err := posToMappedRange(view, pkg, declAST.Name.Pos(), declAST.Name.End())
+		if err != nil {
+			return nil, err
+		}
+		return &IdentifierInfo{
+			Name:        file.Name.Name,
+			ident:       file.Name,
+			mappedRange: rng,
+			pkg:         pkg,
+			qf:          qf,
+			Snapshot:    s,
+			Declaration: Declaration{
+				node:        declAST.Name,
+				MappedRange: []mappedRange{declRng},
+			},
+		}, nil
+	}
 
 	result := &IdentifierInfo{
 		Snapshot:  s,
-		qf:        qualifier(file, pkg.GetTypes(), pkg.GetTypesInfo()),
+		qf:        qf,
 		pkg:       pkg,
 		ident:     ident,
 		enclosing: searchForEnclosing(pkg, path),

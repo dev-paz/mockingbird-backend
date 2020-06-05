@@ -24,7 +24,7 @@ func SignatureHelp(ctx context.Context, snapshot Snapshot, fh FileHandle, pos pr
 
 	pkg, pgh, err := getParsedFile(ctx, snapshot, fh, NarrowestPackageHandle)
 	if err != nil {
-		return nil, 0, fmt.Errorf("getting file for SignatureHelp: %v", err)
+		return nil, 0, fmt.Errorf("getting file for SignatureHelp: %w", err)
 	}
 	file, _, m, _, err := pgh.Cached()
 	if err != nil {
@@ -107,12 +107,12 @@ FindCall:
 		if err != nil {
 			return nil, 0, err
 		}
-		decl := &Declaration{
+		decl := Declaration{
 			obj:  obj,
 			node: node,
 		}
 		decl.MappedRange = append(decl.MappedRange, rng)
-		d, err := decl.hover(ctx)
+		d, err := hover(ctx, snapshot.View().Session().Cache().FileSet(), pkg, decl)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -121,7 +121,7 @@ FindCall:
 	} else {
 		name = "func"
 	}
-	s, err := newSignature(ctx, snapshot, pkg, name, sig, comment, qf)
+	s, err := newSignature(ctx, snapshot, pkg, file, name, sig, comment, qf)
 	if err != nil {
 		return nil, 0, err
 	}

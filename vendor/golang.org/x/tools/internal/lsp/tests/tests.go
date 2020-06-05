@@ -16,7 +16,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -30,6 +29,7 @@ import (
 	"golang.org/x/tools/internal/lsp/protocol"
 	"golang.org/x/tools/internal/lsp/source"
 	"golang.org/x/tools/internal/span"
+	"golang.org/x/tools/internal/testenv"
 	"golang.org/x/tools/txtar"
 )
 
@@ -57,6 +57,7 @@ type FoldingRanges []span.Span
 type Formats []span.Span
 type Imports []span.Span
 type SuggestedFixes map[span.Span][]string
+type RefactorRewriteActions map[span.Span]string
 type Definitions map[span.Span]Definition
 type Implementations map[span.Span][]span.Span
 type Highlights map[span.Span][]span.Span
@@ -87,6 +88,7 @@ type Data struct {
 	Formats                       Formats
 	Imports                       Imports
 	SuggestedFixes                SuggestedFixes
+	RefactorRewrite               RefactorRewriteActions
 	Definitions                   Definitions
 	Implementations               Implementations
 	Highlights                    Highlights
@@ -140,6 +142,7 @@ type Tests interface {
 	CaseSensitiveWorkspaceSymbols(*testing.T, string, []protocol.SymbolInformation, map[string]struct{})
 	SignatureHelp(*testing.T, span.Span, *protocol.SignatureHelp)
 	Link(*testing.T, span.URI, []Link)
+	RefactorRewrite(*testing.T, span.Span, string)
 }
 
 type Definition struct {
@@ -222,6 +225,7 @@ func DefaultOptions() source.Options {
 		},
 		source.Sum: {},
 	}
+	o.UserOptions.EnabledCodeLens[source.CommandTest] = true
 	o.HoverKind = source.SynopsisDocumentation
 	o.InsertTextFormat = protocol.SnippetTextFormat
 	o.CompletionBudget = time.Minute
@@ -229,7 +233,9 @@ func DefaultOptions() source.Options {
 	return o
 }
 
-var haveCgo = false
+var (
+	go115 = false
+)
 
 // Load creates the folder structure required when testing with modules.
 // The directory structure of a test needs to look like the example below:
@@ -290,6 +296,7 @@ func Load(t testing.TB, exporter packagestest.Exporter, dir string) []*Data {
 			CaseSensitiveWorkspaceSymbols: make(WorkspaceSymbols),
 			Signatures:                    make(Signatures),
 			Links:                         make(Links),
+			RefactorRewrite:               make(RefactorRewriteActions),
 
 			t:         t,
 			dir:       folder,
@@ -331,6 +338,7 @@ func Load(t testing.TB, exporter packagestest.Exporter, dir string) []*Data {
 						Filename: goldFile,
 						Archive:  archive,
 					}
+					fmt.Printf("Trimmed : %s, goldfile: %s, ArchiveCount : %d\n", trimmed, goldFile, len(archive.Files))
 				} else if trimmed := strings.TrimSuffix(fragment, inFileSuffix); trimmed != fragment {
 					delete(m.Files, fragment)
 					m.Files[trimmed] = operation
@@ -414,6 +422,7 @@ func Load(t testing.TB, exporter packagestest.Exporter, dir string) []*Data {
 			"signature":       datum.collectSignatures,
 			"link":            datum.collectLinks,
 			"suggestedfix":    datum.collectSuggestedFixes,
+			"refactorrewrite": datum.collectRefactorRewrite,
 		}); err != nil {
 			t.Fatal(err)
 		}
@@ -449,8 +458,11 @@ func Run(t *testing.T, tests Tests, data *Data) {
 			for i, e := range exp {
 				t.Run(SpanName(src)+"_"+strconv.Itoa(i), func(t *testing.T) {
 					t.Helper()
-					if (!haveCgo || runtime.GOOS == "android") && strings.Contains(t.Name(), "cgo") {
-						t.Skip("test requires cgo, not supported")
+					if strings.Contains(t.Name(), "cgo") {
+						testenv.NeedsTool(t, "cgo")
+					}
+					if !go115 && strings.Contains(t.Name(), "declarecgo") {
+						t.Skip("test requires Go 1.15")
 					}
 					test(t, src, e, data.CompletionItems)
 				})
@@ -588,6 +600,17 @@ func Run(t *testing.T, tests Tests, data *Data) {
 		}
 	})
 
+	t.Run("RefactorRewrite", func(t *testing.T) {
+		t.Helper()
+
+		for spn, title := range data.RefactorRewrite {
+			t.Run(SpanName(spn), func(t *testing.T) {
+				t.Helper()
+				tests.RefactorRewrite(t, spn, title)
+			})
+		}
+	})
+
 	t.Run("SuggestedFix", func(t *testing.T) {
 		t.Helper()
 		for spn, actionKinds := range data.SuggestedFixes {
@@ -607,8 +630,11 @@ func Run(t *testing.T, tests Tests, data *Data) {
 		for spn, d := range data.Definitions {
 			t.Run(SpanName(spn), func(t *testing.T) {
 				t.Helper()
-				if (!haveCgo || runtime.GOOS == "android") && strings.Contains(t.Name(), "cgo") {
-					t.Skip("test requires cgo, not supported")
+				if strings.Contains(t.Name(), "cgo") {
+					testenv.NeedsTool(t, "cgo")
+				}
+				if !go115 && strings.Contains(t.Name(), "declarecgo") {
+					t.Skip("test requires Go 1.15")
 				}
 				tests.Definition(t, spn, d)
 			})
@@ -802,13 +828,14 @@ func checkData(t *testing.T, data *Data) {
 	fmt.Fprintf(buf, "SignaturesCount = %v\n", len(data.Signatures))
 	fmt.Fprintf(buf, "LinksCount = %v\n", linksCount)
 	fmt.Fprintf(buf, "ImplementationsCount = %v\n", len(data.Implementations))
+	fmt.Fprintf(buf, "RefactorRewriteCount = %v\n", len(data.RefactorRewrite))
 
 	want := string(data.Golden("summary", summaryFile, func() ([]byte, error) {
 		return buf.Bytes(), nil
 	}))
 	got := buf.String()
 	if want != got {
-		t.Errorf("test summary does not match, want\n%s\ngot:\n%s", want, got)
+		t.Errorf("test summary does not match: %v", Diff(want, got))
 	}
 }
 
@@ -877,6 +904,7 @@ func (data *Data) Golden(tag string, target string, update func() ([]byte, error
 		}
 		file.Data = append(contents, '\n') // add trailing \n for txtar
 		golden.Modified = true
+
 	}
 	if file == nil {
 		data.t.Fatalf("could not find golden contents %v: %v", fragment, tag)
@@ -1008,6 +1036,10 @@ func (data *Data) collectSuggestedFixes(spn span.Span, actionKind string) {
 		data.SuggestedFixes[spn] = []string{}
 	}
 	data.SuggestedFixes[spn] = append(data.SuggestedFixes[spn], actionKind)
+}
+
+func (data *Data) collectRefactorRewrite(spn span.Span, title string) {
+	data.RefactorRewrite[spn] = title
 }
 
 func (data *Data) collectDefinitions(src, target span.Span) {

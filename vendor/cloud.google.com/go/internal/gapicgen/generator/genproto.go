@@ -31,6 +31,12 @@ import (
 
 var goPkgOptRe = regexp.MustCompile(`(?m)^option go_package = (.*);`)
 
+// denylist is a set of clients to NOT generate.
+var denylist = map[string]bool{
+	// TODO(codyoss): re-enable after issue is resolve -- https://github.com/googleapis/go-genproto/issues/357
+	"google.golang.org/genproto/googleapis/cloud/recommendationengine/v1beta1": true,
+}
+
 // regenGenproto regenerates the genproto repository.
 //
 // regenGenproto recursively walks through each directory named by given
@@ -62,7 +68,7 @@ func regenGenproto(ctx context.Context, genprotoDir, googleapisDir, protoDir str
 	// Record and map all .proto files to their Go packages.
 	seenFiles := make(map[string]bool)
 	pkgFiles := make(map[string][]string)
-	for _, root := range []string{googleapisDir, protoDir} {
+	for _, root := range []string{googleapisDir} {
 		walkFn := func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
@@ -99,7 +105,7 @@ func regenGenproto(ctx context.Context, genprotoDir, googleapisDir, protoDir str
 	// Run protoc on all protos of all packages.
 	grp, _ := errgroup.WithContext(ctx)
 	for pkg, fnames := range pkgFiles {
-		if !strings.HasPrefix(pkg, "google.golang.org/genproto") {
+		if !strings.HasPrefix(pkg, "google.golang.org/genproto") || denylist[pkg] {
 			continue
 		}
 		pk := pkg
@@ -189,7 +195,7 @@ func goPkg(fname string) (string, error) {
 // protoc executes the "protoc" command on files named in fnames, and outputs
 // to "<genprotoDir>/generated".
 func protoc(genprotoDir, googleapisDir, protoDir string, fnames []string) error {
-	args := []string{fmt.Sprintf("--go_out=plugins=grpc:%s/generated", genprotoDir), "-I", googleapisDir, "-I", protoDir}
+	args := []string{"--experimental_allow_proto3_optional", fmt.Sprintf("--go_out=plugins=grpc:%s/generated", genprotoDir), "-I", googleapisDir, "-I", protoDir}
 	args = append(args, fnames...)
 	c := command("protoc", args...)
 	c.Stdout = os.Stdout

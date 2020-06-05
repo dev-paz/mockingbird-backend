@@ -170,6 +170,7 @@ func (app *Application) mainCommands() []tool.Application {
 func (app *Application) featureCommands() []tool.Application {
 	return []tool.Application{
 		&check{app: app},
+		&definition{app: app},
 		&foldingRanges{app: app},
 		&format{app: app},
 		&highlight{app: app},
@@ -178,7 +179,6 @@ func (app *Application) featureCommands() []tool.Application {
 		&inspect{app: app},
 		&links{app: app},
 		&prepareRename{app: app},
-		&query{app: app},
 		&references{app: app},
 		&rename{app: app},
 		&signature{app: app},
@@ -230,21 +230,21 @@ func (app *Application) connectRemote(ctx context.Context, remote string) (*conn
 	if err != nil {
 		return nil, err
 	}
-	stream := jsonrpc2.NewHeaderStream(conn, conn)
+	stream := jsonrpc2.NewHeaderStream(conn)
 	cc := jsonrpc2.NewConn(stream)
 	connection.Server = protocol.ServerDispatcher(cc)
 	ctx = protocol.WithClient(ctx, connection.Client)
-	go cc.Run(ctx,
+	cc.Go(ctx,
 		protocol.Handlers(
 			protocol.ClientHandler(connection.Client,
 				jsonrpc2.MethodNotFound)))
 	return connection, connection.initialize(ctx, app.options)
 }
 
-var matcherString = map[source.Matcher]string{
-	source.Fuzzy:           "fuzzy",
-	source.CaseSensitive:   "caseSensitive",
-	source.CaseInsensitive: "default",
+var matcherString = map[source.SymbolMatcher]string{
+	source.SymbolFuzzy:           "fuzzy",
+	source.SymbolCaseSensitive:   "caseSensitive",
+	source.SymbolCaseInsensitive: "default",
 }
 
 func (c *connection) initialize(ctx context.Context, options func(*source.Options)) error {
@@ -262,7 +262,7 @@ func (c *connection) initialize(ctx context.Context, options func(*source.Option
 	}
 	params.Capabilities.TextDocument.DocumentSymbol.HierarchicalDocumentSymbolSupport = opts.HierarchicalDocumentSymbolSupport
 	params.InitializationOptions = map[string]interface{}{
-		"matcher": matcherString[opts.Matcher],
+		"symbolMatcher": matcherString[opts.SymbolMatcher],
 	}
 	if _, err := c.Server.Initialize(ctx, params); err != nil {
 		return err

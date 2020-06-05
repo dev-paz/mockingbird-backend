@@ -117,11 +117,9 @@ func (r *runner) Completion(t *testing.T, src span.Span, test tests.Completion, 
 		opts.Matcher = source.CaseInsensitive
 		opts.DeepCompletion = false
 		opts.UnimportedCompletion = false
-		opts.InsertTextFormat = protocol.PlainTextTextFormat
-		// Only enable literal completions if in the completion literals tests.
-		// TODO(rstambler): Separate out literal completion tests.
-		if strings.Contains(string(src.URI()), "literal") {
-			opts.InsertTextFormat = protocol.SnippetTextFormat
+		opts.InsertTextFormat = protocol.SnippetTextFormat
+		if !strings.Contains(string(src.URI()), "literal") {
+			opts.LiteralCompletions = false
 		}
 	})
 	got = tests.FilterBuiltins(src, got)
@@ -475,6 +473,7 @@ func (r *runner) Import(t *testing.T, spn span.Span) {
 }
 
 func (r *runner) SuggestedFix(t *testing.T, spn span.Span, actionKinds []string) {}
+func (r *runner) RefactorRewrite(t *testing.T, spn span.Span, title string)      {}
 
 func (r *runner) Definition(t *testing.T, spn span.Span, d tests.Definition) {
 	_, srcRng, err := spanToRange(r.data, d.Src)
@@ -493,7 +492,7 @@ func (r *runner) Definition(t *testing.T, spn span.Span, d tests.Definition) {
 	if err != nil {
 		t.Fatalf("failed for %v: %v", d.Src, err)
 	}
-	hover, err := source.FormatHover(h, r.view.Options())
+	hover, err := source.FormatHover(h, r.view.Options(), false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -594,7 +593,7 @@ func (r *runner) Highlight(t *testing.T, src span.Span, locations []span.Span) {
 		t.Errorf("highlight failed for %s: %v", src.URI(), err)
 	}
 	if len(highlights) != len(locations) {
-		t.Errorf("got %d highlights for highlight at %v:%v:%v, expected %d", len(highlights), src.URI().Filename(), src.Start().Line(), src.Start().Column(), len(locations))
+		t.Fatalf("got %d highlights for highlight at %v:%v:%v, expected %d", len(highlights), src.URI().Filename(), src.Start().Line(), src.Start().Column(), len(locations))
 	}
 	// Check to make sure highlights have a valid range.
 	var results []span.Span
@@ -805,37 +804,23 @@ func (r *runner) Symbols(t *testing.T, uri span.URI, expectedSymbols []protocol.
 }
 
 func (r *runner) WorkspaceSymbols(t *testing.T, query string, expectedSymbols []protocol.SymbolInformation, dirs map[string]struct{}) {
-	got := r.callWorkspaceSymbols(t, query, func(opts *source.Options) {
-		opts.Matcher = source.CaseInsensitive
-	})
-	got = tests.FilterWorkspaceSymbols(got, dirs)
-	if len(got) != len(expectedSymbols) {
-		t.Errorf("want %d symbols, got %d", len(expectedSymbols), len(got))
-		return
-	}
-	if diff := tests.DiffWorkspaceSymbols(expectedSymbols, got); diff != "" {
-		t.Error(diff)
-	}
+	r.callWorkspaceSymbols(t, query, source.SymbolCaseInsensitive, dirs, expectedSymbols)
 }
 
 func (r *runner) FuzzyWorkspaceSymbols(t *testing.T, query string, expectedSymbols []protocol.SymbolInformation, dirs map[string]struct{}) {
-	got := r.callWorkspaceSymbols(t, query, func(opts *source.Options) {
-		opts.Matcher = source.Fuzzy
-	})
-	got = tests.FilterWorkspaceSymbols(got, dirs)
-	if len(got) != len(expectedSymbols) {
-		t.Errorf("want %d symbols, got %d", len(expectedSymbols), len(got))
-		return
-	}
-	if diff := tests.DiffWorkspaceSymbols(expectedSymbols, got); diff != "" {
-		t.Error(diff)
-	}
+	r.callWorkspaceSymbols(t, query, source.SymbolFuzzy, dirs, expectedSymbols)
 }
 
 func (r *runner) CaseSensitiveWorkspaceSymbols(t *testing.T, query string, expectedSymbols []protocol.SymbolInformation, dirs map[string]struct{}) {
-	got := r.callWorkspaceSymbols(t, query, func(opts *source.Options) {
-		opts.Matcher = source.CaseSensitive
-	})
+	r.callWorkspaceSymbols(t, query, source.SymbolCaseSensitive, dirs, expectedSymbols)
+}
+
+func (r *runner) callWorkspaceSymbols(t *testing.T, query string, matcher source.SymbolMatcher, dirs map[string]struct{}, expectedSymbols []protocol.SymbolInformation) {
+	t.Helper()
+	got, err := source.WorkspaceSymbols(r.ctx, matcher, []source.View{r.view}, query)
+	if err != nil {
+		t.Fatal(err)
+	}
 	got = tests.FilterWorkspaceSymbols(got, dirs)
 	if len(got) != len(expectedSymbols) {
 		t.Errorf("want %d symbols, got %d", len(expectedSymbols), len(got))
@@ -844,25 +829,6 @@ func (r *runner) CaseSensitiveWorkspaceSymbols(t *testing.T, query string, expec
 	if diff := tests.DiffWorkspaceSymbols(expectedSymbols, got); diff != "" {
 		t.Error(diff)
 	}
-}
-
-func (r *runner) callWorkspaceSymbols(t *testing.T, query string, options func(*source.Options)) []protocol.SymbolInformation {
-	t.Helper()
-
-	original := r.view.Options()
-	modified := original
-	options(&modified)
-	view, err := r.view.SetOptions(r.ctx, modified)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer r.view.SetOptions(r.ctx, original)
-
-	got, err := source.WorkspaceSymbols(r.ctx, []source.View{view}, query)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return got
 }
 
 func (r *runner) SignatureHelp(t *testing.T, spn span.Span, want *protocol.SignatureHelp) {

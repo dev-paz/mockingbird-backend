@@ -35,16 +35,16 @@ import (
 	"google.golang.org/grpc/xds/internal/balancer/lrs"
 )
 
-// subBalancerWithConfig is used to keep the configurations that will be used to start
+// subBalancerWrapper is used to keep the configurations that will be used to start
 // the underlying balancer. It can be called to start/stop the underlying
 // balancer.
 //
 // When the config changes, it will pass the update to the underlying balancer
 // if it exists.
 //
-// TODO: rename to subBalanceWrapper (and move to a separate file?)
-type subBalancerWithConfig struct {
-	// subBalancerWithConfig is passed to the sub-balancer as a ClientConn
+// TODO: move to a separate file?
+type subBalancerWrapper struct {
+	// subBalancerWrapper is passed to the sub-balancer as a ClientConn
 	// wrapper, only to keep the state and picker.  When sub-balancer is
 	// restarted while in cache, the picker needs to be resent.
 	//
@@ -62,17 +62,19 @@ type subBalancerWithConfig struct {
 	// The static part of sub-balancer. Keeps balancerBuilders and addresses.
 	// To be used when restarting sub-balancer.
 	builder balancer.Builder
-	ccState balancer.ClientConnState
+	// ccState is a cache of the addresses/balancer config, so when the balancer
+	// is restarted after close, it will get the previous update. It's a pointer
+	// and is set to nil at init, so when the balancer is built for the first
+	// time (not a restart), it won't receive an empty update. Note that this
+	// isn't reset to nil when the underlying balancer is closed.
+	ccState *balancer.ClientConnState
 	// The dynamic part of sub-balancer. Only used when balancer group is
 	// started. Gets cleared when sub-balancer is closed.
 	balancer balancer.Balancer
 }
 
-func (sbc *subBalancerWithConfig) UpdateBalancerState(state connectivity.State, picker balancer.Picker) {
-}
-
 // UpdateState overrides balancer.ClientConn, to keep state and picker.
-func (sbc *subBalancerWithConfig) UpdateState(state balancer.State) {
+func (sbc *subBalancerWrapper) UpdateState(state balancer.State) {
 	sbc.mu.Lock()
 	sbc.state = state
 	sbc.group.updateBalancerState(sbc.id, state)
@@ -81,11 +83,11 @@ func (sbc *subBalancerWithConfig) UpdateState(state balancer.State) {
 
 // NewSubConn overrides balancer.ClientConn, so balancer group can keep track of
 // the relation between subconns and sub-balancers.
-func (sbc *subBalancerWithConfig) NewSubConn(addrs []resolver.Address, opts balancer.NewSubConnOptions) (balancer.SubConn, error) {
+func (sbc *subBalancerWrapper) NewSubConn(addrs []resolver.Address, opts balancer.NewSubConnOptions) (balancer.SubConn, error) {
 	return sbc.group.newSubConn(sbc, addrs, opts)
 }
 
-func (sbc *subBalancerWithConfig) updateBalancerStateWithCachedPicker() {
+func (sbc *subBalancerWrapper) updateBalancerStateWithCachedPicker() {
 	sbc.mu.Lock()
 	if sbc.state.Picker != nil {
 		sbc.group.updateBalancerState(sbc.id, sbc.state)
@@ -93,18 +95,16 @@ func (sbc *subBalancerWithConfig) updateBalancerStateWithCachedPicker() {
 	sbc.mu.Unlock()
 }
 
-func (sbc *subBalancerWithConfig) startBalancer() {
+func (sbc *subBalancerWrapper) startBalancer() {
 	b := sbc.builder.Build(sbc, balancer.BuildOptions{})
 	sbc.group.logger.Infof("Created child policy %p of type %v", b, sbc.builder.Name())
 	sbc.balancer = b
-	if ub, ok := b.(balancer.V2Balancer); ok {
-		ub.UpdateClientConnState(sbc.ccState)
-		return
+	if sbc.ccState != nil {
+		b.UpdateClientConnState(*sbc.ccState)
 	}
-	b.HandleResolvedAddrs(sbc.ccState.ResolverState.Addresses, nil)
 }
 
-func (sbc *subBalancerWithConfig) updateSubConnState(sc balancer.SubConn, state balancer.SubConnState) {
+func (sbc *subBalancerWrapper) updateSubConnState(sc balancer.SubConn, state balancer.SubConnState) {
 	b := sbc.balancer
 	if b == nil {
 		// This sub-balancer was closed. This can happen when EDS removes a
@@ -113,15 +113,11 @@ func (sbc *subBalancerWithConfig) updateSubConnState(sc balancer.SubConn, state 
 		// happen.
 		return
 	}
-	if ub, ok := b.(balancer.V2Balancer); ok {
-		ub.UpdateSubConnState(sc, state)
-		return
-	}
-	b.HandleSubConnStateChange(sc, state.ConnectivityState)
+	b.UpdateSubConnState(sc, state)
 }
 
-func (sbc *subBalancerWithConfig) updateClientConnState(s balancer.ClientConnState) error {
-	sbc.ccState = s
+func (sbc *subBalancerWrapper) updateClientConnState(s balancer.ClientConnState) error {
+	sbc.ccState = &s
 	b := sbc.balancer
 	if b == nil {
 		// This sub-balancer was closed. This should never happen because
@@ -134,26 +130,43 @@ func (sbc *subBalancerWithConfig) updateClientConnState(s balancer.ClientConnSta
 		// it's the lower priority, but it can still get address updates.
 		return nil
 	}
-	if ub, ok := b.(balancer.V2Balancer); ok {
-		return ub.UpdateClientConnState(s)
-	}
-	b.HandleResolvedAddrs(s.ResolverState.Addresses, nil)
-	return nil
+	return b.UpdateClientConnState(s)
 }
 
-func (sbc *subBalancerWithConfig) stopBalancer() {
+func (sbc *subBalancerWrapper) resolverError(err error) {
+	b := sbc.balancer
+	if b == nil {
+		// This sub-balancer was closed. This should never happen because
+		// sub-balancers are closed when the locality is removed from EDS, or
+		// the balancer group is closed. There should be no further address
+		// updates when either of this happened.
+		//
+		// This will be a common case with priority support, because a
+		// sub-balancer (and the whole balancer group) could be closed because
+		// it's the lower priority, but it can still get address updates.
+		return
+	}
+	b.ResolverError(err)
+}
+
+func (sbc *subBalancerWrapper) stopBalancer() {
 	sbc.balancer.Close()
 	sbc.balancer = nil
 }
 
 type pickerState struct {
 	weight uint32
-	picker balancer.V2Picker
-	state  connectivity.State
+	state  balancer.State
+	// stateToAggregate is the connectivity state used only for state
+	// aggregation. It could be different from state.ConnectivityState. For
+	// example when a sub-balancer transitions from TransientFailure to
+	// connecting, state.ConnectivityState is Connecting, but stateToAggregate
+	// is still TransientFailure.
+	stateToAggregate connectivity.State
 }
 
 func (s *pickerState) String() string {
-	return fmt.Sprintf("weight:%v,picker:%p,state:%v", s.weight, s.picker, s.state)
+	return fmt.Sprintf("weight:%v,picker:%p,state:%v,stateToAggregate:%v", s.weight, s.state.Picker, s.state.ConnectivityState, s.stateToAggregate)
 }
 
 // BalancerGroup takes a list of balancers, and make them into one balancer.
@@ -193,7 +206,7 @@ type BalancerGroup struct {
 	// to sub-balancers after they are closed.
 	outgoingMu         sync.Mutex
 	outgoingStarted    bool
-	idToBalancerConfig map[internal.LocalityID]*subBalancerWithConfig
+	idToBalancerConfig map[internal.LocalityID]*subBalancerWrapper
 	// Cache for sub-balancers when they are removed.
 	balancerCache *cache.TimeoutCache
 
@@ -220,7 +233,7 @@ type BalancerGroup struct {
 	// from sub-balancers after they are closed.
 	incomingMu      sync.Mutex
 	incomingStarted bool // This boolean only guards calls back to ClientConn.
-	scToSubBalancer map[balancer.SubConn]*subBalancerWithConfig
+	scToSubBalancer map[balancer.SubConn]*subBalancerWrapper
 	// All balancer IDs exist as keys in this map, even if balancer group is not
 	// started.
 	//
@@ -242,9 +255,9 @@ func New(cc balancer.ClientConn, loadStore lrs.Store, logger *grpclog.PrefixLogg
 		logger:    logger,
 		loadStore: loadStore,
 
-		idToBalancerConfig: make(map[internal.LocalityID]*subBalancerWithConfig),
+		idToBalancerConfig: make(map[internal.LocalityID]*subBalancerWrapper),
 		balancerCache:      cache.NewTimeoutCache(DefaultSubBalancerCloseTimeout),
-		scToSubBalancer:    make(map[balancer.SubConn]*subBalancerWithConfig),
+		scToSubBalancer:    make(map[balancer.SubConn]*subBalancerWrapper),
 		idToPickerState:    make(map[internal.LocalityID]*pickerState),
 	}
 }
@@ -287,21 +300,25 @@ func (bg *BalancerGroup) Add(id internal.LocalityID, weight uint32, builder bala
 	bg.incomingMu.Lock()
 	bg.idToPickerState[id] = &pickerState{
 		weight: weight,
-		// Start everything in IDLE. It's doesn't affect the overall state
-		// because we don't count IDLE when aggregating (as opposite to e.g.
-		// READY, 1 READY results in overall READY).
-		state: connectivity.Idle,
+		// Start everything in CONNECTING, so if one of the sub-balancers
+		// reports TransientFailure, the RPCs will still wait for the other
+		// sub-balancers.
+		state: balancer.State{
+			ConnectivityState: connectivity.Connecting,
+			Picker:            base.NewErrPicker(balancer.ErrNoSubConnAvailable),
+		},
+		stateToAggregate: connectivity.Connecting,
 	}
 	bg.incomingMu.Unlock()
 
 	// Store data in static map, and then check to see if bg is started.
 	bg.outgoingMu.Lock()
-	var sbc *subBalancerWithConfig
+	var sbc *subBalancerWrapper
 	// If outgoingStarted is true, search in the cache. Otherwise, cache is
 	// guaranteed to be empty, searching is unnecessary.
 	if bg.outgoingStarted {
 		if old, ok := bg.balancerCache.Remove(id); ok {
-			sbc, _ = old.(*subBalancerWithConfig)
+			sbc, _ = old.(*subBalancerWrapper)
 			if sbc != nil && sbc.builder != builder {
 				// If the sub-balancer in cache was built with a different
 				// balancer builder, don't use it, cleanup this old-balancer,
@@ -319,7 +336,7 @@ func (bg *BalancerGroup) Add(id internal.LocalityID, weight uint32, builder bala
 		}
 	}
 	if sbc == nil {
-		sbc = &subBalancerWithConfig{
+		sbc = &subBalancerWrapper{
 			ClientConn: bg.cc,
 			id:         id,
 			group:      bg,
@@ -384,7 +401,7 @@ func (bg *BalancerGroup) Remove(id internal.LocalityID) {
 
 // bg.remove(id) doesn't do cleanup for the sub-balancer. This function does
 // cleanup after the timeout.
-func (bg *BalancerGroup) cleanupSubConns(config *subBalancerWithConfig) {
+func (bg *BalancerGroup) cleanupSubConns(config *subBalancerWrapper) {
 	bg.incomingMu.Lock()
 	// Remove SubConns. This is only done after the balancer is
 	// actually closed.
@@ -466,10 +483,14 @@ func (bg *BalancerGroup) UpdateClientConnState(id internal.LocalityID, s balance
 	return nil
 }
 
-// TODO: handleServiceConfig()
-//
-// For BNS address for slicer, comes from endpoint.Metadata. It will be sent
-// from parent to sub-balancers as service config.
+// ResolverError forwards resolver errors to all sub-balancers.
+func (bg *BalancerGroup) ResolverError(err error) {
+	bg.outgoingMu.Lock()
+	for _, config := range bg.idToBalancerConfig {
+		config.resolverError(err)
+	}
+	bg.outgoingMu.Unlock()
+}
 
 // Following are actions from sub-balancers, forward to ClientConn.
 
@@ -480,7 +501,7 @@ func (bg *BalancerGroup) UpdateClientConnState(id internal.LocalityID, s balance
 // from map. Delete sc from the map only when state changes to Shutdown. Since
 // it's just forwarding the action, there's no need for a removeSubConn()
 // wrapper function.
-func (bg *BalancerGroup) newSubConn(config *subBalancerWithConfig, addrs []resolver.Address, opts balancer.NewSubConnOptions) (balancer.SubConn, error) {
+func (bg *BalancerGroup) newSubConn(config *subBalancerWrapper, addrs []resolver.Address, opts balancer.NewSubConnOptions) (balancer.SubConn, error) {
 	// NOTE: if balancer with id was already removed, this should also return
 	// error. But since we call balancer.stopBalancer when removing the balancer, this
 	// shouldn't happen.
@@ -513,13 +534,18 @@ func (bg *BalancerGroup) updateBalancerState(id internal.LocalityID, state balan
 		bg.logger.Warningf("balancer group: pickerState for %v not found when update picker/state", id)
 		return
 	}
-	newPicker := state.Picker
 	if bg.loadStore != nil {
 		// Only wrap the picker to do load reporting if loadStore was set.
-		newPicker = newLoadReportPicker(state.Picker, id, bg.loadStore)
+		state.Picker = newLoadReportPicker(state.Picker, id, bg.loadStore)
 	}
-	pickerSt.picker = newPicker
-	pickerSt.state = state.ConnectivityState
+	if !(pickerSt.state.ConnectivityState == connectivity.TransientFailure && state.ConnectivityState == connectivity.Connecting) {
+		// If old state is TransientFailure, and new state is Connecting, don't
+		// update the state, to prevent the aggregated state from being always
+		// CONNECTING. Otherwise, stateToAggregate is the same as
+		// state.ConnectivityState.
+		pickerSt.stateToAggregate = state.ConnectivityState
+	}
+	pickerSt.state = state
 	if bg.incomingStarted {
 		bg.logger.Infof("Child pickers with weight: %+v", bg.idToPickerState)
 		bg.cc.UpdateState(buildPickerAndState(bg.idToPickerState))
@@ -534,10 +560,13 @@ func (bg *BalancerGroup) Close() {
 		bg.incomingStarted = false
 
 		for _, pState := range bg.idToPickerState {
-			// Reset everything to IDLE but keep the entry in map (to keep the
-			// weight).
-			pState.picker = nil
-			pState.state = connectivity.Idle
+			// Reset everything to init state (Connecting) but keep the entry in
+			// map (to keep the weight).
+			pState.state = balancer.State{
+				ConnectivityState: connectivity.Connecting,
+				Picker:            base.NewErrPicker(balancer.ErrNoSubConnAvailable),
+			}
+			pState.stateToAggregate = connectivity.Connecting
 		}
 
 		// Also remove all SubConns.
@@ -565,7 +594,7 @@ func buildPickerAndState(m map[internal.LocalityID]*pickerState) balancer.State 
 	var readyN, connectingN int
 	readyPickerWithWeights := make([]pickerState, 0, len(m))
 	for _, ps := range m {
-		switch ps.state {
+		switch ps.stateToAggregate {
 		case connectivity.Ready:
 			readyN++
 			readyPickerWithWeights = append(readyPickerWithWeights, *ps)
@@ -582,10 +611,23 @@ func buildPickerAndState(m map[internal.LocalityID]*pickerState) balancer.State 
 	default:
 		aggregatedState = connectivity.TransientFailure
 	}
-	if aggregatedState == connectivity.TransientFailure {
-		return balancer.State{ConnectivityState: aggregatedState, Picker: base.NewErrPickerV2(balancer.ErrTransientFailure)}
+
+	// Make sure picker's return error is consistent with the aggregatedState.
+	//
+	// TODO: This is true for balancers like weighted_target, but not for
+	// routing. For routing, we want to always build picker with all sub-pickers
+	// (not even ready sub-pickers), so even if the overall state is Ready, pick
+	// for certain RPCs can behave like Connecting or TransientFailure.
+	var picker balancer.Picker
+	switch aggregatedState {
+	case connectivity.TransientFailure:
+		picker = base.NewErrPicker(balancer.ErrTransientFailure)
+	case connectivity.Connecting:
+		picker = base.NewErrPicker(balancer.ErrNoSubConnAvailable)
+	default:
+		picker = newPickerGroup(readyPickerWithWeights)
 	}
-	return balancer.State{ConnectivityState: aggregatedState, Picker: newPickerGroup(readyPickerWithWeights)}
+	return balancer.State{ConnectivityState: aggregatedState, Picker: picker}
 }
 
 // NewRandomWRR is the WRR constructor used to pick sub-pickers from
@@ -607,7 +649,7 @@ type pickerGroup struct {
 func newPickerGroup(readyPickerWithWeights []pickerState) *pickerGroup {
 	w := NewRandomWRR()
 	for _, ps := range readyPickerWithWeights {
-		w.Add(ps.picker, int64(ps.weight))
+		w.Add(ps.state.Picker, int64(ps.weight))
 	}
 
 	return &pickerGroup{
@@ -620,7 +662,7 @@ func (pg *pickerGroup) Pick(info balancer.PickInfo) (balancer.PickResult, error)
 	if pg.length <= 0 {
 		return balancer.PickResult{}, balancer.ErrNoSubConnAvailable
 	}
-	p := pg.w.Next().(balancer.V2Picker)
+	p := pg.w.Next().(balancer.Picker)
 	return p.Pick(info)
 }
 
@@ -630,13 +672,13 @@ const (
 )
 
 type loadReportPicker struct {
-	p balancer.V2Picker
+	p balancer.Picker
 
 	id        internal.LocalityID
 	loadStore lrs.Store
 }
 
-func newLoadReportPicker(p balancer.V2Picker, id internal.LocalityID, loadStore lrs.Store) *loadReportPicker {
+func newLoadReportPicker(p balancer.Picker, id internal.LocalityID, loadStore lrs.Store) *loadReportPicker {
 	return &loadReportPicker{
 		p:         p,
 		id:        id,

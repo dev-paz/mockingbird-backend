@@ -44,6 +44,10 @@ func TestMarshal(t *testing.T) {
 		input: &pb3.Scalars{},
 		want:  "",
 	}, {
+		desc:  "proto3 optional not set",
+		input: &pb3.Proto3Optional{},
+		want:  "",
+	}, {
 		desc: "proto2 optional scalars set to zero values",
 		input: &pb2.Scalars{
 			OptBool:     proto.Bool(false),
@@ -77,6 +81,33 @@ opt_float: 0
 opt_double: 0
 opt_bytes: ""
 opt_string: ""
+`,
+	}, {
+		desc: "proto3 optional set to zero values",
+		input: &pb3.Proto3Optional{
+			OptBool:    proto.Bool(false),
+			OptInt32:   proto.Int32(0),
+			OptInt64:   proto.Int64(0),
+			OptUint32:  proto.Uint32(0),
+			OptUint64:  proto.Uint64(0),
+			OptFloat:   proto.Float32(0),
+			OptDouble:  proto.Float64(0),
+			OptString:  proto.String(""),
+			OptBytes:   []byte{},
+			OptEnum:    pb3.Enum_ZERO.Enum(),
+			OptMessage: &pb3.Nested{},
+		},
+		want: `opt_bool: false
+opt_int32: 0
+opt_int64: 0
+opt_uint32: 0
+opt_uint64: 0
+opt_float: 0
+opt_double: 0
+opt_string: ""
+opt_bytes: ""
+opt_enum: ZERO
+opt_message: {}
 `,
 	}, {
 		desc: "proto3 scalars set to zero values",
@@ -130,7 +161,14 @@ opt_bytes: "谷歌"
 opt_string: "谷歌"
 `,
 	}, {
-		desc: "string with invalid UTF-8",
+		desc: "proto2 string with invalid UTF-8",
+		input: &pb2.Scalars{
+			OptString: proto.String("abc\xff"),
+		},
+		want: `opt_string: "abc\xff"
+`,
+	}, {
+		desc: "proto3 string with invalid UTF-8",
 		input: &pb3.Scalars{
 			SString: "abc\xff",
 		},
@@ -447,8 +485,15 @@ rpt_bytes: "hello"
 rpt_bytes: "世界"
 `,
 	}, {
-		desc: "repeated contains invalid UTF-8",
+		desc: "repeated proto2 contains invalid UTF-8",
 		input: &pb2.Repeats{
+			RptString: []string{"abc\xff"},
+		},
+		want: `rpt_string: "abc\xff"
+`,
+	}, {
+		desc: "repeated proto3 contains invalid UTF-8",
+		input: &pb3.Repeats{
 			RptString: []string{"abc\xff"},
 		},
 		wantErr: true,
@@ -651,7 +696,31 @@ str_to_oneofs: {
 }
 `,
 	}, {
-		desc: "map field value contains invalid UTF-8",
+		desc: "proto2 map field value contains invalid UTF-8",
+		input: &pb2.Maps{
+			Int32ToStr: map[int32]string{
+				101: "abc\xff",
+			},
+		},
+		want: `int32_to_str: {
+  key: 101
+  value: "abc\xff"
+}
+`,
+	}, {
+		desc: "proto2 map field key contains invalid UTF-8",
+		input: &pb2.Maps{
+			StrToNested: map[string]*pb2.Nested{
+				"abc\xff": {},
+			},
+		},
+		want: `str_to_nested: {
+  key: "abc\xff"
+  value: {}
+}
+`,
+	}, {
+		desc: "proto3 map field value contains invalid UTF-8",
 		input: &pb3.Maps{
 			Int32ToStr: map[int32]string{
 				101: "abc\xff",
@@ -659,7 +728,7 @@ str_to_oneofs: {
 		},
 		wantErr: true,
 	}, {
-		desc: "map field key contains invalid UTF-8",
+		desc: "proto3 map field key contains invalid UTF-8",
 		input: &pb3.Maps{
 			StrToNested: map[string]*pb3.Nested{
 				"abc\xff": {},
@@ -944,13 +1013,14 @@ opt_int32: 42
 [pb2.opt_ext_string]: "extension field"
 `,
 	}, {
-		desc: "extension field contains invalid UTF-8",
+		desc: "proto2 extension field contains invalid UTF-8",
 		input: func() proto.Message {
 			m := &pb2.Extensions{}
 			proto.SetExtension(m, pb2.E_OptExtString, "abc\xff")
 			return m
 		}(),
-		wantErr: true,
+		want: `[pb2.opt_ext_string]: "abc\xff"
+`,
 	}, {
 		desc: "extension partial returns error",
 		input: func() proto.Message {
@@ -1241,7 +1311,7 @@ value: "\x80"
 }
 `,
 	}, {
-		desc: "Any not expanded due to invalid UTF-8",
+		desc: "Any expanded with invalid UTF-8 in proto2",
 		input: func() *pb2.KnownTypes {
 			m := &pb2.Nested{
 				OptString: proto.String("invalid UTF-8 abc\xff"),
@@ -1258,12 +1328,29 @@ value: "\x80"
 			}
 		}(),
 		want: `opt_any: {
-  type_url: "pb2.Nested"
-  value: "\n\x12invalid UTF-8 abc\xff"
+  [pb2.Nested]: {
+    opt_string: "invalid UTF-8 abc\xff"
+  }
 }
 `,
 	}, {
-		desc: "Any inside Any not expanded",
+		desc: "Any not expanded due to invalid data",
+		mo:   prototext.MarshalOptions{EmitASCII: true},
+		input: func() *pb2.KnownTypes {
+			return &pb2.KnownTypes{
+				OptAny: &anypb.Any{
+					TypeUrl: "pb3.Scalar",
+					Value:   []byte("\xde\xad\xbe\xef"),
+				},
+			}
+		}(),
+		want: `opt_any: {
+  type_url: "pb3.Scalar"
+  value: "\u07ad\xbe\xef"
+}
+`,
+	}, {
+		desc: "Any inside Any expanded",
 		input: func() *pb2.KnownTypes {
 			m1 := &pb2.Nested{
 				OptString: proto.String("invalid UTF-8 abc\xff"),
@@ -1289,8 +1376,35 @@ value: "\x80"
 		}(),
 		want: `opt_any: {
   [google.protobuf.Any]: {
+    [pb2.Nested]: {
+      opt_string: "invalid UTF-8 abc\xff"
+    }
+  }
+}
+`,
+	}, {
+		desc: "Any inside Any not expanded due to invalid data",
+		mo:   prototext.MarshalOptions{EmitASCII: true},
+		input: func() *pb2.KnownTypes {
+			m := &anypb.Any{
+				TypeUrl: "pb2.Nested",
+				Value:   []byte("\xde\xad\xbe\xef"),
+			}
+			b, err := proto.MarshalOptions{Deterministic: true}.Marshal(m)
+			if err != nil {
+				t.Fatalf("error in binary marshaling message for Any.value: %v", err)
+			}
+			return &pb2.KnownTypes{
+				OptAny: &anypb.Any{
+					TypeUrl: "google.protobuf.Any",
+					Value:   b,
+				},
+			}
+		}(),
+		want: `opt_any: {
+  [google.protobuf.Any]: {
     type_url: "pb2.Nested"
-    value: "\n\x12invalid UTF-8 abc\xff"
+    value: "\u07ad\xbe\xef"
   }
 }
 `,

@@ -48,13 +48,13 @@ func main() {
 `
 
 func TestClientEditing(t *testing.T) {
-	ws, err := NewWorkspace("TestClientEditing", exampleProgram, "")
+	ws, err := NewSandbox("TestClientEditing", exampleProgram, "", false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer ws.Close()
 	ctx := context.Background()
-	editor := NewEditor(ws)
+	editor := NewEditor(ws, EditorConfig{})
 	if err := editor.OpenFile(ctx, "main.go"); err != nil {
 		t.Fatal(err)
 	}

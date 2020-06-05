@@ -52,10 +52,10 @@ func TestClientLogging(t *testing.T) {
 	ctx = debug.WithInstance(ctx, "", "")
 	ss := NewStreamServer(cache.New(ctx, nil))
 	ss.serverForTest = server
-	ts := servertest.NewPipeServer(ctx, ss)
+	ts := servertest.NewPipeServer(ctx, ss, nil)
 	defer checkClose(t, ts.Close)
 	cc := ts.Connect(ctx)
-	go cc.Run(ctx, protocol.ClientHandler(client, jsonrpc2.MethodNotFound))
+	cc.Go(ctx, protocol.ClientHandler(client, jsonrpc2.MethodNotFound))
 
 	protocol.ServerDispatcher(cc).DidOpen(ctx, &protocol.DidOpenTextDocumentParams{})
 
@@ -116,12 +116,12 @@ func TestRequestCancellation(t *testing.T) {
 	serveCtx := debug.WithInstance(baseCtx, "", "")
 	ss := NewStreamServer(cache.New(serveCtx, nil))
 	ss.serverForTest = server
-	tsDirect := servertest.NewTCPServer(serveCtx, ss)
+	tsDirect := servertest.NewTCPServer(serveCtx, ss, nil)
 	defer checkClose(t, tsDirect.Close)
 
 	forwarderCtx := debug.WithInstance(baseCtx, "", "")
 	forwarder := NewForwarder("tcp", tsDirect.Addr)
-	tsForwarded := servertest.NewPipeServer(forwarderCtx, forwarder)
+	tsForwarded := servertest.NewPipeServer(forwarderCtx, forwarder, nil)
 	defer checkClose(t, tsForwarded.Close)
 
 	tests := []struct {
@@ -136,7 +136,7 @@ func TestRequestCancellation(t *testing.T) {
 		t.Run(test.serverType, func(t *testing.T) {
 			cc := test.ts.Connect(baseCtx)
 			sd := protocol.ServerDispatcher(cc)
-			go cc.Run(baseCtx,
+			cc.Go(baseCtx,
 				protocol.Handlers(
 					jsonrpc2.MethodNotFound))
 
@@ -187,15 +187,12 @@ func main() {
 }`
 
 func TestDebugInfoLifecycle(t *testing.T) {
-	resetExitFuncs := OverrideExitFuncsForTest()
-	defer resetExitFuncs()
-
-	ws, err := fake.NewWorkspace("gopls-lsprpc-test", exampleProgram, "")
+	sb, err := fake.NewSandbox("gopls-lsprpc-test", exampleProgram, "", false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer func() {
-		if err := ws.Close(); err != nil {
+		if err := sb.Close(); err != nil {
 			// TODO(golang/go#38490): we can't currently make this an error because
 			// it fails on Windows: the workspace directory is still locked by a
 			// separate Go process.
@@ -212,19 +209,19 @@ func TestDebugInfoLifecycle(t *testing.T) {
 
 	cache := cache.New(serverCtx, nil)
 	ss := NewStreamServer(cache)
-	tsBackend := servertest.NewTCPServer(serverCtx, ss)
+	tsBackend := servertest.NewTCPServer(serverCtx, ss, nil)
 
 	forwarder := NewForwarder("tcp", tsBackend.Addr)
-	tsForwarder := servertest.NewPipeServer(clientCtx, forwarder)
+	tsForwarder := servertest.NewPipeServer(clientCtx, forwarder, nil)
 
 	conn1 := tsForwarder.Connect(clientCtx)
-	ed1, err := fake.NewConnectedEditor(clientCtx, ws, conn1)
+	ed1, err := fake.NewEditor(sb, fake.EditorConfig{}).Connect(clientCtx, conn1, fake.ClientHooks{})
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer ed1.Shutdown(clientCtx)
 	conn2 := tsBackend.Connect(baseCtx)
-	ed2, err := fake.NewConnectedEditor(baseCtx, ws, conn2)
+	ed2, err := fake.NewEditor(sb, fake.EditorConfig{}).Connect(baseCtx, conn2, fake.ClientHooks{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -252,5 +249,3 @@ func TestDebugInfoLifecycle(t *testing.T) {
 	// TODO(rfindley): once disconnection works, assert that len(Clients) == 1
 	// (as of writing, it is still 2)
 }
-
-// TODO: add a test for telemetry.

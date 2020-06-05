@@ -15,8 +15,9 @@ import (
 	"go/types"
 	"reflect"
 
+	"honnef.co/go/tools/go/ir"
+
 	"golang.org/x/tools/go/analysis"
-	"honnef.co/go/tools/ir"
 )
 
 type willExit struct{}
@@ -24,6 +25,9 @@ type willUnwind struct{}
 
 func (*willExit) AFact()   {}
 func (*willUnwind) AFact() {}
+
+func (*willExit) String() string   { return "will exit" }
+func (*willUnwind) String() string { return "will unwind" }
 
 var Analyzer = &analysis.Analyzer{
 	Name:       "buildir",

@@ -31,7 +31,7 @@ type metadata struct {
 	errors          []packages.Error
 	deps            []packageID
 	missingDeps     map[packagePath]struct{}
-	module          *packagesinternal.Module
+	module          *packages.Module
 
 	// config is the *packages.Config associated with the loaded package.
 	config *packages.Config
@@ -92,11 +92,20 @@ func (s *snapshot) load(ctx context.Context, scopes ...interface{}) error {
 	if ctx.Err() != nil {
 		return ctx.Err()
 	}
-
-	event.Log(ctx, "go/packages.Load", tag.Snapshot.Of(s.ID()), tag.Directory.Of(cfg.Dir), tag.Query.Of(query), tag.PackageCount.Of(len(pkgs)))
+	if err != nil {
+		// Match on common error messages. This is really hacky, but I'm not sure
+		// of any better way. This can be removed when golang/go#39164 is resolved.
+		if strings.Contains(err.Error(), "inconsistent vendoring") {
+			return source.InconsistentVendoring
+		}
+		event.Error(ctx, "go/packages.Load", err, tag.Snapshot.Of(s.ID()), tag.Directory.Of(cfg.Dir), tag.Query.Of(query), tag.PackageCount.Of(len(pkgs)))
+	} else {
+		event.Log(ctx, "go/packages.Load", tag.Snapshot.Of(s.ID()), tag.Directory.Of(cfg.Dir), tag.Query.Of(query), tag.PackageCount.Of(len(pkgs)))
+	}
 	if len(pkgs) == 0 {
 		return err
 	}
+
 	for _, pkg := range pkgs {
 		if !containsDir || s.view.Options().VerboseOutput {
 			event.Log(ctx, "go/packages.Load", tag.Snapshot.Of(s.ID()), tag.PackagePath.Of(pkg.PkgPath), tag.Files.Of(pkg.CompiledGoFiles))
@@ -146,7 +155,7 @@ func (s *snapshot) setMetadata(ctx context.Context, pkgPath packagePath, pkg *pa
 		typesSizes: pkg.TypesSizes,
 		errors:     pkg.Errors,
 		config:     cfg,
-		module:     packagesinternal.GetModule(pkg),
+		module:     pkg.Module,
 	}
 
 	for _, filename := range pkg.CompiledGoFiles {

@@ -104,7 +104,6 @@ func New(client *http.Client) (*Service, error) {
 	}
 	s := &Service{client: client, BasePath: basePath}
 	s.Cse = NewCseService(s)
-	s.Siterestrict = NewSiterestrictService(s)
 	return s, nil
 }
 
@@ -114,8 +113,6 @@ type Service struct {
 	UserAgent string // optional additional User-Agent fragment
 
 	Cse *CseService
-
-	Siterestrict *SiterestrictService
 }
 
 func (s *Service) userAgent() string {
@@ -127,19 +124,22 @@ func (s *Service) userAgent() string {
 
 func NewCseService(s *Service) *CseService {
 	rs := &CseService{s: s}
+	rs.Siterestrict = NewCseSiterestrictService(s)
 	return rs
 }
 
 type CseService struct {
 	s *Service
+
+	Siterestrict *CseSiterestrictService
 }
 
-func NewSiterestrictService(s *Service) *SiterestrictService {
-	rs := &SiterestrictService{s: s}
+func NewCseSiterestrictService(s *Service) *CseSiterestrictService {
+	rs := &CseSiterestrictService{s: s}
 	return rs
 }
 
-type SiterestrictService struct {
+type CseSiterestrictService struct {
 	s *Service
 }
 
@@ -2426,7 +2426,7 @@ func (c *CseListCall) Header() http.Header {
 
 func (c *CseListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2716,7 +2716,7 @@ func (c *CseListCall) Do(opts ...googleapi.CallOption) (*Search, error) {
 
 // method id "search.cse.siterestrict.list":
 
-type SiterestrictListCall struct {
+type CseSiterestrictListCall struct {
 	s            *Service
 	urlParams_   gensupport.URLParams
 	ifNoneMatch_ string
@@ -2729,8 +2729,8 @@ type SiterestrictListCall struct {
 // search engine used for the search, and the search results. Uses a
 // small set
 // of url patterns.
-func (r *SiterestrictService) List() *SiterestrictListCall {
-	c := &SiterestrictListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+func (r *CseSiterestrictService) List() *CseSiterestrictListCall {
+	c := &CseSiterestrictListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	return c
 }
 
@@ -2747,7 +2747,7 @@ func (r *SiterestrictService) List() *SiterestrictListCall {
 // * `1`: Disabled
 //
 // * `0`: Enabled (default)
-func (c *SiterestrictListCall) C2coff(c2coff string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) C2coff(c2coff string) *CseSiterestrictListCall {
 	c.urlParams_.Set("c2coff", c2coff)
 	return c
 }
@@ -2771,14 +2771,14 @@ func (c *SiterestrictListCall) C2coff(c2coff string) *SiterestrictListCall {
 // Values](https://developers.google.com/custom-search/docs/xml
 // _results_appendices#countryCollections)
 // page for a list of valid values for this parameter.
-func (c *SiterestrictListCall) Cr(cr string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Cr(cr string) *CseSiterestrictListCall {
 	c.urlParams_.Set("cr", cr)
 	return c
 }
 
 // Cx sets the optional parameter "cx": The custom search engine ID to
 // use for this request.
-func (c *SiterestrictListCall) Cx(cx string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Cx(cx string) *CseSiterestrictListCall {
 	c.urlParams_.Set("cx", cx)
 	return c
 }
@@ -2797,14 +2797,14 @@ func (c *SiterestrictListCall) Cx(cx string) *SiterestrictListCall {
 //
 // * `y[number]`: requests results from the specified number of past
 // years.
-func (c *SiterestrictListCall) DateRestrict(dateRestrict string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) DateRestrict(dateRestrict string) *CseSiterestrictListCall {
 	c.urlParams_.Set("dateRestrict", dateRestrict)
 	return c
 }
 
 // ExactTerms sets the optional parameter "exactTerms": Identifies a
 // phrase that all documents in the search results must contain.
-func (c *SiterestrictListCall) ExactTerms(exactTerms string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) ExactTerms(exactTerms string) *CseSiterestrictListCall {
 	c.urlParams_.Set("exactTerms", exactTerms)
 	return c
 }
@@ -2812,7 +2812,7 @@ func (c *SiterestrictListCall) ExactTerms(exactTerms string) *SiterestrictListCa
 // ExcludeTerms sets the optional parameter "excludeTerms": Identifies a
 // word or phrase that should not appear in any documents in the
 // search results.
-func (c *SiterestrictListCall) ExcludeTerms(excludeTerms string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) ExcludeTerms(excludeTerms string) *CseSiterestrictListCall {
 	c.urlParams_.Set("excludeTerms", excludeTerms)
 	return c
 }
@@ -2822,7 +2822,7 @@ func (c *SiterestrictListCall) ExcludeTerms(excludeTerms string) *SiterestrictLi
 // indexable by Google can be found in Search Console
 // [Help
 // Center](https://support.google.com/webmasters/answer/35287).
-func (c *SiterestrictListCall) FileType(fileType string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) FileType(fileType string) *CseSiterestrictListCall {
 	c.urlParams_.Set("fileType", fileType)
 	return c
 }
@@ -2847,7 +2847,7 @@ func (c *SiterestrictListCall) FileType(fileType string) *SiterestrictListCall {
 // * `0`: Turns off duplicate content filter.
 //
 // * `1`: Turns on duplicate content filter.
-func (c *SiterestrictListCall) Filter(filter string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Filter(filter string) *CseSiterestrictListCall {
 	c.urlParams_.Set("filter", filter)
 	return c
 }
@@ -2871,7 +2871,7 @@ func (c *SiterestrictListCall) Filter(filter string) *SiterestrictListCall {
 // specifically, for customers in English- speaking countries other than
 // the
 // United States.
-func (c *SiterestrictListCall) Gl(gl string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Gl(gl string) *CseSiterestrictListCall {
 	c.urlParams_.Set("gl", gl)
 	return c
 }
@@ -2882,7 +2882,7 @@ func (c *SiterestrictListCall) Gl(gl string) *SiterestrictListCall {
 // The local Google domain (for example, google.com, google.de,
 // or
 // google.fr) to use to perform the search.
-func (c *SiterestrictListCall) Googlehost(googlehost string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Googlehost(googlehost string) *CseSiterestrictListCall {
 	c.urlParams_.Set("googlehost", googlehost)
 	return c
 }
@@ -2893,7 +2893,7 @@ func (c *SiterestrictListCall) Googlehost(googlehost string) *SiterestrictListCa
 // * Use `lowRange` and `highRange` to append an inclusive search range
 // of
 // `lowRange...highRange` to the query.
-func (c *SiterestrictListCall) HighRange(highRange string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) HighRange(highRange string) *CseSiterestrictListCall {
 	c.urlParams_.Set("highRange", highRange)
 	return c
 }
@@ -2918,7 +2918,7 @@ func (c *SiterestrictListCall) HighRange(highRange string) *SiterestrictListCall
 // Languages)[https://developers.google.com/custom-search/docs/
 // xml_results_appendices#interfaceLanguages]
 // for a list of supported languages.
-func (c *SiterestrictListCall) Hl(hl string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Hl(hl string) *CseSiterestrictListCall {
 	c.urlParams_.Set("hl", hl)
 	return c
 }
@@ -2926,7 +2926,7 @@ func (c *SiterestrictListCall) Hl(hl string) *SiterestrictListCall {
 // Hq sets the optional parameter "hq": Appends the specified query
 // terms to the query, as if they were combined
 // with a logical AND operator.
-func (c *SiterestrictListCall) Hq(hq string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Hq(hq string) *CseSiterestrictListCall {
 	c.urlParams_.Set("hq", hq)
 	return c
 }
@@ -2949,7 +2949,7 @@ func (c *SiterestrictListCall) Hq(hq string) *SiterestrictListCall {
 //   "gray"
 //   "color"
 //   "trans"
-func (c *SiterestrictListCall) ImgColorType(imgColorType string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) ImgColorType(imgColorType string) *CseSiterestrictListCall {
 	c.urlParams_.Set("imgColorType", imgColorType)
 	return c
 }
@@ -2996,7 +2996,7 @@ func (c *SiterestrictListCall) ImgColorType(imgColorType string) *SiterestrictLi
 //   "teal"
 //   "white"
 //   "yellow"
-func (c *SiterestrictListCall) ImgDominantColor(imgDominantColor string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) ImgDominantColor(imgDominantColor string) *CseSiterestrictListCall {
 	c.urlParams_.Set("imgDominantColor", imgDominantColor)
 	return c
 }
@@ -3027,7 +3027,7 @@ func (c *SiterestrictListCall) ImgDominantColor(imgDominantColor string) *Sitere
 //   "SMALL"
 //   "XLARGE"
 //   "XXLARGE"
-func (c *SiterestrictListCall) ImgSize(imgSize string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) ImgSize(imgSize string) *CseSiterestrictListCall {
 	c.urlParams_.Set("imgSize", imgSize)
 	return c
 }
@@ -3055,7 +3055,7 @@ func (c *SiterestrictListCall) ImgSize(imgSize string) *SiterestrictListCall {
 //   "stock"
 //   "photo"
 //   "animated"
-func (c *SiterestrictListCall) ImgType(imgType string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) ImgType(imgType string) *CseSiterestrictListCall {
 	c.urlParams_.Set("imgType", imgType)
 	return c
 }
@@ -3063,7 +3063,7 @@ func (c *SiterestrictListCall) ImgType(imgType string) *SiterestrictListCall {
 // LinkSite sets the optional parameter "linkSite": Specifies that all
 // search results should contain a link to a particular
 // URL.
-func (c *SiterestrictListCall) LinkSite(linkSite string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) LinkSite(linkSite string) *CseSiterestrictListCall {
 	c.urlParams_.Set("linkSite", linkSite)
 	return c
 }
@@ -3073,7 +3073,7 @@ func (c *SiterestrictListCall) LinkSite(linkSite string) *SiterestrictListCall {
 // `highRange` to append an inclusive search range of
 // `lowRange...highRange`
 // to the query.
-func (c *SiterestrictListCall) LowRange(lowRange string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) LowRange(lowRange string) *CseSiterestrictListCall {
 	c.urlParams_.Set("lowRange", lowRange)
 	return c
 }
@@ -3154,7 +3154,7 @@ func (c *SiterestrictListCall) LowRange(lowRange string) *SiterestrictListCall {
 // * "lang_zh-CN": Chinese (Simplified)
 //
 // * "lang_zh-TW": Chinese (Traditional)
-func (c *SiterestrictListCall) Lr(lr string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Lr(lr string) *CseSiterestrictListCall {
 	c.urlParams_.Set("lr", lr)
 	return c
 }
@@ -3163,7 +3163,7 @@ func (c *SiterestrictListCall) Lr(lr string) *SiterestrictListCall {
 // return.
 //
 // * Valid values are integers between 1 and 10, inclusive.
-func (c *SiterestrictListCall) Num(num int64) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Num(num int64) *CseSiterestrictListCall {
 	c.urlParams_.Set("num", fmt.Sprint(num))
 	return c
 }
@@ -3173,13 +3173,13 @@ func (c *SiterestrictListCall) Num(num int64) *SiterestrictListCall {
 // document in the search results must contain at least one of the
 // additional
 // search terms.
-func (c *SiterestrictListCall) OrTerms(orTerms string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) OrTerms(orTerms string) *CseSiterestrictListCall {
 	c.urlParams_.Set("orTerms", orTerms)
 	return c
 }
 
 // Q sets the optional parameter "q": Query
-func (c *SiterestrictListCall) Q(q string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Q(q string) *CseSiterestrictListCall {
 	c.urlParams_.Set("q", q)
 	return c
 }
@@ -3187,7 +3187,7 @@ func (c *SiterestrictListCall) Q(q string) *SiterestrictListCall {
 // RelatedSite sets the optional parameter "relatedSite": Specifies that
 // all search results should be pages that are related to the
 // specified URL.
-func (c *SiterestrictListCall) RelatedSite(relatedSite string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) RelatedSite(relatedSite string) *CseSiterestrictListCall {
 	c.urlParams_.Set("relatedSite", relatedSite)
 	return c
 }
@@ -3201,7 +3201,7 @@ func (c *SiterestrictListCall) RelatedSite(relatedSite string) *SiterestrictList
 // [typical
 // combinations](https://wiki.creativecommons.org/wiki/CC_Search
 // _integration).
-func (c *SiterestrictListCall) Rights(rights string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Rights(rights string) *CseSiterestrictListCall {
 	c.urlParams_.Set("rights", rights)
 	return c
 }
@@ -3219,7 +3219,7 @@ func (c *SiterestrictListCall) Rights(rights string) *SiterestrictListCall {
 //   "high"
 //   "medium"
 //   "off"
-func (c *SiterestrictListCall) Safe(safe string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Safe(safe string) *CseSiterestrictListCall {
 	c.urlParams_.Set("safe", safe)
 	return c
 }
@@ -3236,7 +3236,7 @@ func (c *SiterestrictListCall) Safe(safe string) *SiterestrictListCall {
 // Possible values:
 //   "searchTypeUndefined"
 //   "image"
-func (c *SiterestrictListCall) SearchType(searchType string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) SearchType(searchType string) *CseSiterestrictListCall {
 	c.urlParams_.Set("searchType", searchType)
 	return c
 }
@@ -3244,7 +3244,7 @@ func (c *SiterestrictListCall) SearchType(searchType string) *SiterestrictListCa
 // SiteSearch sets the optional parameter "siteSearch": Specifies a
 // given site which should always be included or excluded from
 // results (see `siteSearchFilter` parameter, below).
-func (c *SiterestrictListCall) SiteSearch(siteSearch string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) SiteSearch(siteSearch string) *CseSiterestrictListCall {
 	c.urlParams_.Set("siteSearch", siteSearch)
 	return c
 }
@@ -3264,14 +3264,14 @@ func (c *SiterestrictListCall) SiteSearch(siteSearch string) *SiterestrictListCa
 //   "siteSearchFilterUndefined"
 //   "e"
 //   "i"
-func (c *SiterestrictListCall) SiteSearchFilter(siteSearchFilter string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) SiteSearchFilter(siteSearchFilter string) *CseSiterestrictListCall {
 	c.urlParams_.Set("siteSearchFilter", siteSearchFilter)
 	return c
 }
 
 // Sort sets the optional parameter "sort": The sort expression to apply
 // to the results.
-func (c *SiterestrictListCall) Sort(sort string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Sort(sort string) *CseSiterestrictListCall {
 	c.urlParams_.Set("sort", sort)
 	return c
 }
@@ -3287,7 +3287,7 @@ func (c *SiterestrictListCall) Sort(sort string) *SiterestrictListCall {
 // `start + num` to a number greater than 100 will produce an error.
 // Also note
 // that the maximum value for `num` is 10.
-func (c *SiterestrictListCall) Start(start int64) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Start(start int64) *CseSiterestrictListCall {
 	c.urlParams_.Set("start", fmt.Sprint(start))
 	return c
 }
@@ -3295,7 +3295,7 @@ func (c *SiterestrictListCall) Start(start int64) *SiterestrictListCall {
 // Fields allows partial responses to be retrieved. See
 // https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
 // for more information.
-func (c *SiterestrictListCall) Fields(s ...googleapi.Field) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Fields(s ...googleapi.Field) *CseSiterestrictListCall {
 	c.urlParams_.Set("fields", googleapi.CombineFields(s))
 	return c
 }
@@ -3305,7 +3305,7 @@ func (c *SiterestrictListCall) Fields(s ...googleapi.Field) *SiterestrictListCal
 // getting updates only after the object has changed since the last
 // request. Use googleapi.IsNotModified to check whether the response
 // error from Do is the result of In-None-Match.
-func (c *SiterestrictListCall) IfNoneMatch(entityTag string) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) IfNoneMatch(entityTag string) *CseSiterestrictListCall {
 	c.ifNoneMatch_ = entityTag
 	return c
 }
@@ -3313,23 +3313,23 @@ func (c *SiterestrictListCall) IfNoneMatch(entityTag string) *SiterestrictListCa
 // Context sets the context to be used in this call's Do method. Any
 // pending HTTP request will be aborted if the provided context is
 // canceled.
-func (c *SiterestrictListCall) Context(ctx context.Context) *SiterestrictListCall {
+func (c *CseSiterestrictListCall) Context(ctx context.Context) *CseSiterestrictListCall {
 	c.ctx_ = ctx
 	return c
 }
 
 // Header returns an http.Header that can be modified by the caller to
 // add HTTP headers to the request.
-func (c *SiterestrictListCall) Header() http.Header {
+func (c *CseSiterestrictListCall) Header() http.Header {
 	if c.header_ == nil {
 		c.header_ = make(http.Header)
 	}
 	return c.header_
 }
 
-func (c *SiterestrictListCall) doRequest(alt string) (*http.Response, error) {
+func (c *CseSiterestrictListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3357,7 +3357,7 @@ func (c *SiterestrictListCall) doRequest(alt string) (*http.Response, error) {
 // in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to
 // check whether the returned error was because http.StatusNotModified
 // was returned.
-func (c *SiterestrictListCall) Do(opts ...googleapi.CallOption) (*Search, error) {
+func (c *CseSiterestrictListCall) Do(opts ...googleapi.CallOption) (*Search, error) {
 	gensupport.SetOptions(c.urlParams_, opts...)
 	res, err := c.doRequest("json")
 	if res != nil && res.StatusCode == http.StatusNotModified {

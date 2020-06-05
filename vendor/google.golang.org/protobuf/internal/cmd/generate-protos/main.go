@@ -18,30 +18,26 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	gengo "google.golang.org/protobuf/cmd/protoc-gen-go/internal_gengo"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/internal/detrand"
-	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 // Override the location of the Go package for various source files.
 // TOOD: Commit these changes upstream.
 var protoPackages = map[string]string{
-	// Locally override field_mask.proto to an internal copy.
-	// We need this package as a dependency of several tests,
-	// but it currently lives in google.golang.org/genproto, which
-	// we do not want a dependency on.
-	//
-	// TODO: Move the canonical package into this module.
-	"google/protobuf/field_mask.proto": "google.golang.org/protobuf/internal/testprotos/fieldmaskpb",
-
 	"google/protobuf/any.proto":                  "google.golang.org/protobuf/types/known/anypb;anypb",
+	"google/protobuf/api.proto":                  "google.golang.org/protobuf/types/known/apipb;apipb",
 	"google/protobuf/duration.proto":             "google.golang.org/protobuf/types/known/durationpb;durationpb",
 	"google/protobuf/empty.proto":                "google.golang.org/protobuf/types/known/emptypb;emptypb",
+	"google/protobuf/field_mask.proto":           "google.golang.org/protobuf/types/known/fieldmaskpb;fieldmaskpb",
+	"google/protobuf/source_context.proto":       "google.golang.org/protobuf/types/known/sourcecontextpb;sourcecontextpb",
 	"google/protobuf/struct.proto":               "google.golang.org/protobuf/types/known/structpb;structpb",
 	"google/protobuf/timestamp.proto":            "google.golang.org/protobuf/types/known/timestamppb;timestamppb",
+	"google/protobuf/type.proto":                 "google.golang.org/protobuf/types/known/typepb;typepb",
 	"google/protobuf/wrappers.proto":             "google.golang.org/protobuf/types/known/wrapperspb;wrapperspb",
 	"google/protobuf/descriptor.proto":           "google.golang.org/protobuf/types/descriptorpb;descriptorpb",
 	"google/protobuf/compiler/plugin.proto":      "google.golang.org/protobuf/types/pluginpb;pluginpb",
@@ -96,9 +92,10 @@ func init() {
 				if file.Generate {
 					gengo.GenerateVersionMarkers = false
 					gengo.GenerateFile(gen, file)
-					generateFieldNumbers(gen, file)
+					generateIdentifiers(gen, file)
 				}
 			}
+			gen.SupportedFeatures = gengo.SupportedFeatures
 			return nil
 		})
 		os.Exit(0)
@@ -236,21 +233,19 @@ func generateRemoteProtos() {
 		{"benchmarks", "datasets/google_message4/benchmark_message4_1.proto"},
 		{"benchmarks", "datasets/google_message4/benchmark_message4_2.proto"},
 		{"benchmarks", "datasets/google_message4/benchmark_message4_3.proto"},
-		// TODO: The commented-out entires below are currently part of
-		// google.golang.org/genproto. Move them into this module.
 		{"src", "google/protobuf/any.proto"},
-		//{"src", "google/protobuf/api.proto"},
+		{"src", "google/protobuf/api.proto"},
 		{"src", "google/protobuf/compiler/plugin.proto"},
 		{"src", "google/protobuf/descriptor.proto"},
 		{"src", "google/protobuf/duration.proto"},
 		{"src", "google/protobuf/empty.proto"},
 		{"src", "google/protobuf/field_mask.proto"},
-		//{"src", "google/protobuf/source_context.proto"},
+		{"src", "google/protobuf/source_context.proto"},
 		{"src", "google/protobuf/struct.proto"},
 		{"src", "google/protobuf/test_messages_proto2.proto"},
 		{"src", "google/protobuf/test_messages_proto3.proto"},
 		{"src", "google/protobuf/timestamp.proto"},
-		//{"src", "google/protobuf/type.proto"},
+		{"src", "google/protobuf/type.proto"},
 		{"src", "google/protobuf/wrappers.proto"},
 	}
 	for _, f := range files {
@@ -270,7 +265,8 @@ func generateRemoteProtos() {
 }
 
 func protoc(args ...string) {
-	cmd := exec.Command("protoc", "--plugin=protoc-gen-go="+os.Args[0])
+	// TODO: Remove --experimental_allow_proto3_optional flag.
+	cmd := exec.Command("protoc", "--plugin=protoc-gen-go="+os.Args[0], "--experimental_allow_proto3_optional")
 	cmd.Args = append(cmd.Args, args...)
 	cmd.Env = append(os.Environ(), "RUN_AS_PROTOC_PLUGIN=1")
 	out, err := cmd.CombinedOutput()
@@ -280,14 +276,14 @@ func protoc(args ...string) {
 	check(err)
 }
 
-// generateFieldNumbers generates an internal package for descriptor.proto
+// generateIdentifiers generates an internal package for descriptor.proto
 // and well-known types.
-func generateFieldNumbers(gen *protogen.Plugin, file *protogen.File) {
+func generateIdentifiers(gen *protogen.Plugin, file *protogen.File) {
 	if file.Desc.Package() != "google.protobuf" {
 		return
 	}
 
-	importPath := modulePath + "/internal/fieldnum"
+	importPath := modulePath + "/internal/genid"
 	base := strings.TrimSuffix(path.Base(file.Desc.Path()), ".proto")
 	g := gen.NewGeneratedFile(importPath+"/"+base+"_gen.go", protogen.GoImportPath(importPath))
 	for _, s := range generatedPreamble {
@@ -296,26 +292,69 @@ func generateFieldNumbers(gen *protogen.Plugin, file *protogen.File) {
 	g.P("package ", path.Base(importPath))
 	g.P("")
 
+	var processEnums func([]*protogen.Enum)
 	var processMessages func([]*protogen.Message)
+	const protoreflectPackage = protogen.GoImportPath("google.golang.org/protobuf/reflect/protoreflect")
+	processEnums = func(enums []*protogen.Enum) {
+		for _, enum := range enums {
+			g.P("// Full and short names for ", enum.Desc.FullName(), ".")
+			g.P("const (")
+			g.P(enum.GoIdent.GoName, "_enum_fullname = ", strconv.Quote(string(enum.Desc.FullName())))
+			g.P(enum.GoIdent.GoName, "_enum_name = ", strconv.Quote(string(enum.Desc.Name())))
+			g.P(")")
+			g.P()
+		}
+	}
 	processMessages = func(messages []*protogen.Message) {
 		for _, message := range messages {
-			g.P("// Field numbers for ", message.Desc.FullName(), ".")
+			g.P("// Names for ", message.Desc.FullName(), ".")
 			g.P("const (")
-			for _, field := range message.Fields {
-				fd := field.Desc
-				typeName := fd.Kind().String()
-				switch fd.Kind() {
-				case protoreflect.EnumKind:
-					typeName = string(fd.Enum().FullName())
-				case protoreflect.MessageKind, protoreflect.GroupKind:
-					typeName = string(fd.Message().FullName())
-				}
-				g.P(message.GoIdent.GoName, "_", field.GoName, "=", fd.Number(), "// ", fd.Cardinality(), " ", typeName)
-			}
+			g.P(message.GoIdent.GoName, "_message_name ", protoreflectPackage.Ident("Name"), " = ", strconv.Quote(string(message.Desc.Name())))
+			g.P(message.GoIdent.GoName, "_message_fullname ", protoreflectPackage.Ident("FullName"), " = ", strconv.Quote(string(message.Desc.FullName())))
 			g.P(")")
+			g.P()
+
+			if len(message.Fields) > 0 {
+				g.P("// Field names for ", message.Desc.FullName(), ".")
+				g.P("const (")
+				for _, field := range message.Fields {
+					g.P(message.GoIdent.GoName, "_", field.GoName, "_field_name ", protoreflectPackage.Ident("Name"), " = ", strconv.Quote(string(field.Desc.Name())))
+				}
+				g.P()
+				for _, field := range message.Fields {
+					g.P(message.GoIdent.GoName, "_", field.GoName, "_field_fullname ", protoreflectPackage.Ident("FullName"), " = ", strconv.Quote(string(field.Desc.FullName())))
+				}
+				g.P(")")
+				g.P()
+
+				g.P("// Field numbers for ", message.Desc.FullName(), ".")
+				g.P("const (")
+				for _, field := range message.Fields {
+					g.P(message.GoIdent.GoName, "_", field.GoName, "_field_number ", protoreflectPackage.Ident("FieldNumber"), " = ", field.Desc.Number())
+				}
+				g.P(")")
+				g.P()
+			}
+
+			if len(message.Oneofs) > 0 {
+				g.P("// Oneof names for ", message.Desc.FullName(), ".")
+				g.P("const (")
+				for _, oneof := range message.Oneofs {
+					g.P(message.GoIdent.GoName, "_", oneof.GoName, "_oneof_name ", protoreflectPackage.Ident("Name"), " = ", strconv.Quote(string(oneof.Desc.Name())))
+				}
+				g.P()
+				for _, oneof := range message.Oneofs {
+					g.P(message.GoIdent.GoName, "_", oneof.GoName, "_oneof_fullname ", protoreflectPackage.Ident("FullName"), " = ", strconv.Quote(string(oneof.Desc.FullName())))
+				}
+				g.P(")")
+				g.P()
+			}
+
+			processEnums(message.Enums)
 			processMessages(message.Messages)
 		}
 	}
+	processEnums(file.Enums)
 	processMessages(file.Messages)
 }
 

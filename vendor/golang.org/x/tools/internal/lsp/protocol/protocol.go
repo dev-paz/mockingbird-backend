@@ -21,28 +21,41 @@ var (
 
 // ClientDispatcher returns a Client that dispatches LSP requests across the
 // given jsonrpc2 connection.
-func ClientDispatcher(conn *jsonrpc2.Conn) Client {
+func ClientDispatcher(conn jsonrpc2.Conn) Client {
 	return &clientDispatcher{Conn: conn}
 }
 
 // ServerDispatcher returns a Server that dispatches LSP requests across the
 // given jsonrpc2 connection.
-func ServerDispatcher(conn *jsonrpc2.Conn) Server {
+func ServerDispatcher(conn jsonrpc2.Conn) Server {
 	return &serverDispatcher{Conn: conn}
 }
 
 func Handlers(handler jsonrpc2.Handler) jsonrpc2.Handler {
 	return CancelHandler(
-		CancelHandler(
-			jsonrpc2.AsyncHandler(
-				jsonrpc2.MustReplyHandler(handler))))
+		jsonrpc2.AsyncHandler(
+			jsonrpc2.MustReplyHandler(handler)))
 }
 
 func CancelHandler(handler jsonrpc2.Handler) jsonrpc2.Handler {
 	handler, canceller := jsonrpc2.CancelHandler(handler)
 	return func(ctx context.Context, reply jsonrpc2.Replier, req jsonrpc2.Request) error {
 		if req.Method() != "$/cancelRequest" {
-			return handler(ctx, reply, req)
+			// TODO(iancottrell): See if we can generate a reply for the request to be cancelled
+			// at the point of cancellation rather than waiting for gopls to naturally reply.
+			// To do that, we need to keep track of whether a reply has been sent already and
+			// be careful about racing between the two paths.
+			// TODO(iancottrell): Add a test that watches the stream and verifies the response
+			// for the cancelled request flows.
+			replyWithDetachedContext := func(ctx context.Context, resp interface{}, err error) error {
+				// https://microsoft.github.io/language-server-protocol/specifications/specification-current/#cancelRequest
+				if ctx.Err() != nil && err == nil {
+					err = RequestCancelledError
+				}
+				ctx = xcontext.Detach(ctx)
+				return reply(ctx, resp, err)
+			}
+			return handler(ctx, replyWithDetachedContext, req)
 		}
 		var params CancelParams
 		if err := json.Unmarshal(req.Params(), &params); err != nil {
@@ -59,7 +72,7 @@ func CancelHandler(handler jsonrpc2.Handler) jsonrpc2.Handler {
 	}
 }
 
-func Call(ctx context.Context, conn *jsonrpc2.Conn, method string, params interface{}, result interface{}) error {
+func Call(ctx context.Context, conn jsonrpc2.Conn, method string, params interface{}, result interface{}) error {
 	id, err := conn.Call(ctx, method, params, result)
 	if ctx.Err() != nil {
 		cancelCall(ctx, conn, id)
@@ -67,7 +80,7 @@ func Call(ctx context.Context, conn *jsonrpc2.Conn, method string, params interf
 	return err
 }
 
-func cancelCall(ctx context.Context, conn *jsonrpc2.Conn, id jsonrpc2.ID) {
+func cancelCall(ctx context.Context, conn jsonrpc2.Conn, id jsonrpc2.ID) {
 	ctx = xcontext.Detach(ctx)
 	ctx, done := event.Start(ctx, "protocol.canceller")
 	defer done()

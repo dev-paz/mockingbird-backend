@@ -67,6 +67,11 @@ func (s *Server) codeAction(ctx context.Context, params *protocol.CodeActionPara
 			})
 		}
 	case source.Go:
+		// Don't suggest fixes for generated files, since they are generally
+		// not useful and some editors may apply them automatically on save.
+		if source.IsGenerated(ctx, snapshot, uri) {
+			return nil, nil
+		}
 		diagnostics := params.Context.Diagnostics
 
 		// First, process any missing imports and pair them with the
@@ -138,6 +143,11 @@ func (s *Server) codeAction(ctx context.Context, params *protocol.CodeActionPara
 				})
 			}
 		}
+		fillActions, err := source.FillStruct(ctx, snapshot, fh, params.Range)
+		if err != nil {
+			return nil, err
+		}
+		codeActions = append(codeActions, fillActions...)
 	default:
 		// Unsupported file kind for a code action.
 		return nil, nil

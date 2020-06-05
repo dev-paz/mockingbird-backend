@@ -6,6 +6,7 @@ package lsp
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -25,28 +26,31 @@ type diagnosticKey struct {
 func (s *Server) diagnoseDetached(snapshot source.Snapshot) {
 	ctx := snapshot.View().BackgroundContext()
 	ctx = xcontext.Detach(ctx)
-
-	reports := s.diagnose(ctx, snapshot, false)
+	reports, shows := s.diagnose(ctx, snapshot, false)
+	if shows != nil {
+		// If a view has been created or the configuration changed, warn the user
+		s.client.ShowMessage(ctx, shows)
+	}
 	s.publishReports(ctx, snapshot, reports)
 }
 
 func (s *Server) diagnoseSnapshot(snapshot source.Snapshot) {
 	ctx := snapshot.View().BackgroundContext()
-
-	reports := s.diagnose(ctx, snapshot, false)
+	// Ignore possible workspace configuration warnings in the normal flow
+	reports, _ := s.diagnose(ctx, snapshot, false)
 	s.publishReports(ctx, snapshot, reports)
 }
 
 // diagnose is a helper function for running diagnostics with a given context.
 // Do not call it directly.
-func (s *Server) diagnose(ctx context.Context, snapshot source.Snapshot, alwaysAnalyze bool) map[diagnosticKey][]*source.Diagnostic {
+func (s *Server) diagnose(ctx context.Context, snapshot source.Snapshot, alwaysAnalyze bool) (map[diagnosticKey][]*source.Diagnostic, *protocol.ShowMessageParams) {
 	ctx, done := event.Start(ctx, "lsp:background-worker")
 	defer done()
 
 	// Wait for a free diagnostics slot.
 	select {
 	case <-ctx.Done():
-		return nil
+		return nil, nil
 	case s.diagnosticsSema <- struct{}{}:
 	}
 	defer func() { <-s.diagnosticsSema }()
@@ -61,7 +65,7 @@ func (s *Server) diagnose(ctx context.Context, snapshot source.Snapshot, alwaysA
 		event.Error(ctx, "warning: diagnose go.mod", err, tag.Directory.Of(snapshot.View().Folder().Filename()))
 	}
 	if ctx.Err() != nil {
-		return nil
+		return nil, nil
 	}
 	// Ensure that the reports returned from mod.Diagnostics are only related
 	// to the go.mod file for the module.
@@ -81,10 +85,30 @@ func (s *Server) diagnose(ctx context.Context, snapshot source.Snapshot, alwaysA
 
 	// Diagnose all of the packages in the workspace.
 	wsPackages, err := snapshot.WorkspacePackages(ctx)
-	if err != nil {
+	if err == source.InconsistentVendoring {
+		item, err := s.client.ShowMessageRequest(ctx, &protocol.ShowMessageRequestParams{
+			Type: protocol.Error,
+			Message: `Inconsistent vendoring detected. Please re-run "go mod vendor".
+See https://github.com/golang/go/issues/39164 for more detail on this issue.`,
+			Actions: []protocol.MessageActionItem{
+				{Title: "go mod vendor"},
+			},
+		})
+		if item == nil || err != nil {
+			return nil, nil
+		}
+		if err := s.goModCommand(ctx, protocol.URIFromSpanURI(modURI), "vendor"); err != nil {
+			return nil, &protocol.ShowMessageParams{
+				Type:    protocol.Error,
+				Message: fmt.Sprintf(`"go mod vendor" failed with %v`, err),
+			}
+		}
+		return nil, nil
+	} else if err != nil {
 		event.Error(ctx, "failed to load workspace packages, skipping diagnostics", err, tag.Snapshot.Of(snapshot.ID()), tag.Directory.Of(snapshot.View().Folder()))
-		return nil
+		return nil, nil
 	}
+	var shows *protocol.ShowMessageParams
 	for _, ph := range wsPackages {
 		wg.Add(1)
 		go func(ph source.PackageHandle) {
@@ -98,11 +122,12 @@ func (s *Server) diagnose(ctx context.Context, snapshot source.Snapshot, alwaysA
 			}
 			reports, warn, err := source.Diagnostics(ctx, snapshot, ph, missingModules, withAnalyses)
 			// Check if might want to warn the user about their build configuration.
+			// Our caller decides whether to send the message.
 			if warn && !snapshot.View().ValidBuildConfiguration() {
-				s.client.ShowMessage(ctx, &protocol.ShowMessageParams{
+				shows = &protocol.ShowMessageParams{
 					Type:    protocol.Warning,
 					Message: `You are neither in a module nor in your GOPATH. If you are using modules, please open your editor at the directory containing the go.mod. If you believe this warning is incorrect, please file an issue: https://github.com/golang/go/issues/new.`,
-				})
+				}
 			}
 			if err != nil {
 				event.Error(ctx, "warning: diagnose package", err, tag.Snapshot.Of(snapshot.ID()), tag.Package.Of(ph.ID()))
@@ -120,7 +145,7 @@ func (s *Server) diagnose(ctx context.Context, snapshot source.Snapshot, alwaysA
 		}(ph)
 	}
 	wg.Wait()
-	return allReports
+	return allReports, shows
 }
 
 func (s *Server) publishReports(ctx context.Context, snapshot source.Snapshot, reports map[diagnosticKey][]*source.Diagnostic) {

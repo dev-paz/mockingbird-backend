@@ -297,7 +297,11 @@ func (s *Session) DidModifyFiles(ctx context.Context, changes []source.FileModif
 	if err != nil {
 		return nil, err
 	}
+	forceReloadMetadata := false
 	for _, c := range changes {
+		if c.Action == source.InvalidateMetadata {
+			forceReloadMetadata = true
+		}
 		// Do nothing if the file is open in the editor and we receive
 		// an on-disk action. The editor is the source of truth.
 		if s.isOpen(c.URI) && c.OnDisk {
@@ -330,7 +334,7 @@ func (s *Session) DidModifyFiles(ctx context.Context, changes []source.FileModif
 	}
 	var snapshots []source.Snapshot
 	for view, uris := range views {
-		snapshots = append(snapshots, view.invalidateContent(ctx, uris))
+		snapshots = append(snapshots, view.invalidateContent(ctx, uris, forceReloadMetadata))
 	}
 	return snapshots, nil
 }
@@ -348,8 +352,8 @@ func (s *Session) updateOverlays(ctx context.Context, changes []source.FileModif
 	defer s.overlayMu.Unlock()
 
 	for _, c := range changes {
-		// Don't update overlays for on-disk changes.
-		if c.OnDisk {
+		// Don't update overlays for on-disk changes or metadata invalidations.
+		if c.OnDisk || c.Action == source.InvalidateMetadata {
 			continue
 		}
 
@@ -419,6 +423,7 @@ func (s *Session) updateOverlays(ctx context.Context, changes []source.FileModif
 	return overlays, nil
 }
 
+// GetFile implements the source.FileSystem interface.
 func (s *Session) GetFile(uri span.URI) source.FileHandle {
 	if overlay := s.readOverlay(uri); overlay != nil {
 		return overlay
@@ -435,4 +440,17 @@ func (s *Session) readOverlay(uri span.URI) *overlay {
 		return overlay
 	}
 	return nil
+}
+
+func (s *Session) UnsavedFiles() []span.URI {
+	s.overlayMu.Lock()
+	defer s.overlayMu.Unlock()
+
+	var unsaved []span.URI
+	for uri, overlay := range s.overlays {
+		if !overlay.saved {
+			unsaved = append(unsaved, uri)
+		}
+	}
+	return unsaved
 }

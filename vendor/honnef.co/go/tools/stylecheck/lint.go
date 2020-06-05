@@ -1,4 +1,4 @@
-package stylecheck // import "honnef.co/go/tools/stylecheck"
+package stylecheck
 
 import (
 	"fmt"
@@ -12,14 +12,14 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"honnef.co/go/tools/code"
+	"honnef.co/go/tools/analysis/code"
+	"honnef.co/go/tools/analysis/edit"
+	"honnef.co/go/tools/analysis/lint"
+	"honnef.co/go/tools/analysis/report"
 	"honnef.co/go/tools/config"
-	"honnef.co/go/tools/edit"
+	"honnef.co/go/tools/go/ir"
 	"honnef.co/go/tools/internal/passes/buildir"
-	"honnef.co/go/tools/ir"
-	. "honnef.co/go/tools/lint/lintdsl"
 	"honnef.co/go/tools/pattern"
-	"honnef.co/go/tools/report"
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -50,7 +50,6 @@ func CheckPackageComment(pass *analysis.Pass) (interface{}, error) {
 			if !strings.HasPrefix(strings.TrimSpace(f.Doc.Text()), prefix) {
 				report.Report(pass, f.Doc, fmt.Sprintf(`package comment should be of the form "%s..."`, prefix))
 			}
-			f.Doc.Text()
 		}
 	}
 
@@ -233,7 +232,7 @@ fnLoop:
 // types do not return unexported types.
 func CheckUnexportedReturn(pass *analysis.Pass) (interface{}, error) {
 	for _, fn := range pass.ResultOf[buildir.Analyzer].(*buildir.IR).SrcFuncs {
-		if fn.Synthetic != "" || fn.Parent() != nil {
+		if fn.Synthetic != 0 || fn.Parent() != nil {
 			continue
 		}
 		if !ast.IsExported(fn.Name()) || code.IsMain(pass) || code.IsInTest(pass, fn) {
@@ -325,7 +324,7 @@ func CheckContextFirstArg(pass *analysis.Pass) (interface{}, error) {
 	// 	func helperCommandContext(t *testing.T, ctx context.Context, s ...string) (cmd *exec.Cmd) {
 fnLoop:
 	for _, fn := range pass.ResultOf[buildir.Analyzer].(*buildir.IR).SrcFuncs {
-		if fn.Synthetic != "" || fn.Parent() != nil {
+		if fn.Synthetic != 0 || fn.Parent() != nil {
 			continue
 		}
 		params := fn.Signature.Params()
@@ -410,6 +409,10 @@ func CheckErrorStrings(pass *analysis.Pass) (interface{}, error) {
 					}
 				}
 
+				if strings.ContainsRune(word, '(') {
+					// Might be a function call
+					continue instrLoop
+				}
 				word = strings.TrimRightFunc(word, func(r rune) bool { return unicode.IsPunct(r) })
 				if objNames[fn.Package()][word] {
 					// Word is probably the name of a function or type in this package
@@ -648,7 +651,7 @@ var (
 
 func CheckYodaConditions(pass *analysis.Pass) (interface{}, error) {
 	fn := func(node ast.Node) {
-		if _, edits, ok := MatchAndEdit(pass, checkYodaConditionsQ, checkYodaConditionsR, node); ok {
+		if _, edits, ok := code.MatchAndEdit(pass, checkYodaConditionsQ, checkYodaConditionsR, node); ok {
 			report.Report(pass, node, "don't use Yoda conditions",
 				report.FilterGenerated(),
 				report.Fixes(edit.Fix("un-Yoda-fy", edits...)))
@@ -785,7 +788,7 @@ func CheckExportedFunctionDocs(pass *analysis.Pass) (interface{}, error) {
 					return
 				}
 			default:
-				ExhaustiveTypeSwitch(T)
+				lint.ExhaustiveTypeSwitch(T)
 			}
 		}
 		prefix := decl.Name.Name + " "
@@ -853,7 +856,7 @@ func CheckExportedTypeDocs(pass *analysis.Pass) (interface{}, error) {
 		case *ast.FuncLit, *ast.FuncDecl:
 			return false
 		default:
-			ExhaustiveTypeSwitch(node)
+			lint.ExhaustiveTypeSwitch(node)
 			return false
 		}
 	}
@@ -904,7 +907,7 @@ func CheckExportedVarDocs(pass *analysis.Pass) (interface{}, error) {
 		case *ast.FuncLit, *ast.FuncDecl:
 			return false
 		default:
-			ExhaustiveTypeSwitch(node)
+			lint.ExhaustiveTypeSwitch(node)
 			return false
 		}
 	}

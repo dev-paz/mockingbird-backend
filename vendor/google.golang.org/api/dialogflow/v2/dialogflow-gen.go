@@ -332,7 +332,706 @@ type ProjectsOperationsService struct {
 	s *Service
 }
 
-// GoogleCloudDialogflowV2Agent: Represents a conversational agent.
+// GoogleCloudDialogflowCxV3beta1ExportAgentResponse: The response
+// message for Agents.ExportAgent.
+type GoogleCloudDialogflowCxV3beta1ExportAgentResponse struct {
+	// AgentContent: Uncompressed raw byte content for agent.
+	AgentContent string `json:"agentContent,omitempty"`
+
+	// AgentUri: The URI to a file containing the exported agent. This field
+	// is populated
+	// only if `agent_uri` is specified in ExportAgentRequest.
+	AgentUri string `json:"agentUri,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "AgentContent") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "AgentContent") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1ExportAgentResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1ExportAgentResponse
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1PageInfo: Represents page information
+// communicated to and from the webhook.
+type GoogleCloudDialogflowCxV3beta1PageInfo struct {
+	// CurrentPage: Always present for WebhookRequest. Ignored for
+	// WebhookResponse.
+	// The unique identifier of the current page.
+	// Format: `projects/<Project ID>/locations/<Location
+	// ID>/agents/<Agent
+	// ID>/flows/<Flow ID>/pages/<Page ID>`.
+	CurrentPage string `json:"currentPage,omitempty"`
+
+	// FormInfo: Optional for both WebhookRequest and
+	// WebhookResponse.
+	// Information about the form.
+	FormInfo *GoogleCloudDialogflowCxV3beta1PageInfoFormInfo `json:"formInfo,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "CurrentPage") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "CurrentPage") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1PageInfo) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1PageInfo
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1PageInfoFormInfo: Represents form
+// information.
+type GoogleCloudDialogflowCxV3beta1PageInfoFormInfo struct {
+	// ParameterInfo: Optional for both WebhookRequest and
+	// WebhookResponse.
+	// The parameters contained in the form. Note that the webhook cannot
+	// add
+	// or remove any form parameter.
+	ParameterInfo []*GoogleCloudDialogflowCxV3beta1PageInfoFormInfoParameterInfo `json:"parameterInfo,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "ParameterInfo") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "ParameterInfo") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1PageInfoFormInfo) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1PageInfoFormInfo
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1PageInfoFormInfoParameterInfo:
+// Represents parameter information.
+type GoogleCloudDialogflowCxV3beta1PageInfoFormInfoParameterInfo struct {
+	// DisplayName: Always present for WebhookRequest. Required
+	// for
+	// WebhookResponse.
+	// The human-readable name of the parameter, unique within the form.
+	// This
+	// field cannot be modified by the webhook.
+	DisplayName string `json:"displayName,omitempty"`
+
+	// JustCollected: Optional for WebhookRequest. Ignored for
+	// WebhookResponse.
+	// Indicates if the parameter value was just collected on the
+	// last
+	// conversation turn.
+	JustCollected bool `json:"justCollected,omitempty"`
+
+	// Required: Optional for both WebhookRequest and
+	// WebhookResponse.
+	// Indicates whether the parameter is required. Optional parameters
+	// will
+	// not trigger prompts; however, they are filled if the user
+	// specifies
+	// them. Required parameters must be filled before form filling
+	// concludes.
+	Required bool `json:"required,omitempty"`
+
+	// State: Always present for WebhookRequest. Required
+	// for
+	// WebhookResponse. The state of the parameter. This field can be set
+	// to INVALID by
+	// the webhook to invalidate the parameter; other values set by
+	// the
+	// webhook will be ignored.
+	//
+	// Possible values:
+	//   "PARAMETER_STATE_UNSPECIFIED" - Not specified. This value should be
+	// never used.
+	//   "EMPTY" - Indicates that the parameter does not have a value.
+	//   "INVALID" - Indicates that the parameter value is invalid. This
+	// field can be used
+	// by the webhook to invalidate the parameter and ask the server
+	// to
+	// collect it from the user again.
+	//   "FILLED" - Indicates that the parameter has a value.
+	State string `json:"state,omitempty"`
+
+	// Value: Optional for both WebhookRequest and WebhookResponse.
+	// The value of the parameter. This field can be set by the webhook
+	// to
+	// change the parameter value.
+	Value interface{} `json:"value,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "DisplayName") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "DisplayName") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1PageInfoFormInfoParameterInfo) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1PageInfoFormInfoParameterInfo
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1ResponseMessage: Represents a response
+// message that can be returned by a conversational agent.
+//
+// Response messages are also used for output audio synthesis. The
+// approach is
+// as follows:
+//
+// * If at least one OutputAudioText response is present, then all
+//   OutputAudioText responses are linearly concatenated, and the result
+// is used
+//   for output audio synthesis.
+// * If the OutputAudioText responses are a mixture of text and SSML,
+// then the
+//   concatenated result is treated as SSML; otherwise, the result is
+// treated as
+//   either text or SSML as appropriate. The agent designer should
+// ideally use
+//   either text or SSML consistently throughout the bot design.
+// * Otherwise, all Text responses are linearly concatenated, and the
+// result is
+//   used for output audio synthesis.
+//
+// This approach allows for more sophisticated user experience
+// scenarios, where
+// the text displayed to the user may differ from what is heard.
+type GoogleCloudDialogflowCxV3beta1ResponseMessage struct {
+	// ConversationSuccess: Indicates that the conversation succeeded.
+	ConversationSuccess *GoogleCloudDialogflowCxV3beta1ResponseMessageConversationSuccess `json:"conversationSuccess,omitempty"`
+
+	// HumanAgentHandoff: Hands off conversation to a human agent.
+	HumanAgentHandoff *GoogleCloudDialogflowCxV3beta1ResponseMessageHumanAgentHandoff `json:"humanAgentHandoff,omitempty"`
+
+	// Payload: Returns a response containing a custom, platform-specific
+	// payload.
+	Payload googleapi.RawMessage `json:"payload,omitempty"`
+
+	// Text: Returns a text response.
+	Text *GoogleCloudDialogflowCxV3beta1ResponseMessageText `json:"text,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "ConversationSuccess")
+	// to unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "ConversationSuccess") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1ResponseMessage) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1ResponseMessage
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1ResponseMessageConversationSuccess:
+// Indicates that the conversation succeeded, i.e., the bot handled the
+// issue
+// that the customer talked to it about.
+//
+// Dialogflow only uses this to determine which conversations should
+// be
+// counted as successful and doesn't process the metadata in this
+// message in
+// any way. Note that Dialogflow also considers conversations that get
+// to the
+// conversation end page as successful even if they don't
+// return
+// ConversationSuccess.
+//
+// You may set this, for example:
+// * In the entry_fulfillment of a Page if
+//   entering the page indicates that the conversation succeeded.
+// * In a webhook response when you determine that you handled the
+// customer
+//   issue.
+type GoogleCloudDialogflowCxV3beta1ResponseMessageConversationSuccess struct {
+	// Metadata: Custom metadata. Dialogflow doesn't impose any structure on
+	// this.
+	Metadata googleapi.RawMessage `json:"metadata,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Metadata") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Metadata") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1ResponseMessageConversationSuccess) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1ResponseMessageConversationSuccess
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1ResponseMessageHumanAgentHandoff:
+// Indicates that the conversation should be handed off to a human
+// agent.
+//
+// Dialogflow only uses this to determine which conversations were
+// handed off
+// to a human agent for measurement purposes. What else to do with this
+// signal
+// is up to you and your handoff procedures.
+//
+// You may set this, for example:
+// * In the entry_fulfillment of a Page if
+//   entering the page indicates something went extremely wrong in the
+//   conversation.
+// * In a webhook response when you determine that the customer issue
+// can only
+//   be handled by a human.
+type GoogleCloudDialogflowCxV3beta1ResponseMessageHumanAgentHandoff struct {
+	// Metadata: Custom metadata for your handoff procedure. Dialogflow
+	// doesn't impose
+	// any structure on this.
+	Metadata googleapi.RawMessage `json:"metadata,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Metadata") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Metadata") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1ResponseMessageHumanAgentHandoff) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1ResponseMessageHumanAgentHandoff
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1ResponseMessageText: The text response
+// message.
+type GoogleCloudDialogflowCxV3beta1ResponseMessageText struct {
+	// Text: A collection of text responses.
+	Text []string `json:"text,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Text") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Text") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1ResponseMessageText) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1ResponseMessageText
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1SessionInfo: Represents session
+// information communicated to and from the webhook.
+type GoogleCloudDialogflowCxV3beta1SessionInfo struct {
+	// Parameters: Optional for WebhookRequest. Optional for
+	// WebhookResponse.
+	// All parameters collected from forms and intents during the
+	// session.
+	// Parameters can be created, updated, or removed by the webhook. To
+	// remove a
+	// parameter from the session, the webhook should explicitly set the
+	// parameter
+	// value to null in WebhookResponse. The map is keyed by
+	// parameters'
+	// display names.
+	Parameters googleapi.RawMessage `json:"parameters,omitempty"`
+
+	// Session: Always present for WebhookRequest. Ignored for
+	// WebhookResponse.
+	// The unique identifier of the session. This
+	// field can be used by the webhook to identify a user.
+	// Format: `projects/<Project ID>/locations/<Location
+	// ID>/agents/<Agent
+	// ID>/sessions/<Session ID>`.
+	Session string `json:"session,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Parameters") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Parameters") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1SessionInfo) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1SessionInfo
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1WebhookRequest: The request message for
+// a webhook call.
+type GoogleCloudDialogflowCxV3beta1WebhookRequest struct {
+	// DetectIntentResponseId: Always present. The unique identifier of the
+	// DetectIntentResponse that
+	// will be returned to the API caller.
+	DetectIntentResponseId string `json:"detectIntentResponseId,omitempty"`
+
+	// FulfillmentInfo: Always present. Information about the fulfillment
+	// that triggered this
+	// webhook call.
+	FulfillmentInfo *GoogleCloudDialogflowCxV3beta1WebhookRequestFulfillmentInfo `json:"fulfillmentInfo,omitempty"`
+
+	// IntentInfo: Information about the last matched intent.
+	IntentInfo *GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfo `json:"intentInfo,omitempty"`
+
+	// Messages: The list of rich message responses to present to the user.
+	// Webhook can
+	// choose to append or replace this list
+	// in
+	// WebhookResponse.fulfillment_response;
+	Messages []*GoogleCloudDialogflowCxV3beta1ResponseMessage `json:"messages,omitempty"`
+
+	// PageInfo: Information about page status.
+	PageInfo *GoogleCloudDialogflowCxV3beta1PageInfo `json:"pageInfo,omitempty"`
+
+	// Payload: Custom data set in QueryParameters.payload.
+	Payload googleapi.RawMessage `json:"payload,omitempty"`
+
+	// SessionInfo: Information about session status.
+	SessionInfo *GoogleCloudDialogflowCxV3beta1SessionInfo `json:"sessionInfo,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g.
+	// "DetectIntentResponseId") to unconditionally include in API requests.
+	// By default, fields with empty values are omitted from API requests.
+	// However, any non-pointer, non-interface field appearing in
+	// ForceSendFields will be sent to the server regardless of whether the
+	// field is empty or not. This may be used to include empty fields in
+	// Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "DetectIntentResponseId")
+	// to include in API requests with the JSON null value. By default,
+	// fields with empty values are omitted from API requests. However, any
+	// field with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1WebhookRequest) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1WebhookRequest
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1WebhookRequestFulfillmentInfo:
+// Represents fulfillment information communicated to the webhook.
+type GoogleCloudDialogflowCxV3beta1WebhookRequestFulfillmentInfo struct {
+	// Tag: Always present. The tag used to identify which fulfillment is
+	// being
+	// called.
+	Tag string `json:"tag,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Tag") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Tag") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1WebhookRequestFulfillmentInfo) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1WebhookRequestFulfillmentInfo
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfo: Represents
+// intent information communicated to the webhook.
+type GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfo struct {
+	// LastMatchedIntent: Always present. The unique identifier of the last
+	// matched
+	// intent. Format: `projects/<Project
+	// ID>/locations/<Location
+	// ID>/agents/<Agent ID>/intents/<Intent ID>`.
+	LastMatchedIntent string `json:"lastMatchedIntent,omitempty"`
+
+	// Parameters: Parameters identified as a result of intent matching.
+	// This is a map of
+	// the name of the identified parameter to the value of the
+	// parameter
+	// identified from the user's utterance. All parameters defined in
+	// the
+	// matched intent that are identified will be surfaced here.
+	Parameters map[string]GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfoIntentParameterValue `json:"parameters,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "LastMatchedIntent")
+	// to unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "LastMatchedIntent") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfo) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfo
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfoIntentParameterV
+// alue: Represents a value for an intent parameter.
+type GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfoIntentParameterValue struct {
+	// OriginalValue: Always present. Original text value extracted from
+	// user utterance.
+	OriginalValue string `json:"originalValue,omitempty"`
+
+	// ResolvedValue: Always present. Structured value for the parameter
+	// extracted from user
+	// utterance.
+	ResolvedValue interface{} `json:"resolvedValue,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "OriginalValue") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "OriginalValue") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfoIntentParameterValue) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1WebhookRequestIntentInfoIntentParameterValue
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1WebhookResponse: The response message
+// for a webhook call.
+type GoogleCloudDialogflowCxV3beta1WebhookResponse struct {
+	// FulfillmentResponse: The fulfillment response to send to the user.
+	// This field can be omitted by
+	// the webhook if it does not intend to send any response to the user.
+	FulfillmentResponse *GoogleCloudDialogflowCxV3beta1WebhookResponseFulfillmentResponse `json:"fulfillmentResponse,omitempty"`
+
+	// PageInfo: Information about page status. This field can be omitted by
+	// the webhook if
+	// it does not intend to modify page status.
+	PageInfo *GoogleCloudDialogflowCxV3beta1PageInfo `json:"pageInfo,omitempty"`
+
+	// Payload: Value to append directly to QueryResult.webhook_payloads.
+	Payload googleapi.RawMessage `json:"payload,omitempty"`
+
+	// SessionInfo: Information about session status. This field can be
+	// omitted by the webhook
+	// if it does not intend to modify session status.
+	SessionInfo *GoogleCloudDialogflowCxV3beta1SessionInfo `json:"sessionInfo,omitempty"`
+
+	// TargetFlow: The target flow to transition to.
+	// Format: `projects/<Project ID>/locations/<Location
+	// ID>/agents/<Agent
+	// ID>/flows/<Flow ID>`.
+	TargetFlow string `json:"targetFlow,omitempty"`
+
+	// TargetPage: The target page to transition to.
+	// Format: `projects/<Project ID>/locations/<Location
+	// ID>/agents/<Agent
+	// ID>/flows/<Flow ID>/pages/<Page ID>`.
+	TargetPage string `json:"targetPage,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "FulfillmentResponse")
+	// to unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "FulfillmentResponse") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1WebhookResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1WebhookResponse
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowCxV3beta1WebhookResponseFulfillmentResponse:
+// Represents a fulfillment response to the user.
+type GoogleCloudDialogflowCxV3beta1WebhookResponseFulfillmentResponse struct {
+	// MergeBehavior: Merge behavior for `messages`.
+	//
+	// Possible values:
+	//   "MERGE_BEHAVIOR_UNSPECIFIED" - Not specified. `APPEND` will be
+	// used.
+	//   "APPEND" - `messages` will be appended to the list of messages
+	// waiting to be sent
+	// to the user.
+	//   "REPLACE" - `messages` will replace the list of messages waiting to
+	// be sent to the
+	// user.
+	MergeBehavior string `json:"mergeBehavior,omitempty"`
+
+	// Messages: The list of rich message responses to present to the user.
+	Messages []*GoogleCloudDialogflowCxV3beta1ResponseMessage `json:"messages,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "MergeBehavior") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "MergeBehavior") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowCxV3beta1WebhookResponseFulfillmentResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowCxV3beta1WebhookResponseFulfillmentResponse
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowV2Agent: A Dialogflow agent is a virtual agent
+// that handles conversations with your
+// end-users. It is a natural language understanding module that
+// understands the
+// nuances of human language. Dialogflow translates end-user text or
+// audio
+// during a conversation to structured data that your apps and services
+// can
+// understand. You design and build a Dialogflow agent to handle the
+// types of
+// conversations required for your system.
+//
+// For more information about agents, see
+// the
+// [Agents
+// documentation](https://cloud.google.com/dialogflow/docs/ag
+// ents-overview).
 type GoogleCloudDialogflowV2Agent struct {
 	// ApiVersion: Optional. API version displayed in Dialogflow console. If
 	// not specified,
@@ -1124,6 +1823,12 @@ type GoogleCloudDialogflowV2DetectIntentResponse struct {
 	// generating audio. If no default platform text responses exist,
 	// the
 	// generated audio content will be empty.
+	//
+	// In some scenarios, multiple output audio fields may be present in
+	// the
+	// response structure. In these cases, only the top-most-level audio
+	// output
+	// has content.
 	OutputAudio string `json:"outputAudio,omitempty"`
 
 	// OutputAudioConfig: The config used by the speech synthesizer to
@@ -1629,6 +2334,7 @@ type GoogleCloudDialogflowV2FulfillmentGenericWebService struct {
 	RequestHeaders map[string]string `json:"requestHeaders,omitempty"`
 
 	// Uri: Required. The fulfillment URI for receiving POST requests.
+	// It must use https protocol.
 	Uri string `json:"uri,omitempty"`
 
 	// Username: Optional. The user name for HTTP Basic authentication.
@@ -3282,6 +3988,7 @@ type GoogleCloudDialogflowV2IntentParameter struct {
 	Prompts []string `json:"prompts,omitempty"`
 
 	// Value: Optional. The definition of the parameter value. It can be:
+	//
 	// - a constant string,
 	// - a parameter value defined as `$parameter_name`,
 	// - an original parameter value defined as
@@ -4445,7 +5152,9 @@ func (s *GoogleCloudDialogflowV2SessionEntityType) MarshalJSON() ([]byte, error)
 // to help with recognition in a specific
 // conversation state.
 type GoogleCloudDialogflowV2SpeechContext struct {
-	// Boost: Optional. Boost for this context compared to other contexts:
+	// Boost: Optional. Boost for this context compared to other
+	// contexts:
+	//
 	// * If the boost is positive, Dialogflow will increase the probability
 	// that
 	//   the phrases in this context are recognized over similar sounding
@@ -4871,35 +5580,44 @@ func (s *GoogleCloudDialogflowV2WebhookRequest) MarshalJSON() ([]byte, error) {
 // Guide](https://developers.google.com/protocol-buffers/docs/pr
 // oto3#json).
 type GoogleCloudDialogflowV2WebhookResponse struct {
-	// FollowupEventInput: Optional. Makes the platform immediately invoke
-	// another `DetectIntent` call
-	// internally with the specified event as input.
+	// FollowupEventInput: Optional. Invokes the supplied events.
 	// When this field is set, Dialogflow ignores the
 	// `fulfillment_text`,
 	// `fulfillment_messages`, and `payload` fields.
 	FollowupEventInput *GoogleCloudDialogflowV2EventInput `json:"followupEventInput,omitempty"`
 
-	// FulfillmentMessages: Optional. The collection of rich messages to
-	// present to the user. This
-	// value is passed directly to `QueryResult.fulfillment_messages`.
+	// FulfillmentMessages: Optional. The rich response messages intended
+	// for the end-user.
+	// When provided, Dialogflow uses this field to
+	// populate
+	// QueryResult.fulfillment_messages sent to the integration or API
+	// caller.
 	FulfillmentMessages []*GoogleCloudDialogflowV2IntentMessage `json:"fulfillmentMessages,omitempty"`
 
-	// FulfillmentText: Optional. The text to be shown on the screen. This
-	// value is passed directly
-	// to `QueryResult.fulfillment_text`.
+	// FulfillmentText: Optional. The text response message intended for the
+	// end-user.
+	// It is recommended to use `fulfillment_messages.text.text[0]`
+	// instead.
+	// When provided, Dialogflow uses this field to
+	// populate
+	// QueryResult.fulfillment_text sent to the integration or API caller.
 	FulfillmentText string `json:"fulfillmentText,omitempty"`
 
-	// OutputContexts: Optional. The collection of output contexts. This
-	// value is passed directly
-	// to `QueryResult.output_contexts`.
+	// OutputContexts: Optional. The collection of output contexts that will
+	// overwrite currently
+	// active contexts for the session and reset their lifespans.
+	// When provided, Dialogflow uses this field to
+	// populate
+	// QueryResult.output_contexts sent to the integration or API caller.
 	OutputContexts []*GoogleCloudDialogflowV2Context `json:"outputContexts,omitempty"`
 
 	// Payload: Optional. This field can be used to pass custom data from
-	// your webhook to the API
-	// caller. Arbitrary JSON objects are supported.
+	// your webhook to the
+	// integration or API caller. Arbitrary JSON objects are supported.
 	// When provided, Dialogflow uses this field to
 	// populate
-	// `QueryResult.webhook_payload` sent to the API caller.
+	// QueryResult.webhook_payload sent to the integration or API
+	// caller.
 	// This field is also used by the
 	// [Google
 	// Assistant
@@ -4916,15 +5634,18 @@ type GoogleCloudDialogflowV2WebhookResponse struct {
 	// replace or extend developer
 	// entity types with. The entity synonyms apply to all languages and
 	// persist
-	// for the session of this query. Setting the session entity types
-	// inside
-	// webhook overwrites the session entity types that have been set
-	// through
-	// `DetectIntentRequest.query_params.session_entity_types`.
+	// for the session. Setting this data from a webhook overwrites
+	// the session entity types that have been set using
+	// `detectIntent`,
+	// `streamingDetectIntent` or SessionEntityType management methods.
 	SessionEntityTypes []*GoogleCloudDialogflowV2SessionEntityType `json:"sessionEntityTypes,omitempty"`
 
-	// Source: Optional. This value is passed directly to
-	// `QueryResult.webhook_source`.
+	// Source: Optional. A custom field used to identify the webhook
+	// source.
+	// Arbitrary strings are supported.
+	// When provided, Dialogflow uses this field to
+	// populate
+	// QueryResult.webhook_source sent to the integration or API caller.
 	Source string `json:"source,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "FollowupEventInput")
@@ -5450,8 +6171,8 @@ type GoogleCloudDialogflowV2beta1Intent struct {
 	// Event names are limited to 150 characters.
 	Events []string `json:"events,omitempty"`
 
-	// FollowupIntentInfo: Read-only. Information about all followup intents
-	// that have this intent as
+	// FollowupIntentInfo: Output only. Information about all followup
+	// intents that have this intent as
 	// a direct or indirect parent. We populate this field only in the
 	// output.
 	FollowupIntentInfo []*GoogleCloudDialogflowV2beta1IntentFollowupIntentInfo `json:"followupIntentInfo,omitempty"`
@@ -5497,7 +6218,7 @@ type GoogleCloudDialogflowV2beta1Intent struct {
 	//   ml_enabled = true / ml_disabled = false.
 	MlEnabled bool `json:"mlEnabled,omitempty"`
 
-	// Name: The unique identifier of this intent.
+	// Name: Optional. The unique identifier of this intent.
 	// Required for Intents.UpdateIntent and
 	// Intents.BatchUpdateIntents
 	// methods.
@@ -5519,8 +6240,8 @@ type GoogleCloudDialogflowV2beta1Intent struct {
 	// the intent.
 	Parameters []*GoogleCloudDialogflowV2beta1IntentParameter `json:"parameters,omitempty"`
 
-	// ParentFollowupIntentName: Read-only after creation. The unique
-	// identifier of the parent intent in the
+	// ParentFollowupIntentName: Optional. The unique identifier of the
+	// parent intent in the
 	// chain of followup intents. You can set this field when creating an
 	// intent,
 	// for example with CreateIntent or
@@ -5531,8 +6252,8 @@ type GoogleCloudDialogflowV2beta1Intent struct {
 	// Format: `projects/<Project ID>/agent/intents/<Intent ID>`.
 	ParentFollowupIntentName string `json:"parentFollowupIntentName,omitempty"`
 
-	// Priority: The priority of this intent. Higher numbers represent
-	// higher
+	// Priority: Optional. The priority of this intent. Higher numbers
+	// represent higher
 	// priorities.
 	//
 	// - If the supplied value is unspecified or 0, the service
@@ -5547,11 +6268,11 @@ type GoogleCloudDialogflowV2beta1Intent struct {
 	// session when this intent is matched.
 	ResetContexts bool `json:"resetContexts,omitempty"`
 
-	// RootFollowupIntentName: Read-only. The unique identifier of the root
-	// intent in the chain of
+	// RootFollowupIntentName: Output only. The unique identifier of the
+	// root intent in the chain of
 	// followup intents. It identifies the correct followup intents chain
 	// for
-	// this intent. We populate this field only in the output.
+	// this intent.
 	//
 	// Format: `projects/<Project ID>/agent/intents/<Intent ID>`.
 	RootFollowupIntentName string `json:"rootFollowupIntentName,omitempty"`
@@ -6574,8 +7295,8 @@ func (s *GoogleCloudDialogflowV2beta1IntentMessageRbmCardContentRbmMedia) Marsha
 //
 // For more details about RBM rich cards, please
 // see:
-// https://developers.google.com/rcs-business-messaging/rbm/guides/b
-// uild/send-messages#rich-cards.
+// https://developers.google.com/business-communications/rcs-busines
+// s-messaging/guides/build/messages/send#rich-cards
 // If you want to show a single card with more control over the
 // layout,
 // please use RbmStandaloneCard instead.
@@ -6625,8 +7346,8 @@ func (s *GoogleCloudDialogflowV2beta1IntentMessageRbmCarouselCard) MarshalJSON()
 //
 // For more details about RBM rich cards, please
 // see:
-// https://developers.google.com/rcs-business-messaging/rbm/guides/b
-// uild/send-messages#rich-cards.
+// https://developers.google.com/business-communications/rcs-busines
+// s-messaging/guides/build/messages/send#rich-cards
 // You can group multiple rich cards into one using RbmCarouselCard
 // but
 // carousel cards will give you less control over the card layout.
@@ -7375,6 +8096,7 @@ type GoogleCloudDialogflowV2beta1IntentParameter struct {
 	Prompts []string `json:"prompts,omitempty"`
 
 	// Value: Optional. The definition of the parameter value. It can be:
+	//
 	// - a constant string,
 	// - a parameter value defined as `$parameter_name`,
 	// - an original parameter value defined as
@@ -7663,7 +8385,7 @@ func (s *GoogleCloudDialogflowV2beta1KnowledgeAnswersAnswer) UnmarshalJSON(data 
 // GoogleCloudDialogflowV2beta1KnowledgeOperationMetadata: Metadata in
 // google::longrunning::Operation for Knowledge operations.
 type GoogleCloudDialogflowV2beta1KnowledgeOperationMetadata struct {
-	// State: Required. The current state of this operation.
+	// State: Required. Output only. The current state of this operation.
 	//
 	// Possible values:
 	//   "STATE_UNSPECIFIED" - State unspecified.
@@ -8224,35 +8946,44 @@ type GoogleCloudDialogflowV2beta1WebhookResponse struct {
 	// to close interaction with an end user. Default is false.
 	EndInteraction bool `json:"endInteraction,omitempty"`
 
-	// FollowupEventInput: Optional. Makes the platform immediately invoke
-	// another `DetectIntent` call
-	// internally with the specified event as input.
+	// FollowupEventInput: Optional. Invokes the supplied events.
 	// When this field is set, Dialogflow ignores the
 	// `fulfillment_text`,
 	// `fulfillment_messages`, and `payload` fields.
 	FollowupEventInput *GoogleCloudDialogflowV2beta1EventInput `json:"followupEventInput,omitempty"`
 
-	// FulfillmentMessages: Optional. The collection of rich messages to
-	// present to the user. This
-	// value is passed directly to `QueryResult.fulfillment_messages`.
+	// FulfillmentMessages: Optional. The rich response messages intended
+	// for the end-user.
+	// When provided, Dialogflow uses this field to
+	// populate
+	// QueryResult.fulfillment_messages sent to the integration or API
+	// caller.
 	FulfillmentMessages []*GoogleCloudDialogflowV2beta1IntentMessage `json:"fulfillmentMessages,omitempty"`
 
-	// FulfillmentText: Optional. The text to be shown on the screen. This
-	// value is passed directly
-	// to `QueryResult.fulfillment_text`.
+	// FulfillmentText: Optional. The text response message intended for the
+	// end-user.
+	// It is recommended to use `fulfillment_messages.text.text[0]`
+	// instead.
+	// When provided, Dialogflow uses this field to
+	// populate
+	// QueryResult.fulfillment_text sent to the integration or API caller.
 	FulfillmentText string `json:"fulfillmentText,omitempty"`
 
-	// OutputContexts: Optional. The collection of output contexts. This
-	// value is passed directly
-	// to `QueryResult.output_contexts`.
+	// OutputContexts: Optional. The collection of output contexts that will
+	// overwrite currently
+	// active contexts for the session and reset their lifespans.
+	// When provided, Dialogflow uses this field to
+	// populate
+	// QueryResult.output_contexts sent to the integration or API caller.
 	OutputContexts []*GoogleCloudDialogflowV2beta1Context `json:"outputContexts,omitempty"`
 
 	// Payload: Optional. This field can be used to pass custom data from
-	// your webhook to the API
-	// caller. Arbitrary JSON objects are supported.
+	// your webhook to the
+	// integration or API caller. Arbitrary JSON objects are supported.
 	// When provided, Dialogflow uses this field to
 	// populate
-	// `QueryResult.webhook_payload` sent to the API caller.
+	// QueryResult.webhook_payload sent to the integration or API
+	// caller.
 	// This field is also used by the
 	// [Google
 	// Assistant
@@ -8269,15 +9000,18 @@ type GoogleCloudDialogflowV2beta1WebhookResponse struct {
 	// replace or extend developer
 	// entity types with. The entity synonyms apply to all languages and
 	// persist
-	// for the session of this query. Setting the session entity types
-	// inside
-	// webhook overwrites the session entity types that have been set
-	// through
-	// `DetectIntentRequest.query_params.session_entity_types`.
+	// for the session. Setting this data from a webhook overwrites
+	// the session entity types that have been set using
+	// `detectIntent`,
+	// `streamingDetectIntent` or SessionEntityType management methods.
 	SessionEntityTypes []*GoogleCloudDialogflowV2beta1SessionEntityType `json:"sessionEntityTypes,omitempty"`
 
-	// Source: Optional. This value is passed directly to
-	// `QueryResult.webhook_source`.
+	// Source: Optional. A custom field used to identify the webhook
+	// source.
+	// Arbitrary strings are supported.
+	// When provided, Dialogflow uses this field to
+	// populate
+	// QueryResult.webhook_source sent to the integration or API caller.
 	Source string `json:"source,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "EndInteraction") to
@@ -8300,6 +9034,40 @@ type GoogleCloudDialogflowV2beta1WebhookResponse struct {
 
 func (s *GoogleCloudDialogflowV2beta1WebhookResponse) MarshalJSON() ([]byte, error) {
 	type NoMethod GoogleCloudDialogflowV2beta1WebhookResponse
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// GoogleCloudDialogflowV3alpha1ExportAgentResponse: The response
+// message for Agents.ExportAgent.
+type GoogleCloudDialogflowV3alpha1ExportAgentResponse struct {
+	// AgentContent: Uncompressed raw byte content for agent.
+	AgentContent string `json:"agentContent,omitempty"`
+
+	// AgentUri: The URI to a file containing the exported agent. This field
+	// is populated
+	// only if `agent_uri` is specified in ExportAgentRequest.
+	AgentUri string `json:"agentUri,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "AgentContent") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "AgentContent") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *GoogleCloudDialogflowV3alpha1ExportAgentResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod GoogleCloudDialogflowV3alpha1ExportAgentResponse
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -8588,7 +9356,7 @@ func (c *ProjectsDeleteAgentCall) Header() http.Header {
 
 func (c *ProjectsDeleteAgentCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8730,7 +9498,7 @@ func (c *ProjectsGetAgentCall) Header() http.Header {
 
 func (c *ProjectsGetAgentCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8873,7 +9641,7 @@ func (c *ProjectsSetAgentCall) Header() http.Header {
 
 func (c *ProjectsSetAgentCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9022,7 +9790,7 @@ func (c *ProjectsAgentExportCall) Header() http.Header {
 
 func (c *ProjectsAgentExportCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9172,7 +9940,7 @@ func (c *ProjectsAgentGetFulfillmentCall) Header() http.Header {
 
 func (c *ProjectsAgentGetFulfillmentCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9335,7 +10103,7 @@ func (c *ProjectsAgentGetValidationResultCall) Header() http.Header {
 
 func (c *ProjectsAgentGetValidationResultCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9485,7 +10253,7 @@ func (c *ProjectsAgentImportCall) Header() http.Header {
 
 func (c *ProjectsAgentImportCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9632,7 +10400,7 @@ func (c *ProjectsAgentRestoreCall) Header() http.Header {
 
 func (c *ProjectsAgentRestoreCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9808,7 +10576,7 @@ func (c *ProjectsAgentSearchCall) Header() http.Header {
 
 func (c *ProjectsAgentSearchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9980,7 +10748,7 @@ func (c *ProjectsAgentTrainCall) Header() http.Header {
 
 func (c *ProjectsAgentTrainCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10129,7 +10897,7 @@ func (c *ProjectsAgentUpdateFulfillmentCall) Header() http.Header {
 
 func (c *ProjectsAgentUpdateFulfillmentCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10279,7 +11047,7 @@ func (c *ProjectsAgentEntityTypesBatchDeleteCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesBatchDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10423,7 +11191,7 @@ func (c *ProjectsAgentEntityTypesBatchUpdateCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesBatchUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10577,7 +11345,7 @@ func (c *ProjectsAgentEntityTypesCreateCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10722,7 +11490,7 @@ func (c *ProjectsAgentEntityTypesDeleteCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10877,7 +11645,7 @@ func (c *ProjectsAgentEntityTypesGetCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11056,7 +11824,7 @@ func (c *ProjectsAgentEntityTypesListCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11251,7 +12019,7 @@ func (c *ProjectsAgentEntityTypesPatchCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11407,7 +12175,7 @@ func (c *ProjectsAgentEntityTypesEntitiesBatchCreateCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesEntitiesBatchCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11552,7 +12320,7 @@ func (c *ProjectsAgentEntityTypesEntitiesBatchDeleteCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesEntitiesBatchDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11700,7 +12468,7 @@ func (c *ProjectsAgentEntityTypesEntitiesBatchUpdateCall) Header() http.Header {
 
 func (c *ProjectsAgentEntityTypesEntitiesBatchUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11866,7 +12634,7 @@ func (c *ProjectsAgentEnvironmentsListCall) Header() http.Header {
 
 func (c *ProjectsAgentEnvironmentsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12034,7 +12802,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsDeleteContextsCall) Header() http
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsDeleteContextsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12173,7 +12941,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsDetectIntentCall) Header() http.H
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsDetectIntentCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12318,7 +13086,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsContextsCreateCall) Header() http
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsContextsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12457,7 +13225,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsContextsDeleteCall) Header() http
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsContextsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12599,7 +13367,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsContextsGetCall) Header() http.He
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsContextsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12759,7 +13527,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsContextsListCall) Header() http.H
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsContextsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12936,7 +13704,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsContextsPatchCall) Header() http.
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsContextsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13091,7 +13859,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesCreateCall) Header() h
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13236,7 +14004,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesDeleteCall) Header() h
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13382,7 +14150,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesGetCall) Header() http
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13549,7 +14317,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesListCall) Header() htt
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13730,7 +14498,7 @@ func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesPatchCall) Header() ht
 
 func (c *ProjectsAgentEnvironmentsUsersSessionsEntityTypesPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13881,7 +14649,7 @@ func (c *ProjectsAgentIntentsBatchDeleteCall) Header() http.Header {
 
 func (c *ProjectsAgentIntentsBatchDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14025,7 +14793,7 @@ func (c *ProjectsAgentIntentsBatchUpdateCall) Header() http.Header {
 
 func (c *ProjectsAgentIntentsBatchUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14190,7 +14958,7 @@ func (c *ProjectsAgentIntentsCreateCall) Header() http.Header {
 
 func (c *ProjectsAgentIntentsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14344,7 +15112,7 @@ func (c *ProjectsAgentIntentsDeleteCall) Header() http.Header {
 
 func (c *ProjectsAgentIntentsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14510,7 +15278,7 @@ func (c *ProjectsAgentIntentsGetCall) Header() http.Header {
 
 func (c *ProjectsAgentIntentsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14708,7 +15476,7 @@ func (c *ProjectsAgentIntentsListCall) Header() http.Header {
 
 func (c *ProjectsAgentIntentsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14923,7 +15691,7 @@ func (c *ProjectsAgentIntentsPatchCall) Header() http.Header {
 
 func (c *ProjectsAgentIntentsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15082,7 +15850,7 @@ func (c *ProjectsAgentSessionsDeleteContextsCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsDeleteContextsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15221,7 +15989,7 @@ func (c *ProjectsAgentSessionsDetectIntentCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsDetectIntentCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15366,7 +16134,7 @@ func (c *ProjectsAgentSessionsContextsCreateCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsContextsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15505,7 +16273,7 @@ func (c *ProjectsAgentSessionsContextsDeleteCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsContextsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15647,7 +16415,7 @@ func (c *ProjectsAgentSessionsContextsGetCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsContextsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15807,7 +16575,7 @@ func (c *ProjectsAgentSessionsContextsListCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsContextsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15984,7 +16752,7 @@ func (c *ProjectsAgentSessionsContextsPatchCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsContextsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -16139,7 +16907,7 @@ func (c *ProjectsAgentSessionsEntityTypesCreateCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsEntityTypesCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -16284,7 +17052,7 @@ func (c *ProjectsAgentSessionsEntityTypesDeleteCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsEntityTypesDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -16430,7 +17198,7 @@ func (c *ProjectsAgentSessionsEntityTypesGetCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsEntityTypesGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -16597,7 +17365,7 @@ func (c *ProjectsAgentSessionsEntityTypesListCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsEntityTypesListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -16778,7 +17546,7 @@ func (c *ProjectsAgentSessionsEntityTypesPatchCall) Header() http.Header {
 
 func (c *ProjectsAgentSessionsEntityTypesPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -16942,7 +17710,7 @@ func (c *ProjectsLocationsOperationsCancelCall) Header() http.Header {
 
 func (c *ProjectsLocationsOperationsCancelCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -17088,7 +17856,7 @@ func (c *ProjectsLocationsOperationsGetCall) Header() http.Header {
 
 func (c *ProjectsLocationsOperationsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -17270,7 +18038,7 @@ func (c *ProjectsLocationsOperationsListCall) Header() http.Header {
 
 func (c *ProjectsLocationsOperationsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -17459,7 +18227,7 @@ func (c *ProjectsOperationsCancelCall) Header() http.Header {
 
 func (c *ProjectsOperationsCancelCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -17605,7 +18373,7 @@ func (c *ProjectsOperationsGetCall) Header() http.Header {
 
 func (c *ProjectsOperationsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -17787,7 +18555,7 @@ func (c *ProjectsOperationsListCall) Header() http.Header {
 
 func (c *ProjectsOperationsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}

@@ -54,14 +54,14 @@ var (
 // of another message without regard to irrelevant fields.
 type messageData struct {
 	ID         string
-	Data       []byte
+	Data       string
 	Attributes map[string]string
 }
 
-func extractMessageData(m *Message) *messageData {
-	return &messageData{
+func extractMessageData(m *Message) messageData {
+	return messageData{
 		ID:         m.ID,
-		Data:       m.Data,
+		Data:       string(m.Data),
 		Attributes: m.Attributes,
 	}
 }
@@ -76,7 +76,7 @@ func withGRPCHeadersAssertion(t *testing.T, opts ...option.ClientOption) []optio
 	return append(grpcHeadersEnforcer.CallOptions(), opts...)
 }
 
-func integrationTestClient(ctx context.Context, t *testing.T) *Client {
+func integrationTestClient(ctx context.Context, t *testing.T, opts ...option.ClientOption) *Client {
 	if testing.Short() {
 		t.Skip("Integration tests skipped in short mode")
 	}
@@ -88,7 +88,7 @@ func integrationTestClient(ctx context.Context, t *testing.T) *Client {
 	if ts == nil {
 		t.Skip("Integration tests skipped. See CONTRIBUTING.md for details")
 	}
-	opts := withGRPCHeadersAssertion(t, option.WithTokenSource(ts))
+	opts = append(withGRPCHeadersAssertion(t, option.WithTokenSource(ts)), opts...)
 	client, err := NewClient(ctx, projID, opts...)
 	if err != nil {
 		t.Fatalf("Creating client error: %v", err)
@@ -243,7 +243,7 @@ func testPublishAndReceive(t *testing.T, topic *Topic, sub *Subscription, maxMsg
 		r := topic.Publish(ctx, m)
 		rs = append(rs, pubResult{m, r})
 	}
-	want := make(map[string]*messageData)
+	want := make(map[string]messageData)
 	for _, res := range rs {
 		id, err := res.r.Get(ctx)
 		if err != nil {
@@ -274,13 +274,13 @@ func testPublishAndReceive(t *testing.T, topic *Topic, sub *Subscription, maxMsg
 			t.Fatalf("Pull: %v", err)
 		}
 	}
-	got := make(map[string]*messageData)
+	got := make(map[string]messageData)
 	for _, m := range gotMsgs {
 		md := extractMessageData(m)
 		got[md.ID] = md
 	}
 	if !testutil.Equal(got, want) {
-		t.Fatalf("MaxOutstandingMessages=%d, Synchronous=%t, messages got: %v, messages want: %v",
+		t.Fatalf("MaxOutstandingMessages=%d, Synchronous=%t, messages got: %+v, messages want: %+v",
 			maxMsgs, synchronous, got, want)
 	}
 }
@@ -799,17 +799,7 @@ func TestIntegration_PublicTopic(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sub.Delete(ctx)
-	// Confirm that Receive works. It doesn't matter if we actually get any
-	// messages.
-	ctxt, cancel := context.WithTimeout(ctx, 5*time.Second)
-	err = sub.Receive(ctxt, func(_ context.Context, msg *Message) {
-		msg.Ack()
-		cancel()
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	sub.Delete(ctx)
 }
 
 func TestIntegration_Errors(t *testing.T) {
@@ -1168,6 +1158,7 @@ func TestIntegration_OrderedKeys_Basic(t *testing.T) {
 }
 
 func TestIntegration_OrderedKeys_JSON(t *testing.T) {
+	t.Skip("Flaky, see https://github.com/googleapis/google-cloud-go/issues/1872")
 	ctx := context.Background()
 	client := integrationTestClient(ctx, t)
 	defer client.Close()
@@ -1532,11 +1523,86 @@ func TestIntegration_BadEndpoint(t *testing.T) {
 	opts := withGRPCHeadersAssertion(t,
 		option.WithEndpoint("example.googleapis.com:443"),
 	)
-	client, err := NewClient(ctx, testutil.ProjID(), opts...)
-	if err != nil {
-		t.Fatalf("Creating client error: %v", err)
-	}
-	if _, err = client.CreateTopic(ctx, topicIDs.New()); err == nil {
+	client := integrationTestClient(ctx, t, opts...)
+	defer client.Close()
+	if _, err := client.CreateTopic(ctx, topicIDs.New()); err == nil {
 		t.Fatalf("CreateTopic should fail with fake endpoint, got nil err")
+	}
+}
+
+func TestIntegration_Filter_CreateSubscription(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	// TODO(hongalex): Remove this once filtering is GA.
+	// https://github.com/googleapis/google-cloud-go/issues/2390
+	opts := withGRPCHeadersAssertion(t, option.WithEndpoint("staging-pubsub.sandbox.googleapis.com:443"))
+	client := integrationTestClient(ctx, t, opts...)
+	defer client.Close()
+
+	topic, err := client.CreateTopic(ctx, topicIDs.New())
+	if err != nil {
+		t.Fatalf("CreateTopic error: %v", err)
+	}
+	defer topic.Delete(ctx)
+	defer topic.Stop()
+
+	cfg := SubscriptionConfig{
+		Topic:  topic,
+		Filter: "attributes.event_type = \"1\"",
+	}
+
+	var sub *Subscription
+	if sub, err = client.CreateSubscription(ctx, subIDs.New(), cfg); err != nil {
+		t.Fatalf("CreateSub error: %v", err)
+	}
+	defer sub.Delete(ctx)
+
+	got, err := sub.Config(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := SubscriptionConfig{
+		Topic:               topic,
+		AckDeadline:         10 * time.Second,
+		RetainAckedMessages: false,
+		RetentionDuration:   defaultRetentionDuration,
+		ExpirationPolicy:    defaultExpirationPolicy,
+		Filter:              "attributes.event_type = \"1\"",
+	}
+	if diff := testutil.Diff(got, want); diff != "" {
+		t.Fatalf("SubsciptionConfig; got: - want: +\n%s", diff)
+	}
+
+	attrs := make(map[string]string)
+	attrs["event_type"] = "1"
+	res := topic.Publish(ctx, &Message{
+		Data:       []byte("hello world"),
+		Attributes: attrs,
+	})
+	if _, err := res.Get(ctx); err != nil {
+		t.Fatalf("Publish message error: %v", err)
+	}
+
+	// Publish the same message with a different event_type
+	// and check it is filtered out.
+	attrs["event_type"] = "2"
+	res = topic.Publish(ctx, &Message{
+		Data:       []byte("hello world"),
+		Attributes: attrs,
+	})
+	if _, err := res.Get(ctx); err != nil {
+		t.Fatalf("Publish message error: %v", err)
+	}
+
+	ctx2, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	err = sub.Receive(ctx2, func(_ context.Context, m *Message) {
+		defer m.Ack()
+		if m.Attributes["event_type"] != "1" {
+			t.Fatalf("Got message with attributes that should be filtered out: %v", m.Attributes)
+		}
+	})
+	if err != nil {
+		t.Fatalf("Streaming pull error: %v\n", err)
 	}
 }

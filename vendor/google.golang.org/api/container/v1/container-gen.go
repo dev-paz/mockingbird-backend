@@ -282,8 +282,9 @@ type AcceleratorConfig struct {
 	AcceleratorCount int64 `json:"acceleratorCount,omitempty,string"`
 
 	// AcceleratorType: The accelerator type resource name. List of
-	// supported accelerators
-	// [here](/compute/docs/gpus)
+	// supported
+	// accelerators
+	// [here](https://cloud.google.com/compute/docs/gpus)
 	AcceleratorType string `json:"acceleratorType,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "AcceleratorCount") to
@@ -459,14 +460,11 @@ type AutoprovisioningNodePoolDefaults struct {
 	// node-pools.
 	Management *NodeManagement `json:"management,omitempty"`
 
-	// OauthScopes: Scopes that are used by NAP when creating node pools. If
-	// oauth_scopes are
-	// specified, service_account should be empty.
+	// OauthScopes: Scopes that are used by NAP when creating node pools.
 	OauthScopes []string `json:"oauthScopes,omitempty"`
 
 	// ServiceAccount: The Google Cloud Platform Service Account to be used
-	// by the node VMs. If
-	// service_account is specified, scopes should be empty.
+	// by the node VMs.
 	ServiceAccount string `json:"serviceAccount,omitempty"`
 
 	// UpgradeSettings: Specifies the upgrade settings for NAP created node
@@ -560,7 +558,7 @@ func (s *BinaryAuthorization) MarshalJSON() ([]byte, error) {
 type CancelOperationRequest struct {
 	// Name: The name (project, location, operation id) of the operation to
 	// cancel.
-	// Specified in the format 'projects/*/locations/*/operations/*'.
+	// Specified in the format `projects/*/locations/*/operations/*`.
 	Name string `json:"name,omitempty"`
 
 	// OperationId: Deprecated. The server-assigned `name` of the
@@ -577,9 +575,11 @@ type CancelOperationRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the operation
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// operation resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Name") to
@@ -740,8 +740,8 @@ type Cluster struct {
 
 	// CurrentNodeVersion: [Output only] Deprecated,
 	// use
-	// [NodePools.version](/kubernetes-engine/docs/reference/rest/v1/proj
-	// ects.zones.clusters.nodePools)
+	// [NodePools.version](https://cloud.google.com/kubernetes-engine/doc
+	// s/reference/rest/v1/projects.zones.clusters.nodePools)
 	// instead. The current version of the node software components. If they
 	// are
 	// currently at multiple versions because they're in the process of
@@ -847,18 +847,19 @@ type Cluster struct {
 
 	// Location: [Output only] The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/regions-zones/regions-zones#available)
+	// [zone](https://cloud.google.com/compute/docs/regions-zones/regi
+	// ons-zones#available)
 	// or
-	// [region](/compute/docs/regions-zones/regions-zones#available) in
-	// which
-	// the cluster resides.
+	// [region](https://cloud.google.com/compute/docs
+	// /regions-zones/regions-zones#available)
+	// in which the cluster resides.
 	Location string `json:"location,omitempty"`
 
 	// Locations: The list of Google Compute
 	// Engine
-	// [zones](/compute/docs/zones#available) in which the cluster's
-	// nodes
-	// should be located.
+	// [zones](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster's nodes should be located.
 	Locations []string `json:"locations,omitempty"`
 
 	// LoggingService: The logging service the cluster should use to write
@@ -925,10 +926,11 @@ type Cluster struct {
 
 	// Network: The name of the Google Compute
 	// Engine
-	// [network](/compute/docs/networks-and-firewalls#networks) to which
-	// the
-	// cluster is connected. If left unspecified, the `default` network
-	// will be used.
+	// [network](https://cloud.google.com/compute/docs/networks-and-fi
+	// rewalls#networks)
+	// to which the cluster is connected. If left unspecified, the
+	// `default`
+	// network will be used.
 	Network string `json:"network,omitempty"`
 
 	// NetworkConfig: Configuration for cluster networking.
@@ -1031,8 +1033,9 @@ type Cluster struct {
 
 	// Subnetwork: The name of the Google Compute
 	// Engine
-	// [subnetwork](/compute/docs/subnetworks) to which the
-	// cluster is connected.
+	// [subnetwork](https://cloud.google.com/compute/docs/subnetworks)
+	//  to which
+	// the cluster is connected.
 	Subnetwork string `json:"subnetwork,omitempty"`
 
 	// TpuIpv4CidrBlock: [Output only] The IP address range of the Cloud
@@ -1054,10 +1057,9 @@ type Cluster struct {
 
 	// Zone: [Output only] The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field is deprecated, use location instead.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field is deprecated, use location instead.
 	Zone string `json:"zone,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
@@ -1093,9 +1095,11 @@ func (s *Cluster) MarshalJSON() ([]byte, error) {
 // the size of the cluster and create/delete
 // node pools based on the current needs.
 type ClusterAutoscaling struct {
-	// AutoprovisioningLocations: The list of Google Compute Engine
-	// [zones](/compute/docs/zones#available)
-	// in which the NodePool's nodes can be created by NAP.
+	// AutoprovisioningLocations: The list of Google Compute
+	// Engine
+	// [zones](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// NodePool's nodes can be created by NAP.
 	AutoprovisioningLocations []string `json:"autoprovisioningLocations,omitempty"`
 
 	// AutoprovisioningNodePoolDefaults: AutoprovisioningNodePoolDefaults
@@ -1167,13 +1171,13 @@ type ClusterUpdate struct {
 
 	// DesiredLocations: The desired list of Google Compute
 	// Engine
-	// [zones](/compute/docs/zones#available) in which the cluster's
-	// nodes
-	// should be located. Changing the locations a cluster is in will
-	// result
-	// in nodes being either created or removed from the cluster, depending
-	// on
-	// whether locations are being added or removed.
+	// [zones](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster's nodes should be located. Changing the locations a cluster
+	// is in
+	// will result in nodes being either created or removed from the
+	// cluster,
+	// depending on whether locations are being added or removed.
 	//
 	// This list must always include the cluster's primary zone.
 	DesiredLocations []string `json:"desiredLocations,omitempty"`
@@ -1311,7 +1315,7 @@ type CompleteIPRotationRequest struct {
 	// Name: The name (project, location, cluster id) of the cluster to
 	// complete IP
 	// rotation. Specified in the format
-	// 'projects/*/locations/*/clusters/*'.
+	// `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -1323,10 +1327,11 @@ type CompleteIPRotationRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -1389,13 +1394,13 @@ func (s *ConsumptionMeteringConfig) MarshalJSON() ([]byte, error) {
 type CreateClusterRequest struct {
 	// Cluster: Required. A
 	// [cluster
-	// resource](/container-engine/reference/rest/v1/projects.zones.
-	// clusters)
+	// resource](https://cloud.google.com/container-engine/reference
+	// /rest/v1/projects.zones.clusters)
 	Cluster *Cluster `json:"cluster,omitempty"`
 
 	// Parent: The parent (project and location) where the cluster will be
 	// created.
-	// Specified in the format 'projects/*/locations/*'.
+	// Specified in the format `projects/*/locations/*`.
 	Parent string `json:"parent,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -1407,10 +1412,11 @@ type CreateClusterRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the parent field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// parent
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Cluster") to
@@ -1449,7 +1455,7 @@ type CreateNodePoolRequest struct {
 	// Parent: The parent (project, location, cluster id) where the node
 	// pool will be
 	// created. Specified in the format
-	// 'projects/*/locations/*/clusters/*'.
+	// `projects/*/locations/*/clusters/*`.
 	Parent string `json:"parent,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -1461,10 +1467,11 @@ type CreateNodePoolRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the parent field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// parent
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -2551,15 +2558,18 @@ type NetworkConfig struct {
 
 	// Network: Output only. The relative name of the Google Compute
 	// Engine
-	// network(/compute/docs/networks-and-firewalls#networks) to which
-	// the cluster is connected.
-	// Example: projects/my-project/global/networks/my-network
+	// network(https://cloud.google.com/compute/docs/networks-and-fire
+	// walls#networks)
+	// to which the cluster is connected.
+	// Example:
+	// projects/my-project/global/networks/my-network
 	Network string `json:"network,omitempty"`
 
 	// Subnetwork: Output only. The relative name of the Google Compute
 	// Engine
-	// [subnetwork](/compute/docs/vpc) to which the cluster is
-	// connected.
+	// [subnetwork](https://cloud.google.com/compute/docs/vpc) to which
+	// the
+	// cluster is connected.
 	// Example:
 	// projects/my-project/regions/us-central1/subnetworks/my-subnet
 	Subnetwork string `json:"subnetwork,omitempty"`
@@ -2714,7 +2724,8 @@ type NodeConfig struct {
 
 	// MachineType: The name of a Google Compute Engine
 	// [machine
-	// type](/compute/docs/machine-types) (e.g.
+	// type](https://cloud.google.com/compute/docs/machine-types)
+	// (e.g.
 	// `n1-standard-1`).
 	//
 	// If unspecified, the default machine type is
@@ -2790,9 +2801,12 @@ type NodeConfig struct {
 	// * `https://www.googleapis.com/auth/devstorage.read_only` is required
 	// for
 	// communicating with **gcr.io**
-	// (the [Google Container Registry](/container-registry/)).
+	// (the [Google
+	// Container
+	// Registry](https://cloud.google.com/container-registry/)).
 	//
-	// If unspecified, no scopes are added, unless Cloud Logging or
+	// I
+	// f unspecified, no scopes are added, unless Cloud Logging or
 	// Cloud
 	// Monitoring are enabled, in which case their required scopes will be
 	// added.
@@ -2810,8 +2824,8 @@ type NodeConfig struct {
 	// field will apply
 	// the specified [Zonal
 	// Compute
-	// Reservation](/compute/docs/instances/reserving-zonal-resources
-	// )
+	// Reservation](https://cloud.google.com/compute/docs/instances/r
+	// eserving-zonal-resources)
 	// to this node pool.
 	ReservationAffinity *ReservationAffinity `json:"reservationAffinity,omitempty"`
 
@@ -2952,14 +2966,16 @@ type NodePool struct {
 
 	// InstanceGroupUrls: [Output only] The resource URLs of the [managed
 	// instance
-	// groups](/compute/docs/instance-groups/creating-groups-of-mana
-	// ged-instances)
+	// groups](https://cloud.google.com/compute/docs/instance-groups
+	// /creating-groups-of-managed-instances)
 	// associated with this node pool.
 	InstanceGroupUrls []string `json:"instanceGroupUrls,omitempty"`
 
-	// Locations: The list of Google Compute Engine
-	// [zones](/compute/docs/zones#available)
-	// in which the NodePool's nodes should be located.
+	// Locations: The list of Google Compute
+	// Engine
+	// [zones](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// NodePool's nodes should be located.
 	Locations []string `json:"locations,omitempty"`
 
 	// Management: NodeManagement configuration for this NodePool.
@@ -3095,10 +3111,10 @@ func (s *NodePoolAutoscaling) MarshalJSON() ([]byte, error) {
 // can only be one of three types:  NoSchedule, PreferNoSchedule or
 // NoExecute.
 //
-// For more information, including usage and the valid values,
-// see:
-// https://kubernetes.io/docs/concepts/configuration/taint-and-toler
-// ation/
+// See
+// [here](https://kubernetes.io/docs/concepts/configurati
+// on/taint-and-toleration)
+// for more information, including usage and the valid values.
 type NodeTaint struct {
 	// Effect: Effect for taint.
 	//
@@ -3155,11 +3171,12 @@ type Operation struct {
 
 	// Location: [Output only] The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/regions-zones/regions-zones#available)
+	// [zone](https://cloud.google.com/compute/docs/regions-zones/regi
+	// ons-zones#available)
 	// or
-	// [region](/compute/docs/regions-zones/regions-zones#available) in
-	// which
-	// the cluster resides.
+	// [region](https://cloud.google.com/compute/docs
+	// /regions-zones/regions-zones#available)
+	// in which the cluster resides.
 	Location string `json:"location,omitempty"`
 
 	// Name: The server-assigned ID for the operation.
@@ -3222,9 +3239,10 @@ type Operation struct {
 
 	// Zone: The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the operation
-	// is taking place.
-	// This field is deprecated, use location instead.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// operation is taking place. This field is deprecated, use location
+	// instead.
 	Zone string `json:"zone,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
@@ -3432,9 +3450,9 @@ func (s *RecurringTimeWindow) MarshalJSON() ([]byte, error) {
 }
 
 // ReservationAffinity:
-// [ReservationAffinity](/compute/docs/instances/reserving-zonal-resource
-// s) is
-// the configuration of desired reservation which instances could
+// [ReservationAffinity](https://cloud.google.com/compute/docs/instances/
+// reserving-zonal-resources)
+// is the configuration of desired reservation which instances could
 // take
 // capacity from.
 type ReservationAffinity struct {
@@ -3576,7 +3594,7 @@ type RollbackNodePoolUpgradeRequest struct {
 	// poll to
 	// rollback upgrade.
 	// Specified in the format
-	// 'projects/*/locations/*/clusters/*/nodePools/*'.
+	// `projects/*/locations/*/clusters/*/nodePools/*`.
 	Name string `json:"name,omitempty"`
 
 	// NodePoolId: Deprecated. The name of the node pool to rollback.
@@ -3592,10 +3610,11 @@ type RollbackNodePoolUpgradeRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -3715,7 +3734,7 @@ type SetAddonsConfigRequest struct {
 
 	// Name: The name (project, location, cluster) of the cluster to set
 	// addons.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -3727,10 +3746,11 @@ type SetAddonsConfigRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "AddonsConfig") to
@@ -3781,7 +3801,7 @@ type SetLabelsRequest struct {
 
 	// Name: The name (project, location, cluster id) of the cluster to set
 	// labels.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -3796,10 +3816,11 @@ type SetLabelsRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -3839,7 +3860,7 @@ type SetLegacyAbacRequest struct {
 
 	// Name: The name (project, location, cluster id) of the cluster to set
 	// legacy abac.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -3851,10 +3872,11 @@ type SetLegacyAbacRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -3889,20 +3911,20 @@ type SetLocationsRequest struct {
 
 	// Locations: Required. The desired list of Google Compute
 	// Engine
-	// [zones](/compute/docs/zones#available) in which the cluster's
-	// nodes
-	// should be located. Changing the locations a cluster is in will
-	// result
-	// in nodes being either created or removed from the cluster, depending
-	// on
-	// whether locations are being added or removed.
+	// [zones](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster's nodes should be located. Changing the locations a cluster
+	// is in
+	// will result in nodes being either created or removed from the
+	// cluster,
+	// depending on whether locations are being added or removed.
 	//
 	// This list must always include the cluster's primary zone.
 	Locations []string `json:"locations,omitempty"`
 
 	// Name: The name (project, location, cluster) of the cluster to set
 	// locations.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -3914,10 +3936,11 @@ type SetLocationsRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -3968,7 +3991,7 @@ type SetLoggingServiceRequest struct {
 
 	// Name: The name (project, location, cluster) of the cluster to set
 	// logging.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -3980,10 +4003,11 @@ type SetLoggingServiceRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4023,7 +4047,7 @@ type SetMaintenancePolicyRequest struct {
 	// Name: The name (project, location, cluster id) of the cluster to set
 	// maintenance
 	// policy.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Required. The Google Developers Console [project ID or
@@ -4033,8 +4057,9 @@ type SetMaintenancePolicyRequest struct {
 
 	// Zone: Required. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the cluster
-	// resides.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4085,7 +4110,7 @@ type SetMasterAuthRequest struct {
 
 	// Name: The name (project, location, cluster) of the cluster to set
 	// auth.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -4100,10 +4125,11 @@ type SetMasterAuthRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Action") to
@@ -4156,7 +4182,7 @@ type SetMonitoringServiceRequest struct {
 
 	// Name: The name (project, location, cluster) of the cluster to set
 	// monitoring.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -4168,10 +4194,11 @@ type SetMonitoringServiceRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4206,7 +4233,7 @@ type SetNetworkPolicyRequest struct {
 
 	// Name: The name (project, location, cluster id) of the cluster to set
 	// networking
-	// policy. Specified in the format 'projects/*/locations/*/clusters/*'.
+	// policy. Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// NetworkPolicy: Required. Configuration options for the NetworkPolicy
@@ -4222,10 +4249,11 @@ type SetNetworkPolicyRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4265,7 +4293,7 @@ type SetNodePoolAutoscalingRequest struct {
 	// pool to set
 	// autoscaler settings. Specified in the
 	// format
-	// 'projects/*/locations/*/clusters/*/nodePools/*'.
+	// `projects/*/locations/*/clusters/*/nodePools/*`.
 	Name string `json:"name,omitempty"`
 
 	// NodePoolId: Deprecated. The name of the node pool to upgrade.
@@ -4281,10 +4309,11 @@ type SetNodePoolAutoscalingRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Autoscaling") to
@@ -4325,7 +4354,7 @@ type SetNodePoolManagementRequest struct {
 	// pool to set
 	// management properties. Specified in the
 	// format
-	// 'projects/*/locations/*/clusters/*/nodePools/*'.
+	// `projects/*/locations/*/clusters/*/nodePools/*`.
 	Name string `json:"name,omitempty"`
 
 	// NodePoolId: Deprecated. The name of the node pool to update.
@@ -4341,10 +4370,11 @@ type SetNodePoolManagementRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4382,7 +4412,7 @@ type SetNodePoolSizeRequest struct {
 	// pool to set
 	// size.
 	// Specified in the format
-	// 'projects/*/locations/*/clusters/*/nodePools/*'.
+	// `projects/*/locations/*/clusters/*/nodePools/*`.
 	Name string `json:"name,omitempty"`
 
 	// NodeCount: Required. The desired node count for the pool.
@@ -4401,10 +4431,11 @@ type SetNodePoolSizeRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4519,7 +4550,7 @@ type StartIPRotationRequest struct {
 	// Name: The name (project, location, cluster id) of the cluster to
 	// start IP
 	// rotation. Specified in the format
-	// 'projects/*/locations/*/clusters/*'.
+	// `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -4534,10 +4565,11 @@ type StartIPRotationRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4654,7 +4686,7 @@ type UpdateClusterRequest struct {
 
 	// Name: The name (project, location, cluster) of the cluster to
 	// update.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -4669,10 +4701,11 @@ type UpdateClusterRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4722,7 +4755,7 @@ type UpdateMasterRequest struct {
 
 	// Name: The name (project, location, cluster) of the cluster to
 	// update.
-	// Specified in the format 'projects/*/locations/*/clusters/*'.
+	// Specified in the format `projects/*/locations/*/clusters/*`.
 	Name string `json:"name,omitempty"`
 
 	// ProjectId: Deprecated. The Google Developers Console [project ID or
@@ -4734,10 +4767,11 @@ type UpdateMasterRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -4775,20 +4809,20 @@ type UpdateNodePoolRequest struct {
 
 	// Locations: The desired list of Google Compute
 	// Engine
-	// [zones](/compute/docs/zones#available) in which the node pool's
-	// nodes
-	// should be located. Changing the locations for a node pool will
-	// result
-	// in nodes being either created or removed from the node pool,
-	// depending
-	// on whether locations are being added or removed.
+	// [zones](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// node pool's nodes should be located. Changing the locations for a
+	// node pool
+	// will result in nodes being either created or removed from the node
+	// pool,
+	// depending on whether locations are being added or removed.
 	Locations []string `json:"locations,omitempty"`
 
 	// Name: The name (project, location, cluster, node pool) of the node
 	// pool to
 	// update. Specified in the
 	// format
-	// 'projects/*/locations/*/clusters/*/nodePools/*'.
+	// `projects/*/locations/*/clusters/*/nodePools/*`.
 	Name string `json:"name,omitempty"`
 
 	// NodePoolId: Deprecated. The name of the node pool to upgrade.
@@ -4828,10 +4862,11 @@ type UpdateNodePoolRequest struct {
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
-	// [zone](/compute/docs/zones#available) in which the
-	// cluster
-	// resides.
-	// This field has been deprecated and replaced by the name field.
+	// [zone](https://cloud.google.com/compute/docs/zones#available) in
+	// which the
+	// cluster resides. This field has been deprecated and replaced by the
+	// name
+	// field.
 	Zone string `json:"zone,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ClusterId") to
@@ -5231,7 +5266,7 @@ func (c *ProjectsAggregatedUsableSubnetworksListCall) Header() http.Header {
 
 func (c *ProjectsAggregatedUsableSubnetworksListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5318,7 +5353,7 @@ func (c *ProjectsAggregatedUsableSubnetworksListCall) Do(opts ...googleapi.CallO
 	//       "type": "string"
 	//     },
 	//     "parent": {
-	//       "description": "The parent project where subnetworks are usable.\nSpecified in the format 'projects/*'.",
+	//       "description": "The parent project where subnetworks are usable.\nSpecified in the format `projects/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+$",
 	//       "required": true,
@@ -5388,9 +5423,13 @@ func (c *ProjectsLocationsGetServerConfigCall) ProjectId(projectId string) *Proj
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) to return operations for.
-// This field has been deprecated and replaced by the name field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) to
+// return
+// operations for. This field has been deprecated and replaced by the
+// name
+// field.
 func (c *ProjectsLocationsGetServerConfigCall) Zone(zone string) *ProjectsLocationsGetServerConfigCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -5433,7 +5472,7 @@ func (c *ProjectsLocationsGetServerConfigCall) Header() http.Header {
 
 func (c *ProjectsLocationsGetServerConfigCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5504,7 +5543,7 @@ func (c *ProjectsLocationsGetServerConfigCall) Do(opts ...googleapi.CallOption) 
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project and location) of the server config to get,\nspecified in the format 'projects/*/locations/*'.",
+	//       "description": "The name (project and location) of the server config to get,\nspecified in the format `projects/*/locations/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+$",
 	//       "required": true,
@@ -5516,7 +5555,7 @@ func (c *ProjectsLocationsGetServerConfigCall) Do(opts ...googleapi.CallOption) 
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) to return operations for.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) to return\noperations for. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -5578,7 +5617,7 @@ func (c *ProjectsLocationsClustersCompleteIpRotationCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersCompleteIpRotationCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5651,7 +5690,7 @@ func (c *ProjectsLocationsClustersCompleteIpRotationCall) Do(opts ...googleapi.C
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster id) of the cluster to complete IP\nrotation. Specified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster id) of the cluster to complete IP\nrotation. Specified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -5687,9 +5726,11 @@ type ProjectsLocationsClustersCreateCall struct {
 // type of Google
 // Compute Engine instances.
 //
-// By default, the cluster is created in the project's
+// By default, the cluster is created in the
+// project's
 // [default
-// network](/compute/docs/networks-and-firewalls#networks).
+// network](https://cloud.google.com/compute/docs/netw
+// orks-and-firewalls#networks).
 //
 // One firewall is added for the cluster. After cluster creation,
 // the Kubelet creates routes for each node to allow the containers
@@ -5734,7 +5775,7 @@ func (c *ProjectsLocationsClustersCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5798,7 +5839,7 @@ func (c *ProjectsLocationsClustersCreateCall) Do(opts ...googleapi.CallOption) (
 	}
 	return ret, nil
 	// {
-	//   "description": "Creates a cluster, consisting of the specified number and type of Google\nCompute Engine instances.\n\nBy default, the cluster is created in the project's\n[default network](/compute/docs/networks-and-firewalls#networks).\n\nOne firewall is added for the cluster. After cluster creation,\nthe Kubelet creates routes for each node to allow the containers\non that node to communicate with all other instances in the\ncluster.\n\nFinally, an entry is added to the project's global metadata indicating\nwhich CIDR range the cluster is using.",
+	//   "description": "Creates a cluster, consisting of the specified number and type of Google\nCompute Engine instances.\n\nBy default, the cluster is created in the project's\n[default\nnetwork](https://cloud.google.com/compute/docs/networks-and-firewalls#networks).\n\nOne firewall is added for the cluster. After cluster creation,\nthe Kubelet creates routes for each node to allow the containers\non that node to communicate with all other instances in the\ncluster.\n\nFinally, an entry is added to the project's global metadata indicating\nwhich CIDR range the cluster is using.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.locations.clusters.create",
@@ -5807,7 +5848,7 @@ func (c *ProjectsLocationsClustersCreateCall) Do(opts ...googleapi.CallOption) (
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "The parent (project and location) where the cluster will be created.\nSpecified in the format 'projects/*/locations/*'.",
+	//       "description": "The parent (project and location) where the cluster will be created.\nSpecified in the format `projects/*/locations/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+$",
 	//       "required": true,
@@ -5876,11 +5917,13 @@ func (c *ProjectsLocationsClustersDeleteCall) ProjectId(projectId string) *Proje
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) in which the
-// cluster
-// resides.
-// This field has been deprecated and replaced by the name field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) in
+// which the
+// cluster resides. This field has been deprecated and replaced by the
+// name
+// field.
 func (c *ProjectsLocationsClustersDeleteCall) Zone(zone string) *ProjectsLocationsClustersDeleteCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -5913,7 +5956,7 @@ func (c *ProjectsLocationsClustersDeleteCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5986,7 +6029,7 @@ func (c *ProjectsLocationsClustersDeleteCall) Do(opts ...googleapi.CallOption) (
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to delete.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to delete.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -5998,7 +6041,7 @@ func (c *ProjectsLocationsClustersDeleteCall) Do(opts ...googleapi.CallOption) (
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -6052,11 +6095,13 @@ func (c *ProjectsLocationsClustersGetCall) ProjectId(projectId string) *Projects
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) in which the
-// cluster
-// resides.
-// This field has been deprecated and replaced by the name field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) in
+// which the
+// cluster resides. This field has been deprecated and replaced by the
+// name
+// field.
 func (c *ProjectsLocationsClustersGetCall) Zone(zone string) *ProjectsLocationsClustersGetCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -6099,7 +6144,7 @@ func (c *ProjectsLocationsClustersGetCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6175,7 +6220,7 @@ func (c *ProjectsLocationsClustersGetCall) Do(opts ...googleapi.CallOption) (*Cl
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to retrieve.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to retrieve.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -6187,7 +6232,7 @@ func (c *ProjectsLocationsClustersGetCall) Do(opts ...googleapi.CallOption) (*Cl
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -6263,7 +6308,7 @@ func (c *ProjectsLocationsClustersGetJwksCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersGetJwksCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6334,7 +6379,7 @@ func (c *ProjectsLocationsClustersGetJwksCall) Do(opts ...googleapi.CallOption) 
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "The cluster (project, location, cluster id) to get keys for. Specified in\nthe format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The cluster (project, location, cluster id) to get keys for. Specified in\nthe format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -6381,10 +6426,13 @@ func (c *ProjectsLocationsClustersListCall) ProjectId(projectId string) *Project
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) in which the cluster
-// resides, or "-" for all zones.
-// This field has been deprecated and replaced by the parent field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) in
+// which the
+// cluster resides, or "-" for all zones. This field has been deprecated
+// and
+// replaced by the parent field.
 func (c *ProjectsLocationsClustersListCall) Zone(zone string) *ProjectsLocationsClustersListCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -6427,7 +6475,7 @@ func (c *ProjectsLocationsClustersListCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6498,7 +6546,7 @@ func (c *ProjectsLocationsClustersListCall) Do(opts ...googleapi.CallOption) (*L
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "The parent (project and location) where the clusters will be listed.\nSpecified in the format 'projects/*/locations/*'.\nLocation \"-\" matches all zones and all regions.",
+	//       "description": "The parent (project and location) where the clusters will be listed.\nSpecified in the format `projects/*/locations/*`.\nLocation \"-\" matches all zones and all regions.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+$",
 	//       "required": true,
@@ -6510,7 +6558,7 @@ func (c *ProjectsLocationsClustersListCall) Do(opts ...googleapi.CallOption) (*L
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides, or \"-\" for all zones.\nThis field has been deprecated and replaced by the parent field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides, or \"-\" for all zones. This field has been deprecated and\nreplaced by the parent field.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -6572,7 +6620,7 @@ func (c *ProjectsLocationsClustersSetAddonsCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersSetAddonsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6645,7 +6693,7 @@ func (c *ProjectsLocationsClustersSetAddonsCall) Do(opts ...googleapi.CallOption
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to set addons.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to set addons.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -6713,7 +6761,7 @@ func (c *ProjectsLocationsClustersSetLegacyAbacCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersSetLegacyAbacCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6786,7 +6834,7 @@ func (c *ProjectsLocationsClustersSetLegacyAbacCall) Do(opts ...googleapi.CallOp
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster id) of the cluster to set legacy abac.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster id) of the cluster to set legacy abac.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -6821,8 +6869,9 @@ type ProjectsLocationsClustersSetLocationsCall struct {
 // SetLocations: Sets the locations for a specific cluster.
 // Deprecated.
 // Use
-// [projects.locations.clusters.update](/kubernetes-engine/docs/refer
-// ence/rest/v1/projects.locations.clusters/update)
+// [projects.locations.clusters.update](https://cloud.google.com/kube
+// rnetes-engine/docs/reference/rest/v1/projects.locations.clusters/updat
+// e)
 // instead.
 func (r *ProjectsLocationsClustersService) SetLocations(name string, setlocationsrequest *SetLocationsRequest) *ProjectsLocationsClustersSetLocationsCall {
 	c := &ProjectsLocationsClustersSetLocationsCall{s: r.s, urlParams_: make(gensupport.URLParams)}
@@ -6858,7 +6907,7 @@ func (c *ProjectsLocationsClustersSetLocationsCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersSetLocationsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6922,7 +6971,7 @@ func (c *ProjectsLocationsClustersSetLocationsCall) Do(opts ...googleapi.CallOpt
 	}
 	return ret, nil
 	// {
-	//   "description": "Sets the locations for a specific cluster.\nDeprecated. Use\n[projects.locations.clusters.update](/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/update)\ninstead.",
+	//   "description": "Sets the locations for a specific cluster.\nDeprecated. Use\n[projects.locations.clusters.update](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/update)\ninstead.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}:setLocations",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.locations.clusters.setLocations",
@@ -6931,7 +6980,7 @@ func (c *ProjectsLocationsClustersSetLocationsCall) Do(opts ...googleapi.CallOpt
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to set locations.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to set locations.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -6998,7 +7047,7 @@ func (c *ProjectsLocationsClustersSetLoggingCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersSetLoggingCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7071,7 +7120,7 @@ func (c *ProjectsLocationsClustersSetLoggingCall) Do(opts ...googleapi.CallOptio
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to set logging.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to set logging.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -7138,7 +7187,7 @@ func (c *ProjectsLocationsClustersSetMaintenancePolicyCall) Header() http.Header
 
 func (c *ProjectsLocationsClustersSetMaintenancePolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7211,7 +7260,7 @@ func (c *ProjectsLocationsClustersSetMaintenancePolicyCall) Do(opts ...googleapi
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster id) of the cluster to set maintenance\npolicy.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster id) of the cluster to set maintenance\npolicy.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -7282,7 +7331,7 @@ func (c *ProjectsLocationsClustersSetMasterAuthCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersSetMasterAuthCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7355,7 +7404,7 @@ func (c *ProjectsLocationsClustersSetMasterAuthCall) Do(opts ...googleapi.CallOp
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to set auth.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to set auth.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -7422,7 +7471,7 @@ func (c *ProjectsLocationsClustersSetMonitoringCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersSetMonitoringCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7495,7 +7544,7 @@ func (c *ProjectsLocationsClustersSetMonitoringCall) Do(opts ...googleapi.CallOp
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to set monitoring.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to set monitoring.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -7562,7 +7611,7 @@ func (c *ProjectsLocationsClustersSetNetworkPolicyCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersSetNetworkPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7635,7 +7684,7 @@ func (c *ProjectsLocationsClustersSetNetworkPolicyCall) Do(opts ...googleapi.Cal
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster id) of the cluster to set networking\npolicy. Specified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster id) of the cluster to set networking\npolicy. Specified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -7702,7 +7751,7 @@ func (c *ProjectsLocationsClustersSetResourceLabelsCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersSetResourceLabelsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7775,7 +7824,7 @@ func (c *ProjectsLocationsClustersSetResourceLabelsCall) Do(opts ...googleapi.Ca
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster id) of the cluster to set labels.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster id) of the cluster to set labels.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -7842,7 +7891,7 @@ func (c *ProjectsLocationsClustersStartIpRotationCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersStartIpRotationCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7915,7 +7964,7 @@ func (c *ProjectsLocationsClustersStartIpRotationCall) Do(opts ...googleapi.Call
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster id) of the cluster to start IP\nrotation. Specified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster id) of the cluster to start IP\nrotation. Specified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -7982,7 +8031,7 @@ func (c *ProjectsLocationsClustersUpdateCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8055,7 +8104,7 @@ func (c *ProjectsLocationsClustersUpdateCall) Do(opts ...googleapi.CallOption) (
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to update.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to update.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -8122,7 +8171,7 @@ func (c *ProjectsLocationsClustersUpdateMasterCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersUpdateMasterCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8195,7 +8244,7 @@ func (c *ProjectsLocationsClustersUpdateMasterCall) Do(opts ...googleapi.CallOpt
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to update.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to update.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -8262,7 +8311,7 @@ func (c *ProjectsLocationsClustersNodePoolsCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersNodePoolsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8335,7 +8384,7 @@ func (c *ProjectsLocationsClustersNodePoolsCreateCall) Do(opts ...googleapi.Call
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "The parent (project, location, cluster id) where the node pool will be\ncreated. Specified in the format\n'projects/*/locations/*/clusters/*'.",
+	//       "description": "The parent (project, location, cluster id) where the node pool will be\ncreated. Specified in the format\n`projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -8401,11 +8450,13 @@ func (c *ProjectsLocationsClustersNodePoolsDeleteCall) ProjectId(projectId strin
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) in which the
-// cluster
-// resides.
-// This field has been deprecated and replaced by the name field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) in
+// which the
+// cluster resides. This field has been deprecated and replaced by the
+// name
+// field.
 func (c *ProjectsLocationsClustersNodePoolsDeleteCall) Zone(zone string) *ProjectsLocationsClustersNodePoolsDeleteCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -8438,7 +8489,7 @@ func (c *ProjectsLocationsClustersNodePoolsDeleteCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersNodePoolsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8511,7 +8562,7 @@ func (c *ProjectsLocationsClustersNodePoolsDeleteCall) Do(opts ...googleapi.Call
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool id) of the node pool to\ndelete. Specified in the format\n'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool id) of the node pool to\ndelete. Specified in the format\n`projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/nodePools/[^/]+$",
 	//       "required": true,
@@ -8528,7 +8579,7 @@ func (c *ProjectsLocationsClustersNodePoolsDeleteCall) Do(opts ...googleapi.Call
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -8590,11 +8641,13 @@ func (c *ProjectsLocationsClustersNodePoolsGetCall) ProjectId(projectId string) 
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) in which the
-// cluster
-// resides.
-// This field has been deprecated and replaced by the name field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) in
+// which the
+// cluster resides. This field has been deprecated and replaced by the
+// name
+// field.
 func (c *ProjectsLocationsClustersNodePoolsGetCall) Zone(zone string) *ProjectsLocationsClustersNodePoolsGetCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -8637,7 +8690,7 @@ func (c *ProjectsLocationsClustersNodePoolsGetCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersNodePoolsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8713,7 +8766,7 @@ func (c *ProjectsLocationsClustersNodePoolsGetCall) Do(opts ...googleapi.CallOpt
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool id) of the node pool to\nget. Specified in the format\n'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool id) of the node pool to\nget. Specified in the format\n`projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/nodePools/[^/]+$",
 	//       "required": true,
@@ -8730,7 +8783,7 @@ func (c *ProjectsLocationsClustersNodePoolsGetCall) Do(opts ...googleapi.CallOpt
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -8784,11 +8837,13 @@ func (c *ProjectsLocationsClustersNodePoolsListCall) ProjectId(projectId string)
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) in which the
-// cluster
-// resides.
-// This field has been deprecated and replaced by the parent field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) in
+// which the
+// cluster resides. This field has been deprecated and replaced by the
+// parent
+// field.
 func (c *ProjectsLocationsClustersNodePoolsListCall) Zone(zone string) *ProjectsLocationsClustersNodePoolsListCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -8831,7 +8886,7 @@ func (c *ProjectsLocationsClustersNodePoolsListCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersNodePoolsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -8907,7 +8962,7 @@ func (c *ProjectsLocationsClustersNodePoolsListCall) Do(opts ...googleapi.CallOp
 	//       "type": "string"
 	//     },
 	//     "parent": {
-	//       "description": "The parent (project, location, cluster id) where the node pools will be\nlisted. Specified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The parent (project, location, cluster id) where the node pools will be\nlisted. Specified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -8919,7 +8974,7 @@ func (c *ProjectsLocationsClustersNodePoolsListCall) Do(opts ...googleapi.CallOp
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the parent field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the parent\nfield.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -8983,7 +9038,7 @@ func (c *ProjectsLocationsClustersNodePoolsRollbackCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersNodePoolsRollbackCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9056,7 +9111,7 @@ func (c *ProjectsLocationsClustersNodePoolsRollbackCall) Do(opts ...googleapi.Ca
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool id) of the node poll to\nrollback upgrade.\nSpecified in the format 'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool id) of the node poll to\nrollback upgrade.\nSpecified in the format `projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/nodePools/[^/]+$",
 	//       "required": true,
@@ -9124,7 +9179,7 @@ func (c *ProjectsLocationsClustersNodePoolsSetAutoscalingCall) Header() http.Hea
 
 func (c *ProjectsLocationsClustersNodePoolsSetAutoscalingCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9197,7 +9252,7 @@ func (c *ProjectsLocationsClustersNodePoolsSetAutoscalingCall) Do(opts ...google
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool) of the node pool to set\nautoscaler settings. Specified in the format\n'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool) of the node pool to set\nautoscaler settings. Specified in the format\n`projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/nodePools/[^/]+$",
 	//       "required": true,
@@ -9264,7 +9319,7 @@ func (c *ProjectsLocationsClustersNodePoolsSetManagementCall) Header() http.Head
 
 func (c *ProjectsLocationsClustersNodePoolsSetManagementCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9337,7 +9392,7 @@ func (c *ProjectsLocationsClustersNodePoolsSetManagementCall) Do(opts ...googlea
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool id) of the node pool to set\nmanagement properties. Specified in the format\n'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool id) of the node pool to set\nmanagement properties. Specified in the format\n`projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/nodePools/[^/]+$",
 	//       "required": true,
@@ -9404,7 +9459,7 @@ func (c *ProjectsLocationsClustersNodePoolsSetSizeCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersNodePoolsSetSizeCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9477,7 +9532,7 @@ func (c *ProjectsLocationsClustersNodePoolsSetSizeCall) Do(opts ...googleapi.Cal
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool id) of the node pool to set\nsize.\nSpecified in the format 'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool id) of the node pool to set\nsize.\nSpecified in the format `projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/nodePools/[^/]+$",
 	//       "required": true,
@@ -9545,7 +9600,7 @@ func (c *ProjectsLocationsClustersNodePoolsUpdateCall) Header() http.Header {
 
 func (c *ProjectsLocationsClustersNodePoolsUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9618,7 +9673,7 @@ func (c *ProjectsLocationsClustersNodePoolsUpdateCall) Do(opts ...googleapi.Call
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool) of the node pool to\nupdate. Specified in the format\n'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool) of the node pool to\nupdate. Specified in the format\n`projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+/nodePools/[^/]+$",
 	//       "required": true,
@@ -9704,7 +9759,7 @@ func (c *ProjectsLocationsClustersWellKnownGetOpenidConfigurationCall) Header() 
 
 func (c *ProjectsLocationsClustersWellKnownGetOpenidConfigurationCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9775,7 +9830,7 @@ func (c *ProjectsLocationsClustersWellKnownGetOpenidConfigurationCall) Do(opts .
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "The cluster (project, location, cluster id) to get the discovery document\nfor. Specified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The cluster (project, location, cluster id) to get the discovery document\nfor. Specified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/clusters/[^/]+$",
 	//       "required": true,
@@ -9836,7 +9891,7 @@ func (c *ProjectsLocationsOperationsCancelCall) Header() http.Header {
 
 func (c *ProjectsLocationsOperationsCancelCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -9909,7 +9964,7 @@ func (c *ProjectsLocationsOperationsCancelCall) Do(opts ...googleapi.CallOption)
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, operation id) of the operation to cancel.\nSpecified in the format 'projects/*/locations/*/operations/*'.",
+	//       "description": "The name (project, location, operation id) of the operation to cancel.\nSpecified in the format `projects/*/locations/*/operations/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
 	//       "required": true,
@@ -9968,11 +10023,13 @@ func (c *ProjectsLocationsOperationsGetCall) ProjectId(projectId string) *Projec
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) in which the
-// cluster
-// resides.
-// This field has been deprecated and replaced by the name field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) in
+// which the
+// cluster resides. This field has been deprecated and replaced by the
+// name
+// field.
 func (c *ProjectsLocationsOperationsGetCall) Zone(zone string) *ProjectsLocationsOperationsGetCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -10015,7 +10072,7 @@ func (c *ProjectsLocationsOperationsGetCall) Header() http.Header {
 
 func (c *ProjectsLocationsOperationsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10086,7 +10143,7 @@ func (c *ProjectsLocationsOperationsGetCall) Do(opts ...googleapi.CallOption) (*
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, operation id) of the operation to get.\nSpecified in the format 'projects/*/locations/*/operations/*'.",
+	//       "description": "The name (project, location, operation id) of the operation to get.\nSpecified in the format `projects/*/locations/*/operations/*`.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+/operations/[^/]+$",
 	//       "required": true,
@@ -10103,7 +10160,7 @@ func (c *ProjectsLocationsOperationsGetCall) Do(opts ...googleapi.CallOption) (*
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -10150,11 +10207,13 @@ func (c *ProjectsLocationsOperationsListCall) ProjectId(projectId string) *Proje
 }
 
 // Zone sets the optional parameter "zone": Deprecated. The name of the
-// Google Compute Engine
-// [zone](/compute/docs/zones#available) to return operations for, or
-// `-` for
-// all zones. This field has been deprecated and replaced by the parent
-// field.
+// Google Compute
+// Engine
+// [zone](https://cloud.google.com/compute/docs/zones#available) to
+// return
+// operations for, or `-` for all zones. This field has been deprecated
+// and
+// replaced by the parent field.
 func (c *ProjectsLocationsOperationsListCall) Zone(zone string) *ProjectsLocationsOperationsListCall {
 	c.urlParams_.Set("zone", zone)
 	return c
@@ -10197,7 +10256,7 @@ func (c *ProjectsLocationsOperationsListCall) Header() http.Header {
 
 func (c *ProjectsLocationsOperationsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10268,7 +10327,7 @@ func (c *ProjectsLocationsOperationsListCall) Do(opts ...googleapi.CallOption) (
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "The parent (project and location) where the operations will be listed.\nSpecified in the format 'projects/*/locations/*'.\nLocation \"-\" matches all zones and all regions.",
+	//       "description": "The parent (project and location) where the operations will be listed.\nSpecified in the format `projects/*/locations/*`.\nLocation \"-\" matches all zones and all regions.",
 	//       "location": "path",
 	//       "pattern": "^projects/[^/]+/locations/[^/]+$",
 	//       "required": true,
@@ -10280,7 +10339,7 @@ func (c *ProjectsLocationsOperationsListCall) Do(opts ...googleapi.CallOption) (
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) to return operations for, or `-` for\nall zones. This field has been deprecated and replaced by the parent field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) to return\noperations for, or `-` for all zones. This field has been deprecated and\nreplaced by the parent field.",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -10319,7 +10378,7 @@ func (r *ProjectsZonesService) GetServerconfig(projectId string, zone string) *P
 
 // Name sets the optional parameter "name": The name (project and
 // location) of the server config to get,
-// specified in the format 'projects/*/locations/*'.
+// specified in the format `projects/*/locations/*`.
 func (c *ProjectsZonesGetServerconfigCall) Name(name string) *ProjectsZonesGetServerconfigCall {
 	c.urlParams_.Set("name", name)
 	return c
@@ -10362,7 +10421,7 @@ func (c *ProjectsZonesGetServerconfigCall) Header() http.Header {
 
 func (c *ProjectsZonesGetServerconfigCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10435,7 +10494,7 @@ func (c *ProjectsZonesGetServerconfigCall) Do(opts ...googleapi.CallOption) (*Se
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project and location) of the server config to get,\nspecified in the format 'projects/*/locations/*'.",
+	//       "description": "The name (project and location) of the server config to get,\nspecified in the format `projects/*/locations/*`.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -10446,7 +10505,7 @@ func (c *ProjectsZonesGetServerconfigCall) Do(opts ...googleapi.CallOption) (*Se
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) to return operations for.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) to return\noperations for. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -10513,7 +10572,7 @@ func (c *ProjectsZonesClustersAddonsCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersAddonsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10602,7 +10661,7 @@ func (c *ProjectsZonesClustersAddonsCall) Do(opts ...googleapi.CallOption) (*Ope
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -10672,7 +10731,7 @@ func (c *ProjectsZonesClustersCompleteIpRotationCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersCompleteIpRotationCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10761,7 +10820,7 @@ func (c *ProjectsZonesClustersCompleteIpRotationCall) Do(opts ...googleapi.CallO
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -10797,9 +10856,11 @@ type ProjectsZonesClustersCreateCall struct {
 // type of Google
 // Compute Engine instances.
 //
-// By default, the cluster is created in the project's
+// By default, the cluster is created in the
+// project's
 // [default
-// network](/compute/docs/networks-and-firewalls#networks).
+// network](https://cloud.google.com/compute/docs/netw
+// orks-and-firewalls#networks).
 //
 // One firewall is added for the cluster. After cluster creation,
 // the Kubelet creates routes for each node to allow the containers
@@ -10845,7 +10906,7 @@ func (c *ProjectsZonesClustersCreateCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -10910,7 +10971,7 @@ func (c *ProjectsZonesClustersCreateCall) Do(opts ...googleapi.CallOption) (*Ope
 	}
 	return ret, nil
 	// {
-	//   "description": "Creates a cluster, consisting of the specified number and type of Google\nCompute Engine instances.\n\nBy default, the cluster is created in the project's\n[default network](/compute/docs/networks-and-firewalls#networks).\n\nOne firewall is added for the cluster. After cluster creation,\nthe Kubelet creates routes for each node to allow the containers\non that node to communicate with all other instances in the\ncluster.\n\nFinally, an entry is added to the project's global metadata indicating\nwhich CIDR range the cluster is using.",
+	//   "description": "Creates a cluster, consisting of the specified number and type of Google\nCompute Engine instances.\n\nBy default, the cluster is created in the project's\n[default\nnetwork](https://cloud.google.com/compute/docs/networks-and-firewalls#networks).\n\nOne firewall is added for the cluster. After cluster creation,\nthe Kubelet creates routes for each node to allow the containers\non that node to communicate with all other instances in the\ncluster.\n\nFinally, an entry is added to the project's global metadata indicating\nwhich CIDR range the cluster is using.",
 	//   "flatPath": "v1/projects/{projectId}/zones/{zone}/clusters",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.zones.clusters.create",
@@ -10926,7 +10987,7 @@ func (c *ProjectsZonesClustersCreateCall) Do(opts ...googleapi.CallOption) (*Ope
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the parent field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the parent\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -10980,7 +11041,7 @@ func (r *ProjectsZonesClustersService) Delete(projectId string, zone string, clu
 
 // Name sets the optional parameter "name": The name (project, location,
 // cluster) of the cluster to delete.
-// Specified in the format 'projects/*/locations/*/clusters/*'.
+// Specified in the format `projects/*/locations/*/clusters/*`.
 func (c *ProjectsZonesClustersDeleteCall) Name(name string) *ProjectsZonesClustersDeleteCall {
 	c.urlParams_.Set("name", name)
 	return c
@@ -11013,7 +11074,7 @@ func (c *ProjectsZonesClustersDeleteCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11091,7 +11152,7 @@ func (c *ProjectsZonesClustersDeleteCall) Do(opts ...googleapi.CallOption) (*Ope
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to delete.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to delete.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -11102,7 +11163,7 @@ func (c *ProjectsZonesClustersDeleteCall) Do(opts ...googleapi.CallOption) (*Ope
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -11143,7 +11204,7 @@ func (r *ProjectsZonesClustersService) Get(projectId string, zone string, cluste
 
 // Name sets the optional parameter "name": The name (project, location,
 // cluster) of the cluster to retrieve.
-// Specified in the format 'projects/*/locations/*/clusters/*'.
+// Specified in the format `projects/*/locations/*/clusters/*`.
 func (c *ProjectsZonesClustersGetCall) Name(name string) *ProjectsZonesClustersGetCall {
 	c.urlParams_.Set("name", name)
 	return c
@@ -11186,7 +11247,7 @@ func (c *ProjectsZonesClustersGetCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11267,7 +11328,7 @@ func (c *ProjectsZonesClustersGetCall) Do(opts ...googleapi.CallOption) (*Cluste
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name (project, location, cluster) of the cluster to retrieve.\nSpecified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The name (project, location, cluster) of the cluster to retrieve.\nSpecified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -11278,7 +11339,7 @@ func (c *ProjectsZonesClustersGetCall) Do(opts ...googleapi.CallOption) (*Cluste
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -11346,7 +11407,7 @@ func (c *ProjectsZonesClustersLegacyAbacCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersLegacyAbacCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11435,7 +11496,7 @@ func (c *ProjectsZonesClustersLegacyAbacCall) Do(opts ...googleapi.CallOption) (
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -11479,7 +11540,7 @@ func (r *ProjectsZonesClustersService) List(projectId string, zone string) *Proj
 
 // Parent sets the optional parameter "parent": The parent (project and
 // location) where the clusters will be listed.
-// Specified in the format 'projects/*/locations/*'.
+// Specified in the format `projects/*/locations/*`.
 // Location "-" matches all zones and all regions.
 func (c *ProjectsZonesClustersListCall) Parent(parent string) *ProjectsZonesClustersListCall {
 	c.urlParams_.Set("parent", parent)
@@ -11523,7 +11584,7 @@ func (c *ProjectsZonesClustersListCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11596,7 +11657,7 @@ func (c *ProjectsZonesClustersListCall) Do(opts ...googleapi.CallOption) (*ListC
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "The parent (project and location) where the clusters will be listed.\nSpecified in the format 'projects/*/locations/*'.\nLocation \"-\" matches all zones and all regions.",
+	//       "description": "The parent (project and location) where the clusters will be listed.\nSpecified in the format `projects/*/locations/*`.\nLocation \"-\" matches all zones and all regions.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -11607,7 +11668,7 @@ func (c *ProjectsZonesClustersListCall) Do(opts ...googleapi.CallOption) (*ListC
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides, or \"-\" for all zones.\nThis field has been deprecated and replaced by the parent field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides, or \"-\" for all zones. This field has been deprecated and\nreplaced by the parent field.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -11640,8 +11701,9 @@ type ProjectsZonesClustersLocationsCall struct {
 // Locations: Sets the locations for a specific cluster.
 // Deprecated.
 // Use
-// [projects.locations.clusters.update](/kubernetes-engine/docs/refer
-// ence/rest/v1/projects.locations.clusters/update)
+// [projects.locations.clusters.update](https://cloud.google.com/kube
+// rnetes-engine/docs/reference/rest/v1/projects.locations.clusters/updat
+// e)
 // instead.
 func (r *ProjectsZonesClustersService) Locations(projectId string, zone string, clusterId string, setlocationsrequest *SetLocationsRequest) *ProjectsZonesClustersLocationsCall {
 	c := &ProjectsZonesClustersLocationsCall{s: r.s, urlParams_: make(gensupport.URLParams)}
@@ -11679,7 +11741,7 @@ func (c *ProjectsZonesClustersLocationsCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersLocationsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11745,7 +11807,7 @@ func (c *ProjectsZonesClustersLocationsCall) Do(opts ...googleapi.CallOption) (*
 	}
 	return ret, nil
 	// {
-	//   "description": "Sets the locations for a specific cluster.\nDeprecated. Use\n[projects.locations.clusters.update](/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/update)\ninstead.",
+	//   "description": "Sets the locations for a specific cluster.\nDeprecated. Use\n[projects.locations.clusters.update](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters/update)\ninstead.",
 	//   "flatPath": "v1/projects/{projectId}/zones/{zone}/clusters/{clusterId}/locations",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.zones.clusters.locations",
@@ -11768,7 +11830,7 @@ func (c *ProjectsZonesClustersLocationsCall) Do(opts ...googleapi.CallOption) (*
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -11838,7 +11900,7 @@ func (c *ProjectsZonesClustersLoggingCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersLoggingCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -11927,7 +11989,7 @@ func (c *ProjectsZonesClustersLoggingCall) Do(opts ...googleapi.CallOption) (*Op
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -11997,7 +12059,7 @@ func (c *ProjectsZonesClustersMasterCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersMasterCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12086,7 +12148,7 @@ func (c *ProjectsZonesClustersMasterCall) Do(opts ...googleapi.CallOption) (*Ope
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -12156,7 +12218,7 @@ func (c *ProjectsZonesClustersMonitoringCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersMonitoringCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12245,7 +12307,7 @@ func (c *ProjectsZonesClustersMonitoringCall) Do(opts ...googleapi.CallOption) (
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -12315,7 +12377,7 @@ func (c *ProjectsZonesClustersResourceLabelsCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersResourceLabelsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12404,7 +12466,7 @@ func (c *ProjectsZonesClustersResourceLabelsCall) Do(opts ...googleapi.CallOptio
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -12474,7 +12536,7 @@ func (c *ProjectsZonesClustersSetMaintenancePolicyCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersSetMaintenancePolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12563,7 +12625,7 @@ func (c *ProjectsZonesClustersSetMaintenancePolicyCall) Do(opts ...googleapi.Cal
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Required. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.",
+	//       "description": "Required. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -12637,7 +12699,7 @@ func (c *ProjectsZonesClustersSetMasterAuthCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersSetMasterAuthCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12726,7 +12788,7 @@ func (c *ProjectsZonesClustersSetMasterAuthCall) Do(opts ...googleapi.CallOption
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -12796,7 +12858,7 @@ func (c *ProjectsZonesClustersSetNetworkPolicyCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersSetNetworkPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -12885,7 +12947,7 @@ func (c *ProjectsZonesClustersSetNetworkPolicyCall) Do(opts ...googleapi.CallOpt
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -12955,7 +13017,7 @@ func (c *ProjectsZonesClustersStartIpRotationCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersStartIpRotationCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13044,7 +13106,7 @@ func (c *ProjectsZonesClustersStartIpRotationCall) Do(opts ...googleapi.CallOpti
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -13114,7 +13176,7 @@ func (c *ProjectsZonesClustersUpdateCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13203,7 +13265,7 @@ func (c *ProjectsZonesClustersUpdateCall) Do(opts ...googleapi.CallOption) (*Ope
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -13276,7 +13338,7 @@ func (c *ProjectsZonesClustersNodePoolsAutoscalingCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsAutoscalingCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13373,7 +13435,7 @@ func (c *ProjectsZonesClustersNodePoolsAutoscalingCall) Do(opts ...googleapi.Cal
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -13443,7 +13505,7 @@ func (c *ProjectsZonesClustersNodePoolsCreateCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13532,7 +13594,7 @@ func (c *ProjectsZonesClustersNodePoolsCreateCall) Do(opts ...googleapi.CallOpti
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the parent field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the parent\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -13579,7 +13641,7 @@ func (r *ProjectsZonesClustersNodePoolsService) Delete(projectId string, zone st
 // cluster, node pool id) of the node pool to
 // delete. Specified in the
 // format
-// 'projects/*/locations/*/clusters/*/nodePools/*'.
+// `projects/*/locations/*/clusters/*/nodePools/*`.
 func (c *ProjectsZonesClustersNodePoolsDeleteCall) Name(name string) *ProjectsZonesClustersNodePoolsDeleteCall {
 	c.urlParams_.Set("name", name)
 	return c
@@ -13612,7 +13674,7 @@ func (c *ProjectsZonesClustersNodePoolsDeleteCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsDeleteCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13692,7 +13754,7 @@ func (c *ProjectsZonesClustersNodePoolsDeleteCall) Do(opts ...googleapi.CallOpti
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool id) of the node pool to\ndelete. Specified in the format\n'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool id) of the node pool to\ndelete. Specified in the format\n`projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -13709,7 +13771,7 @@ func (c *ProjectsZonesClustersNodePoolsDeleteCall) Do(opts ...googleapi.CallOpti
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -13754,7 +13816,7 @@ func (r *ProjectsZonesClustersNodePoolsService) Get(projectId string, zone strin
 // cluster, node pool id) of the node pool to
 // get. Specified in the
 // format
-// 'projects/*/locations/*/clusters/*/nodePools/*'.
+// `projects/*/locations/*/clusters/*/nodePools/*`.
 func (c *ProjectsZonesClustersNodePoolsGetCall) Name(name string) *ProjectsZonesClustersNodePoolsGetCall {
 	c.urlParams_.Set("name", name)
 	return c
@@ -13797,7 +13859,7 @@ func (c *ProjectsZonesClustersNodePoolsGetCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -13880,7 +13942,7 @@ func (c *ProjectsZonesClustersNodePoolsGetCall) Do(opts ...googleapi.CallOption)
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name (project, location, cluster, node pool id) of the node pool to\nget. Specified in the format\n'projects/*/locations/*/clusters/*/nodePools/*'.",
+	//       "description": "The name (project, location, cluster, node pool id) of the node pool to\nget. Specified in the format\n`projects/*/locations/*/clusters/*/nodePools/*`.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -13897,7 +13959,7 @@ func (c *ProjectsZonesClustersNodePoolsGetCall) Do(opts ...googleapi.CallOption)
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -13938,7 +14000,7 @@ func (r *ProjectsZonesClustersNodePoolsService) List(projectId string, zone stri
 
 // Parent sets the optional parameter "parent": The parent (project,
 // location, cluster id) where the node pools will be
-// listed. Specified in the format 'projects/*/locations/*/clusters/*'.
+// listed. Specified in the format `projects/*/locations/*/clusters/*`.
 func (c *ProjectsZonesClustersNodePoolsListCall) Parent(parent string) *ProjectsZonesClustersNodePoolsListCall {
 	c.urlParams_.Set("parent", parent)
 	return c
@@ -13981,7 +14043,7 @@ func (c *ProjectsZonesClustersNodePoolsListCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14062,7 +14124,7 @@ func (c *ProjectsZonesClustersNodePoolsListCall) Do(opts ...googleapi.CallOption
 	//       "type": "string"
 	//     },
 	//     "parent": {
-	//       "description": "The parent (project, location, cluster id) where the node pools will be\nlisted. Specified in the format 'projects/*/locations/*/clusters/*'.",
+	//       "description": "The parent (project, location, cluster id) where the node pools will be\nlisted. Specified in the format `projects/*/locations/*/clusters/*`.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -14073,7 +14135,7 @@ func (c *ProjectsZonesClustersNodePoolsListCall) Do(opts ...googleapi.CallOption
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the parent field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the parent\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -14144,7 +14206,7 @@ func (c *ProjectsZonesClustersNodePoolsRollbackCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsRollbackCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14241,7 +14303,7 @@ func (c *ProjectsZonesClustersNodePoolsRollbackCall) Do(opts ...googleapi.CallOp
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -14313,7 +14375,7 @@ func (c *ProjectsZonesClustersNodePoolsSetManagementCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsSetManagementCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14410,7 +14472,7 @@ func (c *ProjectsZonesClustersNodePoolsSetManagementCall) Do(opts ...googleapi.C
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -14482,7 +14544,7 @@ func (c *ProjectsZonesClustersNodePoolsSetSizeCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsSetSizeCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14579,7 +14641,7 @@ func (c *ProjectsZonesClustersNodePoolsSetSizeCall) Do(opts ...googleapi.CallOpt
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -14652,7 +14714,7 @@ func (c *ProjectsZonesClustersNodePoolsUpdateCall) Header() http.Header {
 
 func (c *ProjectsZonesClustersNodePoolsUpdateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14749,7 +14811,7 @@ func (c *ProjectsZonesClustersNodePoolsUpdateCall) Do(opts ...googleapi.CallOpti
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -14819,7 +14881,7 @@ func (c *ProjectsZonesOperationsCancelCall) Header() http.Header {
 
 func (c *ProjectsZonesOperationsCancelCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -14908,7 +14970,7 @@ func (c *ProjectsZonesOperationsCancelCall) Do(opts ...googleapi.CallOption) (*E
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the operation resides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\noperation resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -14952,7 +15014,7 @@ func (r *ProjectsZonesOperationsService) Get(projectId string, zone string, oper
 
 // Name sets the optional parameter "name": The name (project, location,
 // operation id) of the operation to get.
-// Specified in the format 'projects/*/locations/*/operations/*'.
+// Specified in the format `projects/*/locations/*/operations/*`.
 func (c *ProjectsZonesOperationsGetCall) Name(name string) *ProjectsZonesOperationsGetCall {
 	c.urlParams_.Set("name", name)
 	return c
@@ -14995,7 +15057,7 @@ func (c *ProjectsZonesOperationsGetCall) Header() http.Header {
 
 func (c *ProjectsZonesOperationsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15070,7 +15132,7 @@ func (c *ProjectsZonesOperationsGetCall) Do(opts ...googleapi.CallOption) (*Oper
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "The name (project, location, operation id) of the operation to get.\nSpecified in the format 'projects/*/locations/*/operations/*'.",
+	//       "description": "The name (project, location, operation id) of the operation to get.\nSpecified in the format `projects/*/locations/*/operations/*`.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -15087,7 +15149,7 @@ func (c *ProjectsZonesOperationsGetCall) Do(opts ...googleapi.CallOption) (*Oper
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) in which the\ncluster resides. This field has been deprecated and replaced by the name\nfield.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"
@@ -15127,7 +15189,7 @@ func (r *ProjectsZonesOperationsService) List(projectId string, zone string) *Pr
 
 // Parent sets the optional parameter "parent": The parent (project and
 // location) where the operations will be listed.
-// Specified in the format 'projects/*/locations/*'.
+// Specified in the format `projects/*/locations/*`.
 // Location "-" matches all zones and all regions.
 func (c *ProjectsZonesOperationsListCall) Parent(parent string) *ProjectsZonesOperationsListCall {
 	c.urlParams_.Set("parent", parent)
@@ -15171,7 +15233,7 @@ func (c *ProjectsZonesOperationsListCall) Header() http.Header {
 
 func (c *ProjectsZonesOperationsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -15244,7 +15306,7 @@ func (c *ProjectsZonesOperationsListCall) Do(opts ...googleapi.CallOption) (*Lis
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "The parent (project and location) where the operations will be listed.\nSpecified in the format 'projects/*/locations/*'.\nLocation \"-\" matches all zones and all regions.",
+	//       "description": "The parent (project and location) where the operations will be listed.\nSpecified in the format `projects/*/locations/*`.\nLocation \"-\" matches all zones and all regions.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -15255,7 +15317,7 @@ func (c *ProjectsZonesOperationsListCall) Do(opts ...googleapi.CallOption) (*Lis
 	//       "type": "string"
 	//     },
 	//     "zone": {
-	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) to return operations for, or `-` for\nall zones. This field has been deprecated and replaced by the parent field.",
+	//       "description": "Deprecated. The name of the Google Compute Engine\n[zone](https://cloud.google.com/compute/docs/zones#available) to return\noperations for, or `-` for all zones. This field has been deprecated and\nreplaced by the parent field.",
 	//       "location": "path",
 	//       "required": true,
 	//       "type": "string"

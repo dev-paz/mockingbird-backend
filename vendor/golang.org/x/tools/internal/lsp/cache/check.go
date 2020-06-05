@@ -12,6 +12,7 @@ import (
 	"go/token"
 	"go/types"
 	"path"
+	"reflect"
 	"sort"
 	"strings"
 	"sync"
@@ -97,8 +98,11 @@ func (s *snapshot) buildPackageHandle(ctx context.Context, id packageID, mode so
 	})
 	ph.handle = h
 
-	// Cache the PackageHandle in the snapshot.
-	s.addPackage(ph)
+	// Cache the PackageHandle in the snapshot. If a package handle has already
+	// been cached, addPackage will return the cached value. This is fine,
+	// since the original package handle above will have no references and be
+	// garbage collected.
+	ph = s.addPackageHandle(ph)
 
 	return ph, nil
 }
@@ -170,7 +174,7 @@ func hashConfig(config *packages.Config) string {
 
 	// Dir, Mode, Env, BuildFlags are the parts of the config that can change.
 	b.WriteString(config.Dir)
-	b.WriteString(string(config.Mode))
+	b.WriteString(string(rune(config.Mode)))
 
 	for _, e := range config.Env {
 		b.WriteString(e)
@@ -398,6 +402,12 @@ func typeCheck(ctx context.Context, fset *token.FileSet, m *metadata, mode sourc
 			return depPkg.types, nil
 		}),
 	}
+	// We want to type check cgo code if go/types supports it.
+	// We passed TypecheckCgo to go/packages when we Loaded.
+	if usescgo := reflect.ValueOf(cfg).Elem().FieldByName("UsesCgo"); usescgo.IsValid() {
+		usescgo.SetBool(true)
+	}
+
 	check := types.NewChecker(cfg, fset, pkg.types, pkg.typesInfo)
 
 	// Type checking errors are handled via the config, so ignore them here.

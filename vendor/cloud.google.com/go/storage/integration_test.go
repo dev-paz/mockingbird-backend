@@ -29,7 +29,9 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"mime/multipart"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -587,14 +589,19 @@ func TestIntegration_ObjectsRangeReader(t *testing.T) {
 
 	objName := uidSpace.New()
 	obj := bkt.Object(objName)
-	w := obj.NewWriter(ctx)
-
 	contents := []byte("Hello, world this is a range request")
-	if _, err := w.Write(contents); err != nil {
-		t.Fatalf("Failed to write contents: %v", err)
-	}
-	if err := w.Close(); err != nil {
-		t.Fatalf("Failed to close writer: %v", err)
+
+	if err := retry(ctx, func() error {
+		w := obj.NewWriter(ctx)
+		if _, err := w.Write(contents); err != nil {
+			return fmt.Errorf("Failed to write contents: %v", err)
+		}
+		if err := w.Close(); err != nil {
+			return fmt.Errorf("Failed to close writer: %v", err)
+		}
+		return nil
+	}, nil); err != nil {
+		t.Fatal(err)
 	}
 
 	last5s := []struct {
@@ -2970,22 +2977,30 @@ func TestIntegration_NewReaderWithContentEncodingGzip(t *testing.T) {
 	bkt := client.Bucket(uidSpace.New())
 	h.mustCreate(bkt, projectID, nil)
 	defer h.mustDeleteBucket(bkt)
-
 	obj := bkt.Object("decompressive-transcoding")
-	// Firstly upload the gzip compressed file.
-	w := obj.NewWriter(ctx)
 	original := bytes.Repeat([]byte("a"), 4<<10)
-	// Compress and upload the content.
-	gzw := gzip.NewWriter(w)
-	if _, err := gzw.Write(original); err != nil {
-		t.Fatalf("Failed to compress content: %v", err)
-	}
-	if err := gzw.Close(); err != nil {
-		t.Fatalf("Failed to compress content: %v", err)
-	}
-	if err := w.Close(); err != nil {
-		t.Fatalf("Failed to finish uploading the file: %v", err)
-	}
+
+	// Wrap the file upload in a retry.
+	// TODO: Investigate removing retry after resolving
+	// https://github.com/googleapis/google-api-go-client/issues/392.
+	err := retry(ctx, func() error {
+		// Firstly upload the gzip compressed file.
+		w := obj.NewWriter(ctx)
+		// Compress and upload the content.
+		gzw := gzip.NewWriter(w)
+		if _, err := gzw.Write(original); err != nil {
+			return fmt.Errorf("Failed to compress content: %v", err)
+		}
+		if err := gzw.Close(); err != nil {
+			return fmt.Errorf("Failed to compress content: %v", err)
+		}
+		if err := w.Close(); err != nil {
+			return fmt.Errorf("Failed to finish uploading the file: %v", err)
+		}
+		return nil
+	},
+		nil)
+
 	defer h.mustDeleteObject(obj)
 
 	// Now update the Content-Encoding and Content-Type to enable
@@ -3140,15 +3155,126 @@ func TestIntegration_HMACKey(t *testing.T) {
 		t.Fatalf("Unexpected deletion failure: %v", err)
 	}
 
-	hk, err := hkh.Get(ctx)
-	if err == nil {
-		// If the err == nil, then the returned HMACKey's state MUST be Deleted.
-		if hk == nil || hk.State != Deleted {
-			t.Fatalf("After deletion\nGot %#v\nWanted state %q", hk, Deleted)
-		}
-	} else if !strings.Contains(err.Error(), "404") {
+	_, err = hkh.Get(ctx)
+	if err != nil && !strings.Contains(err.Error(), "404") {
 		// If the deleted key has already been garbage collected, a 404 is expected.
+		// Other errors should cause a failure and are not expected.
 		t.Fatalf("Unexpected error: %v", err)
+	}
+}
+
+func TestIntegration_PostPolicyV4(t *testing.T) {
+	jwtConf, err := testutil.JWTConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if jwtConf == nil {
+		t.Skip("JSON key file is not present")
+	}
+
+	ctx := context.Background()
+	client := testConfig(ctx, t)
+	defer client.Close()
+
+	projectID := testutil.ProjID()
+	newBucketName := uidSpace.New()
+	b := client.Bucket(newBucketName)
+	h := testHelper{t}
+	h.mustCreate(b, projectID, nil)
+	defer h.mustDeleteBucket(b)
+
+	statusCodeToRespond := 200
+	opts := &PostPolicyV4Options{
+		GoogleAccessID: jwtConf.Email,
+		PrivateKey:     jwtConf.PrivateKey,
+
+		Expires: time.Now().Add(30 * time.Minute),
+
+		Fields: &PolicyV4Fields{
+			StatusCodeOnSuccess: statusCodeToRespond,
+			ContentType:         "text/plain",
+			ACL:                 "public-read",
+		},
+
+		// The conditions that the uploaded file will be expected to conform to.
+		Conditions: []PostPolicyV4Condition{
+			// Make the file a maximum of 10mB.
+			ConditionContentLengthRange(0, 10<<20),
+			ConditionStartsWith("$acl", "public"),
+		},
+	}
+
+	objectName := "my-object.txt"
+	pv4, err := GenerateSignedPostPolicyV4(newBucketName, objectName, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	formBuf := new(bytes.Buffer)
+	mw := multipart.NewWriter(formBuf)
+	for fieldName, value := range pv4.Fields {
+		if err := mw.WriteField(fieldName, value); err != nil {
+			t.Fatalf("Failed to write form field: %q: %v", fieldName, err)
+		}
+	}
+
+	// Now let's perform the upload.
+	fileBody := bytes.Repeat([]byte("a"), 25)
+	mf, err := mw.CreateFormFile("file", "myfile.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := mf.Write(fileBody); err != nil {
+		t.Fatal(err)
+	}
+	if err := mw.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	// Compose the HTTP request.
+	req, err := http.NewRequest("POST", pv4.URL, formBuf)
+	if err != nil {
+		t.Fatalf("Failed to compose HTTP request: %v", err)
+	}
+	// Ensure the Content-Type is derived from the writer.
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if g, w := res.StatusCode, statusCodeToRespond; g != w {
+		blob, _ := httputil.DumpResponse(res, true)
+		t.Errorf("Status code in response mismatch: got %d want %d\nBody: %s", g, w, blob)
+	}
+	io.Copy(ioutil.Discard, res.Body)
+
+	// Verify that the file was properly uploaded, by
+	// reading back its attributes and content!
+	obj := b.Object(objectName)
+	defer h.mustDeleteObject(obj)
+
+	attrs, err := obj.Attrs(ctx)
+	if err != nil {
+		t.Fatalf("Failed to retrieve attributes: %v", err)
+	}
+	if g, w := attrs.Size, int64(len(fileBody)); g != w {
+		t.Errorf("ContentLength mismatch: got %d want %d", g, w)
+	}
+	if g, w := attrs.MD5, md5.Sum(fileBody); !bytes.Equal(g, w[:]) {
+		t.Errorf("MD5Checksum mismatch\nGot:  %x\nWant: %x", g, w)
+	}
+
+	// Compare the uploaded body with the expected.
+	rd, err := obj.NewReader(ctx)
+	if err != nil {
+		t.Fatalf("Failed to create a reader: %v", err)
+	}
+	gotBody, err := ioutil.ReadAll(rd)
+	if err != nil {
+		t.Fatalf("Failed to read the body: %v", err)
+	}
+	if diff := testutil.Diff(string(gotBody), string(fileBody)); diff != "" {
+		t.Fatalf("Body mismatch: got - want +\n%s", diff)
 	}
 }
 
@@ -3265,16 +3391,20 @@ func (h testHelper) mustNewReader(obj *ObjectHandle) *Reader {
 }
 
 func writeObject(ctx context.Context, obj *ObjectHandle, contentType string, contents []byte) error {
-	w := obj.NewWriter(ctx)
-	w.ContentType = contentType
-	w.CacheControl = "public, max-age=60"
-	if contents != nil {
-		if _, err := w.Write(contents); err != nil {
-			_ = w.Close()
-			return err
+	// TODO: remove retry once retry logic in the client has been improved.
+	// https://github.com/googleapis/google-cloud-go/issues/2395
+	return retry(ctx, func() error {
+		w := obj.NewWriter(ctx)
+		w.ContentType = contentType
+		w.CacheControl = "public, max-age=60"
+		if contents != nil {
+			if _, err := w.Write(contents); err != nil {
+				_ = w.Close()
+				return err
+			}
 		}
-	}
-	return w.Close()
+		return w.Close()
+	}, nil)
 }
 
 // loc returns a string describing the file and line of its caller's call site. In
@@ -3478,7 +3608,7 @@ func retry(ctx context.Context, call func() error, check func() error) error {
 		}
 		err = call()
 		if err == nil {
-			if check() == nil {
+			if check == nil || check() == nil {
 				return nil
 			}
 			err = check()

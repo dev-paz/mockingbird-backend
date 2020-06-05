@@ -699,11 +699,13 @@ func (p *parser) skipSpace() bool {
 		if term == "" {
 			break
 		}
-		ti := strings.Index(p.s[i:], term)
+		// Search for the terminator, starting after the marker.
+		ti := strings.Index(p.s[i+len(marker):], term)
 		if ti < 0 {
 			p.errorf("unterminated comment")
 			return false
 		}
+		ti += len(marker) // make ti relative to p.s[i:]
 		if com != nil && (com.end.Line+1 < p.line || com.marker != marker) {
 			// There's a previous comment, but there's an
 			// intervening blank line, or the marker changed.
@@ -1699,9 +1701,7 @@ func (p *parser) parseSelectList() ([]Expr, []string, *parseError) {
 
 		// TODO: The "AS" keyword is optional.
 		if p.eat("AS") {
-			// The docs don't seem to indicate the valid lexical element for aliases,
-			// but it seems likely that identifiers are suitable.
-			alias, err := p.parseTableOrIndexOrColumnName()
+			alias, err := p.parseAlias()
 			if err != nil {
 				return nil, nil, err
 			}
@@ -1724,7 +1724,21 @@ func (p *parser) parseSelectList() ([]Expr, []string, *parseError) {
 func (p *parser) parseSelectFrom() (SelectFrom, *parseError) {
 	// TODO: support more than a single table name.
 	tname, err := p.parseTableOrIndexOrColumnName()
-	return SelectFrom{Table: tname}, err
+	if err != nil {
+		return SelectFrom{}, err
+	}
+	sf := SelectFrom{Table: tname}
+
+	// TODO: The "AS" keyword is optional.
+	if p.eat("AS") {
+		alias, err := p.parseAlias()
+		if err != nil {
+			return SelectFrom{}, err
+		}
+		sf.Alias = alias
+	}
+
+	return sf, nil
 }
 
 func (p *parser) parseTableSample() (TableSample, *parseError) {
@@ -2224,6 +2238,12 @@ func (p *parser) parseBoolExpr() (BoolExpr, *parseError) {
 		return nil, p.errorf("got non-bool expression %T", expr)
 	}
 	return be, nil
+}
+
+func (p *parser) parseAlias() (string, *parseError) {
+	// The docs don't specify what lexical token is valid for an alias,
+	// but it seems likely that it is an identifier.
+	return p.parseTableOrIndexOrColumnName()
 }
 
 func (p *parser) parseTableOrIndexOrColumnName() (string, *parseError) {

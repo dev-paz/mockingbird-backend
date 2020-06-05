@@ -18,6 +18,7 @@
 package edsbalancer
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -26,6 +27,8 @@ import (
 	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/grpclog"
 )
+
+var errAllPrioritiesRemoved = errors.New("eds: no locality is provided, all priorities are removed")
 
 // handlePriorityChange handles priority after EDS adds/removes a
 // priority.
@@ -46,7 +49,7 @@ func (edsImpl *edsBalancerImpl) handlePriorityChange() {
 	// Everything was removed by EDS.
 	if !edsImpl.priorityLowest.isSet() {
 		edsImpl.priorityInUse = newPriorityTypeUnset()
-		edsImpl.cc.UpdateState(balancer.State{ConnectivityState: connectivity.TransientFailure, Picker: base.NewErrPickerV2(balancer.ErrTransientFailure)})
+		edsImpl.cc.UpdateState(balancer.State{ConnectivityState: connectivity.TransientFailure, Picker: base.NewErrPicker(errAllPrioritiesRemoved)})
 		return
 	}
 
@@ -73,7 +76,7 @@ func (edsImpl *edsBalancerImpl) handlePriorityChange() {
 			// We don't have an old state to send to parent, but we also don't
 			// want parent to keep using picker from old_priorityInUse. Send an
 			// update to trigger block picks until a new picker is ready.
-			edsImpl.cc.UpdateState(balancer.State{ConnectivityState: connectivity.Connecting, Picker: base.NewErrPickerV2(balancer.ErrNoSubConnAvailable)})
+			edsImpl.cc.UpdateState(balancer.State{ConnectivityState: connectivity.Connecting, Picker: base.NewErrPicker(balancer.ErrNoSubConnAvailable)})
 		}
 		return
 	}

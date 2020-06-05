@@ -9,8 +9,10 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"go/types"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 	"sync"
@@ -105,7 +107,8 @@ func (s *snapshot) Config(ctx context.Context) *packages.Config {
 			packages.NeedCompiledGoFiles |
 			packages.NeedImports |
 			packages.NeedDeps |
-			packages.NeedTypesSizes,
+			packages.NeedTypesSizes |
+			packages.NeedModule,
 		Fset:    s.view.session.cache.fset,
 		Overlay: s.buildOverlay(),
 		ParseFile: func(*token.FileSet, string, []byte) (*ast.File, error) {
@@ -117,6 +120,10 @@ func (s *snapshot) Config(ctx context.Context) *packages.Config {
 			}
 		},
 		Tests: true,
+	}
+	// We want to type check cgo code if go/types supports it.
+	if reflect.ValueOf(&types.Config{}).Elem().FieldByName("UsesCgo").IsValid() {
+		cfg.Mode |= packages.TypecheckCgo
 	}
 	packagesinternal.SetGoCmdRunner(cfg, s.view.gocmdRunner)
 
@@ -291,17 +298,17 @@ func (s *snapshot) rebuildImportGraph() {
 	}
 }
 
-func (s *snapshot) addPackage(ph *packageHandle) {
+func (s *snapshot) addPackageHandle(ph *packageHandle) *packageHandle {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	// TODO: We should make sure not to compute duplicate packageHandles,
-	// and instead panic here. This will be hard to do because we may encounter
-	// the same package multiple times in the dependency tree.
-	if _, ok := s.packages[ph.packageKey()]; ok {
-		return
+	// If the package handle has already been cached,
+	// return the cached handle instead of overriding it.
+	if ph, ok := s.packages[ph.packageKey()]; ok {
+		return ph
 	}
 	s.packages[ph.packageKey()] = ph
+	return ph
 }
 
 func (s *snapshot) workspacePackageIDs() (ids []packageID) {
@@ -427,7 +434,7 @@ func (s *snapshot) getActionHandle(id packageID, m source.ParseMode, a *analysis
 	return s.actions[key]
 }
 
-func (s *snapshot) addActionHandle(ah *actionHandle) {
+func (s *snapshot) addActionHandle(ah *actionHandle) *actionHandle {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -438,10 +445,11 @@ func (s *snapshot) addActionHandle(ah *actionHandle) {
 			mode: ah.pkg.mode,
 		},
 	}
-	if _, ok := s.actions[key]; ok {
-		return
+	if ah, ok := s.actions[key]; ok {
+		return ah
 	}
 	s.actions[key] = ah
+	return ah
 }
 
 func (s *snapshot) getIDsForURI(uri span.URI) []packageID {
@@ -500,6 +508,17 @@ func (s *snapshot) isWorkspacePackage(id packageID) (packagePath, bool) {
 	scope, ok := s.workspacePackages[id]
 	return scope, ok
 }
+func (s *snapshot) FindFile(uri span.URI) source.FileHandle {
+	f, err := s.view.getFile(uri)
+	if err != nil {
+		return nil
+	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.files[f.URI()]
+}
 
 // GetFile returns a File for the given URI. It will always succeed because it
 // adds the file to the managed set if needed.
@@ -541,7 +560,18 @@ func (s *snapshot) awaitLoaded(ctx context.Context) error {
 	if err := s.reloadWorkspace(ctx); err != nil {
 		return err
 	}
-	return s.reloadOrphanedFiles(ctx)
+	if err := s.reloadOrphanedFiles(ctx); err != nil {
+		return err
+	}
+	// If we still have absolutely no metadata, check if the view failed to
+	// initialize and return any errors.
+	// TODO(rstambler): Should we clear the error after we return it?
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if len(s.metadata) == 0 {
+		return s.view.initializedErr
+	}
+	return nil
 }
 
 // reloadWorkspace reloads the metadata for all invalidated workspace packages.
@@ -646,7 +676,7 @@ func contains(views []*view, view *view) bool {
 	return false
 }
 
-func (s *snapshot) clone(ctx context.Context, withoutURIs map[span.URI]source.FileHandle) *snapshot {
+func (s *snapshot) clone(ctx context.Context, withoutURIs map[span.URI]source.FileHandle, forceReloadMetadata bool) *snapshot {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -696,7 +726,7 @@ func (s *snapshot) clone(ctx context.Context, withoutURIs map[span.URI]source.Fi
 
 		// Check if the file's package name or imports have changed,
 		// and if so, invalidate this file's packages' metadata.
-		invalidateMetadata := s.shouldInvalidateMetadata(ctx, originalFH, currentFH)
+		invalidateMetadata := forceReloadMetadata || s.shouldInvalidateMetadata(ctx, originalFH, currentFH)
 
 		// Invalidate the previous modTidyHandle if any of the files have been
 		// saved or if any of the metadata has been invalidated.

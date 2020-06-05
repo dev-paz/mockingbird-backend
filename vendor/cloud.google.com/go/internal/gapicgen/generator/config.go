@@ -67,7 +67,7 @@ var microgenGapicConfigs = []*microgenConfig{
 		importPath:            "cloud.google.com/go/billing/apiv1",
 		gRPCServiceConfigPath: "google/cloud/billing/v1/cloud_billing_grpc_service_config.json",
 		apiServiceConfigPath:  "google/cloud/billing/v1/cloudbilling.yaml",
-		releaseLevel:          "beta",
+		releaseLevel:          "ga",
 	},
 	{
 		inputDirectoryPath:    "google/cloud/language/v1",
@@ -172,6 +172,14 @@ var microgenGapicConfigs = []*microgenConfig{
 		gRPCServiceConfigPath: "google/cloud/bigquery/reservation/v1beta1/bigqueryreservation_grpc_service_config.json",
 		apiServiceConfigPath:  "google/cloud/bigquery/reservation/v1beta1/bigqueryreservation_v1beta1.yaml",
 		releaseLevel:          "beta",
+	},
+	{
+		inputDirectoryPath:    "google/cloud/bigquery/reservation/v1",
+		pkg:                   "reservation",
+		importPath:            "cloud.google.com/go/bigquery/reservation/apiv1",
+		gRPCServiceConfigPath: "google/cloud/bigquery/reservation/v1/bigqueryreservation_grpc_service_config.json",
+		apiServiceConfigPath:  "google/cloud/bigquery/reservation/v1/bigqueryreservation_v1.yaml",
+		releaseLevel:          "ga",
 	},
 	{
 		inputDirectoryPath:    "google/cloud/bigquery/storage/v1alpha2",
@@ -283,7 +291,7 @@ var microgenGapicConfigs = []*microgenConfig{
 		importPath:            "cloud.google.com/go/secretmanager/apiv1",
 		gRPCServiceConfigPath: "google/cloud/secretmanager/v1/secretmanager_grpc_service_config.json",
 		apiServiceConfigPath:  "google/cloud/secretmanager/v1/secretmanager_v1.yaml",
-		releaseLevel:          "beta",
+		releaseLevel:          "ga",
 	},
 	{
 		inputDirectoryPath:    "google/cloud/secrets/v1beta1",
@@ -299,7 +307,7 @@ var microgenGapicConfigs = []*microgenConfig{
 		importPath:            "cloud.google.com/go/osconfig/apiv1",
 		gRPCServiceConfigPath: "google/cloud/osconfig/v1/osconfig_grpc_service_config.json",
 		apiServiceConfigPath:  "google/cloud/osconfig/v1/osconfig_v1.yaml",
-		releaseLevel:          "beta",
+		releaseLevel:          "ga",
 	},
 	{
 		inputDirectoryPath:    "google/cloud/osconfig/v1beta",
@@ -462,6 +470,14 @@ var microgenGapicConfigs = []*microgenConfig{
 		releaseLevel:          "ga",
 	},
 	{
+		inputDirectoryPath:    "google/datastore/admin/v1",
+		pkg:                   "admin",
+		importPath:            "cloud.google.com/go/datastore/admin/apiv1",
+		gRPCServiceConfigPath: "google/datastore/admin/v1/datastore_admin_grpc_service_config.json",
+		apiServiceConfigPath:  "google/datastore/admin/v1/datastore_admin_v1.yaml",
+		releaseLevel:          "alpha",
+	},
+	{
 		inputDirectoryPath:    "google/spanner/admin/database/v1",
 		pkg:                   "database",
 		importPath:            "cloud.google.com/go/spanner/admin/database/apiv1",
@@ -589,7 +605,7 @@ var microgenGapicConfigs = []*microgenConfig{
 		importPath:            "cloud.google.com/go/recommender/apiv1",
 		gRPCServiceConfigPath: "google/cloud/recommender/v1/recommender_grpc_service_config.json",
 		apiServiceConfigPath:  "google/cloud/recommender/v1/recommender_v1.yaml",
-		releaseLevel:          "alpha",
+		releaseLevel:          "ga",
 	},
 	{
 		inputDirectoryPath:    "google/cloud/videointelligence/v1beta2",
@@ -618,12 +634,10 @@ var microgenGapicConfigs = []*microgenConfig{
 	{
 		inputDirectoryPath:    "google/monitoring/v3",
 		pkg:                   "monitoring",
-		importPath:            "cloud.google.com/go/monitoring/apiv3",
+		importPath:            "cloud.google.com/go/monitoring/apiv3/v2",
 		gRPCServiceConfigPath: "google/monitoring/v3/monitoring_grpc_service_config.json",
 		apiServiceConfigPath:  "google/monitoring/v3/monitoring.yaml",
 		releaseLevel:          "ga",
-		//TODO(codyoss): re-enable generation under v2 -- https://github.com/googleapis/google-cloud-go/issues/1930
-		stopGeneration: true,
 	},
 	{
 		inputDirectoryPath:    "google/cloud/vision/v1p1beta1",

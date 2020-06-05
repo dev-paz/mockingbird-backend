@@ -550,7 +550,7 @@
       }
     }
   },
-  "revision": "20200421",
+  "revision": "20200526",
   "rootUrl": "https://cloudidentity.googleapis.com/",
   "schemas": {
     "AndroidAttributes": {
@@ -977,6 +977,11 @@
           ],
           "type": "string"
         },
+        "createTime": {
+          "description": "When the user first signed in to the device",
+          "format": "google-datetime",
+          "type": "string"
+        },
         "firstSyncTime": {
           "description": "Output only. Most recent time when user registered with this service.",
           "format": "google-datetime",
@@ -1159,6 +1164,24 @@
         "updateTime": {
           "description": "Output only. The time when the `Group` was last updated.",
           "format": "google-datetime",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ListClientStatesResponse": {
+      "description": "Response message that is returned in LRO result of ListClientStates\nOperation.",
+      "id": "ListClientStatesResponse",
+      "properties": {
+        "clientStates": {
+          "description": "Client states meeting the list restrictions.",
+          "items": {
+            "$ref": "ClientState"
+          },
+          "type": "array"
+        },
+        "nextPageToken": {
+          "description": "Token to retrieve the next page of results. Empty if there are no more\nresults.",
           "type": "string"
         }
       },

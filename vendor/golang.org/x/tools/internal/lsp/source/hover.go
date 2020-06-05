@@ -11,6 +11,7 @@ import (
 	"go/ast"
 	"go/doc"
 	"go/format"
+	"go/token"
 	"go/types"
 	"strings"
 
@@ -57,7 +58,8 @@ func Hover(ctx context.Context, snapshot Snapshot, fh FileHandle, position proto
 	if err != nil {
 		return nil, err
 	}
-	hover, err := FormatHover(h, snapshot.View().Options())
+	isPrivate := h.Link != "" && snapshot.View().IsGoPrivatePath(h.Link)
+	hover, err := FormatHover(h, snapshot.View().Options(), isPrivate)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +76,8 @@ func (i *IdentifierInfo) Hover(ctx context.Context) (*HoverInformation, error) {
 	ctx, done := event.Start(ctx, "source.Hover")
 	defer done()
 
-	h, err := i.Declaration.hover(ctx)
+	fset := i.Snapshot.View().Session().Cache().FileSet()
+	h, err := hover(ctx, fset, i.pkg, i.Declaration)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +85,7 @@ func (i *IdentifierInfo) Hover(ctx context.Context) (*HoverInformation, error) {
 	switch x := h.source.(type) {
 	case ast.Node:
 		var b strings.Builder
-		if err := format.Node(&b, i.Snapshot.View().Session().Cache().FileSet(), x); err != nil {
+		if err := format.Node(&b, fset, x); err != nil {
 			return nil, err
 		}
 		h.Signature = b.String()
@@ -200,13 +203,35 @@ func objectString(obj types.Object, qf types.Qualifier) string {
 	return str
 }
 
-func (d Declaration) hover(ctx context.Context) (*HoverInformation, error) {
+func hover(ctx context.Context, fset *token.FileSet, pkg Package, d Declaration) (*HoverInformation, error) {
 	_, done := event.Start(ctx, "source.hover")
 	defer done()
 
 	obj := d.obj
 	switch node := d.node.(type) {
+	case *ast.Ident:
+		// The package declaration.
+		for _, f := range pkg.GetSyntax() {
+			if f.Name == node {
+				return &HoverInformation{comment: f.Doc}, nil
+			}
+		}
 	case *ast.ImportSpec:
+		// Try to find the package documentation for an imported package.
+		if pkgName, ok := obj.(*types.PkgName); ok {
+			imp, err := pkg.GetImport(pkgName.Imported().Path())
+			if err != nil {
+				return nil, err
+			}
+			// Assume that only one file will contain package documentation,
+			// so pick the first file that has a doc comment.
+			var doc *ast.CommentGroup
+			for _, file := range imp.GetSyntax() {
+				if file.Doc != nil {
+					return &HoverInformation{source: obj, comment: doc}, nil
+				}
+			}
+		}
 		return &HoverInformation{source: node}, nil
 	case *ast.GenDecl:
 		switch obj := obj.(type) {
@@ -281,7 +306,14 @@ func formatVar(node ast.Spec, obj types.Object, decl *ast.GenDecl) *HoverInforma
 			fieldList = t.Methods
 		}
 	case *ast.ValueSpec:
-		return &HoverInformation{source: obj, comment: spec.Doc}
+		comment := spec.Doc
+		if comment == nil {
+			comment = decl.Doc
+		}
+		if comment == nil {
+			comment = spec.Comment
+		}
+		return &HoverInformation{source: obj, comment: comment}
 	}
 	// If we have a struct or interface declaration,
 	// we need to match the object to the corresponding field or method.
@@ -296,21 +328,15 @@ func formatVar(node ast.Spec, obj types.Object, decl *ast.GenDecl) *HoverInforma
 			}
 		}
 	}
-	// If we have a package level variable that does have a
-	// comment group attached to it but not in the ast.spec.
-	if decl.Doc.Text() != "" {
-		return &HoverInformation{source: obj, comment: decl.Doc}
-	}
-
-	// If we weren't able to find documentation for the object.
-	return &HoverInformation{source: obj}
+	return &HoverInformation{source: obj, comment: decl.Doc}
 }
 
-func FormatHover(h *HoverInformation, options Options) (string, error) {
+func FormatHover(h *HoverInformation, options Options, isPrivate bool) (string, error) {
 	signature := h.Signature
-	if options.PreferredContentFormat == protocol.Markdown {
+	if signature != "" && options.PreferredContentFormat == protocol.Markdown {
 		signature = fmt.Sprintf("```go\n%s\n```", signature)
 	}
+
 	switch options.HoverKind {
 	case SingleLine:
 		return h.SingleLine, nil
@@ -323,7 +349,10 @@ func FormatHover(h *HoverInformation, options Options) (string, error) {
 		}
 		return string(b), nil
 	}
-	link := formatLink(h, options)
+	var link string
+	if !isPrivate {
+		link = formatLink(h, options)
+	}
 	switch options.HoverKind {
 	case SynopsisDocumentation:
 		doc := formatDoc(h.Synopsis, options)
@@ -349,7 +378,6 @@ func formatLink(h *HoverInformation, options Options) string {
 		return plainLink
 	}
 }
-
 func formatDoc(doc string, options Options) string {
 	if options.PreferredContentFormat == protocol.Markdown {
 		return CommentToMarkdown(doc)

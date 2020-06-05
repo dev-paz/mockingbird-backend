@@ -18,12 +18,12 @@ import (
 	preg "google.golang.org/protobuf/reflect/protoregistry"
 	"google.golang.org/protobuf/testing/protopack"
 
-	fieldmaskpb "google.golang.org/protobuf/internal/testprotos/fieldmaskpb"
 	pb2 "google.golang.org/protobuf/internal/testprotos/textpb2"
 	pb3 "google.golang.org/protobuf/internal/testprotos/textpb3"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -47,6 +47,10 @@ func TestMarshal(t *testing.T) {
 	}, {
 		desc:  "proto3 scalars not set",
 		input: &pb3.Scalars{},
+		want:  "{}",
+	}, {
+		desc:  "proto3 optional not set",
+		input: &pb3.Proto3Optional{},
 		want:  "{}",
 	}, {
 		desc: "proto2 optional scalars set to zero values",
@@ -83,6 +87,34 @@ func TestMarshal(t *testing.T) {
   "optDouble": 0,
   "optBytes": "",
   "optString": ""
+}`,
+	}, {
+		desc: "proto3 optional set to zero values",
+		input: &pb3.Proto3Optional{
+			OptBool:    proto.Bool(false),
+			OptInt32:   proto.Int32(0),
+			OptInt64:   proto.Int64(0),
+			OptUint32:  proto.Uint32(0),
+			OptUint64:  proto.Uint64(0),
+			OptFloat:   proto.Float32(0),
+			OptDouble:  proto.Float64(0),
+			OptString:  proto.String(""),
+			OptBytes:   []byte{},
+			OptEnum:    pb3.Enum_ZERO.Enum(),
+			OptMessage: &pb3.Nested{},
+		},
+		want: `{
+  "optBool": false,
+  "optInt32": 0,
+  "optInt64": "0",
+  "optUint32": 0,
+  "optUint64": "0",
+  "optFloat": 0,
+  "optDouble": 0,
+  "optString": "",
+  "optBytes": "",
+  "optEnum": "ZERO",
+  "optMessage": {}
 }`,
 	}, {
 		desc: "proto2 optional scalars set to some values",

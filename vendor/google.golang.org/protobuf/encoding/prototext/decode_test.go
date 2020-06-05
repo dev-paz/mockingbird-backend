@@ -91,6 +91,34 @@ s_string: ""
 `,
 		wantMessage: &pb3.Scalars{},
 	}, {
+		desc:         "proto3 optional set to zero values",
+		inputMessage: &pb3.Proto3Optional{},
+		inputText: `opt_bool: false
+opt_int32: 0
+opt_int64: 0
+opt_uint32: 0
+opt_uint64: 0
+opt_float: 0
+opt_double: 0
+opt_string: ""
+opt_bytes: ""
+opt_enum: ZERO
+opt_message: {}
+`,
+		wantMessage: &pb3.Proto3Optional{
+			OptBool:    proto.Bool(false),
+			OptInt32:   proto.Int32(0),
+			OptInt64:   proto.Int64(0),
+			OptUint32:  proto.Uint32(0),
+			OptUint64:  proto.Uint64(0),
+			OptFloat:   proto.Float32(0),
+			OptDouble:  proto.Float64(0),
+			OptString:  proto.String(""),
+			OptBytes:   []byte{},
+			OptEnum:    pb3.Enum_ZERO.Enum(),
+			OptMessage: &pb3.Nested{},
+		},
+	}, {
 		desc:         "proto2 optional scalars",
 		inputMessage: &pb2.Scalars{},
 		inputText: `opt_bool: true
@@ -160,7 +188,14 @@ s_string: "谷歌"
 			SString:   "谷歌",
 		},
 	}, {
-		desc:         "string with invalid UTF-8",
+		desc:         "proto2 string with invalid UTF-8",
+		inputMessage: &pb2.Scalars{},
+		inputText:    `opt_string: "abc\xff"`,
+		wantMessage: &pb2.Scalars{
+			OptString: proto.String("abc\xff"),
+		},
+	}, {
+		desc:         "proto3 string with invalid UTF-8",
 		inputMessage: &pb3.Scalars{},
 		inputText:    `s_string: "abc\xff"`,
 		wantErr:      "(line 1:11): contains invalid UTF-8",
@@ -582,8 +617,15 @@ rpt_string: "b"
 			RptBool:   []bool{true, false, true},
 		},
 	}, {
-		desc:         "repeated contains invalid UTF-8",
+		desc:         "repeated proto2 contains invalid UTF-8",
 		inputMessage: &pb2.Repeats{},
+		inputText:    `rpt_string: "abc\xff"`,
+		wantMessage: &pb2.Repeats{
+			RptString: []string{"abc\xff"},
+		},
+	}, {
+		desc:         "repeated proto3 contains invalid UTF-8",
+		inputMessage: &pb3.Repeats{},
 		inputText:    `rpt_string: "abc\xff"`,
 		wantErr:      "contains invalid UTF-8",
 	}, {
@@ -966,7 +1008,29 @@ int32_to_str: {}
 			},
 		},
 	}, {
-		desc:         "map field value contains invalid UTF-8",
+		desc:         "proto2 map field value contains invalid UTF-8",
+		inputMessage: &pb2.Maps{},
+		inputText: `int32_to_str: {
+  key: 101
+  value: "abc\xff"
+}
+`,
+		wantMessage: &pb2.Maps{
+			Int32ToStr: map[int32]string{101: "abc\xff"},
+		},
+	}, {
+		desc:         "proto2 map field key contains invalid UTF-8",
+		inputMessage: &pb2.Maps{},
+		inputText: `str_to_nested: {
+  key: "abc\xff"
+  value: {}
+}
+`,
+		wantMessage: &pb2.Maps{
+			StrToNested: map[string]*pb2.Nested{"abc\xff": {}},
+		},
+	}, {
+		desc:         "proto3 map field value contains invalid UTF-8",
 		inputMessage: &pb3.Maps{},
 		inputText: `int32_to_str: {
   key: 101
@@ -975,7 +1039,7 @@ int32_to_str: {}
 `,
 		wantErr: "contains invalid UTF-8",
 	}, {
-		desc:         "map field key contains invalid UTF-8",
+		desc:         "proto3 map field key contains invalid UTF-8",
 		inputMessage: &pb3.Maps{},
 		inputText: `str_to_nested: {
   key: "abc\xff"
@@ -1291,7 +1355,11 @@ opt_int32: 42
 		desc:         "extension field contains invalid UTF-8",
 		inputMessage: &pb2.Extensions{},
 		inputText:    `[pb2.opt_ext_string]: "abc\xff"`,
-		wantErr:      "contains invalid UTF-8",
+		wantMessage: func() proto.Message {
+			m := &pb2.Extensions{}
+			proto.SetExtension(m, pb2.E_OptExtString, "abc\xff")
+			return m
+		}(),
 	}, {
 		desc:         "extensions of repeated fields",
 		inputMessage: &pb2.Extensions{},

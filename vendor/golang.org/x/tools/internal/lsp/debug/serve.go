@@ -201,7 +201,7 @@ type View interface {
 	Session() Session
 }
 
-// A File is is a file within a session.
+// A File is a file within a session.
 type File struct {
 	Session Session
 	URI     span.URI
@@ -435,7 +435,7 @@ func (i *Instance) SetLogFile(logfile string) (func(), error) {
 		}
 		f, err := os.Create(logfile)
 		if err != nil {
-			return nil, fmt.Errorf("unable to create log file: %v", err)
+			return nil, fmt.Errorf("unable to create log file: %w", err)
 		}
 		closeLog = func() {
 			defer f.Close()
@@ -545,17 +545,21 @@ func (i *Instance) writeMemoryDebug(threshold uint64) error {
 }
 
 func makeGlobalExporter(stderr io.Writer) event.Exporter {
+	p := export.Printer{}
+	var pMu sync.Mutex
 	return func(ctx context.Context, ev core.Event, lm label.Map) context.Context {
 		i := GetInstance(ctx)
 
-		if ev.IsLog() {
+		if event.IsLog(ev) {
 			// Don't log context cancellation errors.
 			if err := keys.Err.Get(ev); xerrors.Is(err, context.Canceled) {
 				return ctx
 			}
 			// Make sure any log messages without an instance go to stderr.
 			if i == nil {
-				fmt.Fprintf(stderr, "%v\n", ev)
+				pMu.Lock()
+				p.WriteEvent(stderr, ev, lm)
+				pMu.Unlock()
 			}
 		}
 		ctx = protocol.LogEvent(ctx, ev, lm)

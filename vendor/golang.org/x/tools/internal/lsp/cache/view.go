@@ -13,6 +13,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -92,6 +93,10 @@ type view struct {
 	initializeOnce sync.Once
 	initialized    chan struct{}
 
+	// initializedErr needs no mutex, since any access to it happens after it
+	// has been set.
+	initializedErr error
+
 	// builtin pins the AST and package for builtin.go in memory.
 	builtin *builtinPackageHandle
 
@@ -108,7 +113,7 @@ type view struct {
 	goCommand bool
 
 	// `go env` variables that need to be tracked.
-	gopath, gocache string
+	gopath, gocache, goprivate string
 
 	// gocmdRunner guards go command calls from concurrency errors.
 	gocmdRunner *gocommand.Runner
@@ -345,8 +350,11 @@ func (v *view) refreshProcessEnv() {
 	// We don't have a context handy to use for logging, so use the stdlib for now.
 	event.Log(v.baseCtx, "background imports cache refresh starting")
 	err := imports.PrimeCache(context.Background(), env)
-	event.Log(v.baseCtx, fmt.Sprintf("background refresh finished after %v", time.Since(start)), keys.Err.Of(err))
-
+	if err == nil {
+		event.Log(v.baseCtx, fmt.Sprintf("background refresh finished after %v", time.Since(start)))
+	} else {
+		event.Log(v.baseCtx, fmt.Sprintf("background refresh finished after %v", time.Since(start)), keys.Err.Of(err))
+	}
 	v.importsMu.Lock()
 	v.cacheRefreshDuration = time.Since(start)
 	v.cacheRefreshTimer = nil
@@ -370,7 +378,7 @@ func (v *view) buildProcessEnv(ctx context.Context) (*imports.ProcessEnv, error)
 		}
 	}
 	for _, kv := range env {
-		split := strings.Split(kv, "=")
+		split := strings.SplitN(kv, "=", 2)
 		if len(split) < 2 {
 			continue
 		}
@@ -567,6 +575,7 @@ func (v *view) initialize(ctx context.Context, s *snapshot) {
 		defer close(v.initialized)
 
 		if err := s.load(ctx, viewLoadScope("LOAD_VIEW"), packagePath("builtin")); err != nil {
+			v.initializedErr = err
 			event.Error(ctx, "initial workspace load failed", err)
 		}
 	})
@@ -582,7 +591,7 @@ func (v *view) awaitInitialized(ctx context.Context) {
 // invalidateContent invalidates the content of a Go file,
 // including any position and type information that depends on it.
 // It returns true if we were already tracking the given file, false otherwise.
-func (v *view) invalidateContent(ctx context.Context, uris map[span.URI]source.FileHandle) source.Snapshot {
+func (v *view) invalidateContent(ctx context.Context, uris map[span.URI]source.FileHandle, forceReloadMetadata bool) source.Snapshot {
 	// Detach the context so that content invalidation cannot be canceled.
 	ctx = xcontext.Detach(ctx)
 
@@ -597,21 +606,24 @@ func (v *view) invalidateContent(ctx context.Context, uris map[span.URI]source.F
 	v.snapshotMu.Lock()
 	defer v.snapshotMu.Unlock()
 
-	v.snapshot = v.snapshot.clone(ctx, uris)
+	v.snapshot = v.snapshot.clone(ctx, uris, forceReloadMetadata)
 	return v.snapshot
 }
 
 func (v *view) cancelBackground() {
 	v.mu.Lock()
 	defer v.mu.Unlock()
-
+	if v.cancel == nil {
+		// this can happen during shutdown
+		return
+	}
 	v.cancel()
 	v.backgroundCtx, v.cancel = context.WithCancel(v.baseCtx)
 }
 
 func (v *view) setBuildInformation(ctx context.Context, folder span.URI, env []string, modfileFlagEnabled bool) error {
 	if err := checkPathCase(folder.Filename()); err != nil {
-		return fmt.Errorf("invalid workspace configuration: %v", err)
+		return fmt.Errorf("invalid workspace configuration: %w", err)
 	}
 	// Make sure to get the `go env` before continuing with initialization.
 	gomod, err := v.getGoEnv(ctx, env)
@@ -706,10 +718,11 @@ func isSubdirectory(root, leaf string) bool {
 	return err == nil && !strings.HasPrefix(rel, "..")
 }
 
-// getGoEnv sets the view's build information's GOPATH, GOCACHE, and GOPACKAGESDRIVER values.
-// It also returns the view's GOMOD value, which need not be cached.
+// getGoEnv sets the view's build information's GOPATH, GOCACHE, GOPRIVATE, and
+// GOPACKAGESDRIVER values.  It also returns the view's GOMOD value, which need
+// not be cached.
 func (v *view) getGoEnv(ctx context.Context, env []string) (string, error) {
-	var gocache, gopath, gopackagesdriver bool
+	var gocache, gopath, gopackagesdriver, goprivate bool
 	isGoCommand := func(gopackagesdriver string) bool {
 		return gopackagesdriver == "" || gopackagesdriver == "off"
 	}
@@ -725,6 +738,9 @@ func (v *view) getGoEnv(ctx context.Context, env []string) (string, error) {
 		case "GOPATH":
 			v.gopath = split[1]
 			gopath = true
+		case "GOPRIVATE":
+			v.goprivate = split[1]
+			goprivate = true
 		case "GOPACKAGESDRIVER":
 			v.goCommand = isGoCommand(split[1])
 			gopackagesdriver = true
@@ -759,6 +775,12 @@ func (v *view) getGoEnv(ctx context.Context, env []string) (string, error) {
 			return "", errors.New("unable to determine GOCACHE")
 		}
 	}
+	if !goprivate {
+		if goprivate, ok := envMap["GOPRIVATE"]; ok {
+			v.goprivate = goprivate
+		}
+		// No error here: GOPRIVATE is not essential.
+	}
 	// The value of GOPACKAGESDRIVER is not returned through the go command.
 	if !gopackagesdriver {
 		v.goCommand = isGoCommand(os.Getenv("GOPACKAGESDRIVER"))
@@ -767,6 +789,53 @@ func (v *view) getGoEnv(ctx context.Context, env []string) (string, error) {
 		return gomod, nil
 	}
 	return "", nil
+
+}
+
+func (v *view) IsGoPrivatePath(target string) bool {
+	return globsMatchPath(v.goprivate, target)
+}
+
+// Copied from
+// https://cs.opensource.google/go/go/+/master:src/cmd/go/internal/str/path.go;l=58;drc=2910c5b4a01a573ebc97744890a07c1a3122c67a
+func globsMatchPath(globs, target string) bool {
+	for globs != "" {
+		// Extract next non-empty glob in comma-separated list.
+		var glob string
+		if i := strings.Index(globs, ","); i >= 0 {
+			glob, globs = globs[:i], globs[i+1:]
+		} else {
+			glob, globs = globs, ""
+		}
+		if glob == "" {
+			continue
+		}
+
+		// A glob with N+1 path elements (N slashes) needs to be matched
+		// against the first N+1 path elements of target,
+		// which end just before the N+1'th slash.
+		n := strings.Count(glob, "/")
+		prefix := target
+		// Walk target, counting slashes, truncating at the N+1'th slash.
+		for i := 0; i < len(target); i++ {
+			if target[i] == '/' {
+				if n == 0 {
+					prefix = target[:i]
+					break
+				}
+				n--
+			}
+		}
+		if n > 0 {
+			// Not enough prefix elements.
+			continue
+		}
+		matched, _ := path.Match(glob, prefix)
+		if matched {
+			return true
+		}
+	}
+	return false
 }
 
 // This function will return the main go.mod file for this folder if it exists and whether the -modfile

@@ -83,9 +83,16 @@ Example Usage:
 ...
 ```
 
-### **staticcheck** *boolean*
+### **codelens** *map[string]bool*
 
-If true, it enables the use of the staticcheck.io analyzers.
+Overrides the enabled/disabled state of various code lenses. Currently, we
+support two code lenses:
+
+* `generate`: [default: enabled] run `go generate` as specified by a `//go:generate` directive.
+* `upgrade.dependency`: [default: enabled] upgrade a dependency listed in a `go.mod` file.
+* `test`: [default: disabled] run `go test -run` for a test func.
+
+By default, both of these code lenses are enabled.
 
 ### **completionDocumentation** *boolean*
 
@@ -129,3 +136,27 @@ At the location of the `<>` in this program, deep completion would suggest the r
 If true, this enables server side fuzzy matching of completion candidates.
 
 Default: `true`.
+
+### **staticcheck** *boolean*
+
+If true, it enables the use of the staticcheck.io analyzers.
+
+### **matcher** *string*
+
+Defines the algorithm that is used when calculating completion candidates. Must be one of:
+
+* `"fuzzy"`
+* `"caseSensitive"`
+* `"caseInsensitive"`
+
+Default: `"caseInsensitive"`.
+
+### **symbolMatcher** *string*
+
+Defines the algorithm that is used when calculating workspace symbol results. Must be one of:
+
+* `"fuzzy"`
+* `"caseSensitive"`
+* `"caseInsensitive"`
+
+Default: `"caseInsensitive"`.

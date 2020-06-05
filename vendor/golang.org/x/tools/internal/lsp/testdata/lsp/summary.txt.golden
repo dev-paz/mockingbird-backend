@@ -1,7 +1,7 @@
 -- summary --
-CodeLensCount = 2
-CompletionsCount = 237
-CompletionSnippetCount = 76
+CodeLensCount = 4
+CompletionsCount = 244
+CompletionSnippetCount = 80
 UnimportedCompletionsCount = 6
 DeepCompletionsCount = 5
 FuzzyCompletionsCount = 8
@@ -12,7 +12,7 @@ FoldingRangesCount = 2
 FormatCount = 6
 ImportCount = 8
 SuggestedFixCount = 6
-DefinitionsCount = 46
+DefinitionsCount = 53
 TypeDefinitionsCount = 2
 HighlightsCount = 52
 ReferencesCount = 11
@@ -22,7 +22,8 @@ SymbolsCount = 3
 WorkspaceSymbolsCount = 2
 FuzzyWorkspaceSymbolsCount = 3
 CaseSensitiveWorkspaceSymbolsCount = 2
-SignaturesCount = 31
+SignaturesCount = 32
 LinksCount = 8
 ImplementationsCount = 14
+RefactorRewriteCount = 5
 

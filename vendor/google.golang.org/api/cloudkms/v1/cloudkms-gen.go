@@ -221,6 +221,34 @@ type AsymmetricDecryptRequest struct {
 	// key using OAEP.
 	Ciphertext string `json:"ciphertext,omitempty"`
 
+	// CiphertextCrc32c: Optional. An optional CRC32C checksum of the
+	// AsymmetricDecryptRequest.ciphertext.
+	// If specified, KeyManagementService will verify the integrity of
+	// the
+	// received AsymmetricDecryptRequest.ciphertext using this
+	// checksum.
+	// KeyManagementService will report an error if the checksum
+	// verification
+	// fails. If you receive a checksum error, your client should verify
+	// that
+	// CRC32C(AsymmetricDecryptRequest.ciphertext) is equal
+	// to
+	// AsymmetricDecryptRequest.ciphertext_crc32c, and if so, perform
+	// a
+	// limited number of retries. A persistent mismatch may indicate an
+	// issue in
+	// your computation of the CRC32C checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	CiphertextCrc32c int64 `json:"ciphertextCrc32c,omitempty,string"`
+
 	// ForceSendFields is a list of field names (e.g. "Ciphertext") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
@@ -250,6 +278,50 @@ type AsymmetricDecryptResponse struct {
 	// Plaintext: The decrypted data originally encrypted with the matching
 	// public key.
 	Plaintext string `json:"plaintext,omitempty"`
+
+	// PlaintextCrc32c: Integrity verification field. A CRC32C checksum of
+	// the returned
+	// AsymmetricDecryptResponse.plaintext. An integrity check
+	// of
+	// AsymmetricDecryptResponse.plaintext can be performed by computing
+	// the
+	// CRC32C checksum of AsymmetricDecryptResponse.plaintext and
+	// comparing
+	// your results to this field. Discard the response in case of
+	// non-matching
+	// checksum values, and perform a limited number of retries. A
+	// persistent
+	// mismatch may indicate an issue in your computation of the CRC32C
+	// checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	PlaintextCrc32c int64 `json:"plaintextCrc32c,omitempty,string"`
+
+	// VerifiedCiphertextCrc32c: Integrity verification field. A flag
+	// indicating whether
+	// AsymmetricDecryptRequest.ciphertext_crc32c was received
+	// by
+	// KeyManagementService and used for the integrity verification of
+	// the
+	// ciphertext. A false value of this
+	// field indicates either that
+	// AsymmetricDecryptRequest.ciphertext_crc32c
+	// was left unset or that it was not delivered to KeyManagementService.
+	// If
+	// you've set AsymmetricDecryptRequest.ciphertext_crc32c but this field
+	// is
+	// still false, discard the response and perform a limited number of
+	// retries.
+	//
+	// NOTE: This field is in Beta.
+	VerifiedCiphertextCrc32c bool `json:"verifiedCiphertextCrc32c,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
 	// server.
@@ -288,6 +360,34 @@ type AsymmetricSignRequest struct {
 	// algorithm.
 	Digest *Digest `json:"digest,omitempty"`
 
+	// DigestCrc32c: Optional. An optional CRC32C checksum of the
+	// AsymmetricSignRequest.digest. If
+	// specified, KeyManagementService will verify the integrity of
+	// the
+	// received AsymmetricSignRequest.digest using this
+	// checksum.
+	// KeyManagementService will report an error if the checksum
+	// verification
+	// fails. If you receive a checksum error, your client should verify
+	// that
+	// CRC32C(AsymmetricSignRequest.digest) is equal
+	// to
+	// AsymmetricSignRequest.digest_crc32c, and if so, perform a
+	// limited
+	// number of retries. A persistent mismatch may indicate an issue in
+	// your
+	// computation of the CRC32C checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	DigestCrc32c int64 `json:"digestCrc32c,omitempty,string"`
+
 	// ForceSendFields is a list of field names (e.g. "Digest") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
@@ -314,14 +414,65 @@ func (s *AsymmetricSignRequest) MarshalJSON() ([]byte, error) {
 // AsymmetricSignResponse: Response message for
 // KeyManagementService.AsymmetricSign.
 type AsymmetricSignResponse struct {
+	// Name: The resource name of the CryptoKeyVersion used for signing.
+	// Check
+	// this field to verify that the intended resource was used for
+	// signing.
+	//
+	// NOTE: This field is in Beta.
+	Name string `json:"name,omitempty"`
+
 	// Signature: The created signature.
 	Signature string `json:"signature,omitempty"`
+
+	// SignatureCrc32c: Integrity verification field. A CRC32C checksum of
+	// the returned
+	// AsymmetricSignResponse.signature. An integrity check
+	// of
+	// AsymmetricSignResponse.signature can be performed by computing
+	// the
+	// CRC32C checksum of AsymmetricSignResponse.signature and comparing
+	// your
+	// results to this field. Discard the response in case of
+	// non-matching
+	// checksum values, and perform a limited number of retries. A
+	// persistent
+	// mismatch may indicate an issue in your computation of the CRC32C
+	// checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	SignatureCrc32c int64 `json:"signatureCrc32c,omitempty,string"`
+
+	// VerifiedDigestCrc32c: Integrity verification field. A flag indicating
+	// whether
+	// AsymmetricSignRequest.digest_crc32c was received
+	// by
+	// KeyManagementService and used for the integrity verification of
+	// the
+	// digest. A false value of this field
+	// indicates either that AsymmetricSignRequest.digest_crc32c was
+	// left
+	// unset or that it was not delivered to KeyManagementService. If
+	// you've
+	// set AsymmetricSignRequest.digest_crc32c but this field is still
+	// false,
+	// discard the response and perform a limited number of retries.
+	//
+	// NOTE: This field is in Beta.
+	VerifiedDigestCrc32c bool `json:"verifiedDigestCrc32c,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
 	// server.
 	googleapi.ServerResponse `json:"-"`
 
-	// ForceSendFields is a list of field names (e.g. "Signature") to
+	// ForceSendFields is a list of field names (e.g. "Name") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
 	// non-interface field appearing in ForceSendFields will be sent to the
@@ -329,8 +480,8 @@ type AsymmetricSignResponse struct {
 	// used to include empty fields in Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "Signature") to include in
-	// API requests with the JSON null value. By default, fields with empty
+	// NullFields is a list of field names (e.g. "Name") to include in API
+	// requests with the JSON null value. By default, fields with empty
 	// values are omitted from API requests. However, any field with an
 	// empty value appearing in NullFields will be sent to the server as
 	// null. It is an error if a field in this list has a non-empty value.
@@ -501,11 +652,23 @@ func (s *AuditLogConfig) MarshalJSON() ([]byte, error) {
 // Binding: Associates `members` with a `role`.
 type Binding struct {
 	// Condition: The condition that is associated with this binding.
-	// NOTE: An unsatisfied condition will not allow user access via
-	// current
-	// binding. Different bindings, including their conditions, are
-	// examined
-	// independently.
+	//
+	// If the condition evaluates to `true`, then this binding applies to
+	// the
+	// current request.
+	//
+	// If the condition evaluates to `false`, then this binding does not
+	// apply to
+	// the current request. However, a different role binding might grant
+	// the same
+	// role to one or more of the members in this binding.
+	//
+	// To learn which resources support conditions in their IAM policies,
+	// see
+	// the
+	// [IAM
+	// documentation](https://cloud.google.com/iam/help/conditions/r
+	// esource-policies).
 	Condition *Expr `json:"condition,omitempty"`
 
 	// Members: Specifies the identities requesting access for a Cloud
@@ -606,8 +769,9 @@ func (s *Binding) MarshalJSON() ([]byte, error) {
 // cryptographic
 // operations.
 //
-// A CryptoKey is made up of one or more versions, which
-// represent the actual key material used in cryptographic operations.
+// A CryptoKey is made up of zero or more versions,
+// which represent the actual key material used in cryptographic
+// operations.
 type CryptoKey struct {
 	// CreateTime: Output only. The time at which this CryptoKey was
 	// created.
@@ -1001,10 +1165,68 @@ type DecryptRequest struct {
 	// EncryptRequest.additional_authenticated_data.
 	AdditionalAuthenticatedData string `json:"additionalAuthenticatedData,omitempty"`
 
+	// AdditionalAuthenticatedDataCrc32c: Optional. An optional CRC32C
+	// checksum of the
+	// DecryptRequest.additional_authenticated_data. If
+	// specified,
+	// KeyManagementService will verify the integrity of the
+	// received
+	// DecryptRequest.additional_authenticated_data using this
+	// checksum.
+	// KeyManagementService will report an error if the checksum
+	// verification
+	// fails. If you receive a checksum error, your client should verify
+	// that
+	// CRC32C(DecryptRequest.additional_authenticated_data) is equal
+	// to
+	// DecryptRequest.additional_authenticated_data_crc32c, and if so,
+	// perform
+	// a limited number of retries. A persistent mismatch may indicate an
+	// issue in
+	// your computation of the CRC32C checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	AdditionalAuthenticatedDataCrc32c int64 `json:"additionalAuthenticatedDataCrc32c,omitempty,string"`
+
 	// Ciphertext: Required. The encrypted data originally returned
 	// in
 	// EncryptResponse.ciphertext.
 	Ciphertext string `json:"ciphertext,omitempty"`
+
+	// CiphertextCrc32c: Optional. An optional CRC32C checksum of the
+	// DecryptRequest.ciphertext. If
+	// specified, KeyManagementService will verify the integrity of
+	// the
+	// received DecryptRequest.ciphertext using this
+	// checksum.
+	// KeyManagementService will report an error if the checksum
+	// verification
+	// fails. If you receive a checksum error, your client should verify
+	// that
+	// CRC32C(DecryptRequest.ciphertext) is equal
+	// to
+	// DecryptRequest.ciphertext_crc32c, and if so, perform a limited
+	// number
+	// of retries. A persistent mismatch may indicate an issue in your
+	// computation
+	// of the CRC32C checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	CiphertextCrc32c int64 `json:"ciphertextCrc32c,omitempty,string"`
 
 	// ForceSendFields is a list of field names (e.g.
 	// "AdditionalAuthenticatedData") to unconditionally include in API
@@ -1036,6 +1258,34 @@ type DecryptResponse struct {
 	// Plaintext: The decrypted data originally supplied in
 	// EncryptRequest.plaintext.
 	Plaintext string `json:"plaintext,omitempty"`
+
+	// PlaintextCrc32c: Integrity verification field. A CRC32C checksum of
+	// the returned
+	// DecryptResponse.plaintext. An integrity check
+	// of
+	// DecryptResponse.plaintext can be performed by computing the
+	// CRC32C
+	// checksum of DecryptResponse.plaintext and comparing your results
+	// to
+	// this field. Discard the response in case of non-matching checksum
+	// values,
+	// and perform a limited number of retries. A persistent mismatch may
+	// indicate
+	// an issue in your computation of the CRC32C checksum. Note: receiving
+	// this
+	// response message indicates that KeyManagementService is able
+	// to
+	// successfully decrypt the ciphertext.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	PlaintextCrc32c int64 `json:"plaintextCrc32c,omitempty,string"`
 
 	// ServerResponse contains the HTTP response code and headers from the
 	// server.
@@ -1118,6 +1368,36 @@ type EncryptRequest struct {
 	// 8KiB.
 	AdditionalAuthenticatedData string `json:"additionalAuthenticatedData,omitempty"`
 
+	// AdditionalAuthenticatedDataCrc32c: Optional. An optional CRC32C
+	// checksum of the
+	// EncryptRequest.additional_authenticated_data. If
+	// specified,
+	// KeyManagementService will verify the integrity of the
+	// received
+	// EncryptRequest.additional_authenticated_data using this
+	// checksum.
+	// KeyManagementService will report an error if the checksum
+	// verification
+	// fails. If you receive a checksum error, your client should verify
+	// that
+	// CRC32C(EncryptRequest.additional_authenticated_data) is equal
+	// to
+	// EncryptRequest.additional_authenticated_data_crc32c, and if so,
+	// perform
+	// a limited number of retries. A persistent mismatch may indicate an
+	// issue in
+	// your computation of the CRC32C checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	AdditionalAuthenticatedDataCrc32c int64 `json:"additionalAuthenticatedDataCrc32c,omitempty,string"`
+
 	// Plaintext: Required. The data to encrypt. Must be no larger than
 	// 64KiB.
 	//
@@ -1129,6 +1409,34 @@ type EncryptRequest struct {
 	// than
 	// 8KiB.
 	Plaintext string `json:"plaintext,omitempty"`
+
+	// PlaintextCrc32c: Optional. An optional CRC32C checksum of the
+	// EncryptRequest.plaintext. If
+	// specified, KeyManagementService will verify the integrity of
+	// the
+	// received EncryptRequest.plaintext using this
+	// checksum.
+	// KeyManagementService will report an error if the checksum
+	// verification
+	// fails. If you receive a checksum error, your client should verify
+	// that
+	// CRC32C(EncryptRequest.plaintext) is equal
+	// to
+	// EncryptRequest.plaintext_crc32c, and if so, perform a limited number
+	// of
+	// retries. A persistent mismatch may indicate an issue in your
+	// computation of
+	// the CRC32C checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	PlaintextCrc32c int64 `json:"plaintextCrc32c,omitempty,string"`
 
 	// ForceSendFields is a list of field names (e.g.
 	// "AdditionalAuthenticatedData") to unconditionally include in API
@@ -1160,11 +1468,74 @@ type EncryptResponse struct {
 	// Ciphertext: The encrypted data.
 	Ciphertext string `json:"ciphertext,omitempty"`
 
+	// CiphertextCrc32c: Integrity verification field. A CRC32C checksum of
+	// the returned
+	// EncryptResponse.ciphertext. An integrity check
+	// of
+	// EncryptResponse.ciphertext can be performed by computing the
+	// CRC32C
+	// checksum of EncryptResponse.ciphertext and comparing your results
+	// to
+	// this field. Discard the response in case of non-matching checksum
+	// values,
+	// and perform a limited number of retries. A persistent mismatch may
+	// indicate
+	// an issue in your computation of the CRC32C checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	CiphertextCrc32c int64 `json:"ciphertextCrc32c,omitempty,string"`
+
 	// Name: The resource name of the CryptoKeyVersion used in encryption.
 	// Check
 	// this field to verify that the intended resource was used for
 	// encryption.
 	Name string `json:"name,omitempty"`
+
+	// VerifiedAdditionalAuthenticatedDataCrc32c: Integrity verification
+	// field. A flag indicating
+	// whether
+	// EncryptRequest.additional_authenticated_data_crc32c was received
+	// by
+	// KeyManagementService and used for the integrity verification of
+	// the
+	// AAD. A false value of this
+	// field indicates either
+	// that
+	// EncryptRequest.additional_authenticated_data_crc32c was left unset
+	// or
+	// that it was not delivered to KeyManagementService. If you've
+	// set
+	// EncryptRequest.additional_authenticated_data_crc32c but this field
+	// is
+	// still false, discard the response and perform a limited number of
+	// retries.
+	//
+	// NOTE: This field is in Beta.
+	VerifiedAdditionalAuthenticatedDataCrc32c bool `json:"verifiedAdditionalAuthenticatedDataCrc32c,omitempty"`
+
+	// VerifiedPlaintextCrc32c: Integrity verification field. A flag
+	// indicating whether
+	// EncryptRequest.plaintext_crc32c was received by
+	// KeyManagementService and used for the integrity verification of
+	// the
+	// plaintext. A false value of this field
+	// indicates either that EncryptRequest.plaintext_crc32c was left unset
+	// or
+	// that it was not delivered to KeyManagementService. If you've
+	// set
+	// EncryptRequest.plaintext_crc32c but this field is still false,
+	// discard
+	// the response and perform a limited number of retries.
+	//
+	// NOTE: This field is in Beta.
+	VerifiedPlaintextCrc32c bool `json:"verifiedPlaintextCrc32c,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
 	// server.
@@ -1977,13 +2348,18 @@ func (s *LocationMetadata) MarshalJSON() ([]byte, error) {
 // user-created
 // custom role.
 //
-// Optionally, a `binding` can specify a `condition`, which is a
-// logical
-// expression that allows access to a resource only if the expression
-// evaluates
-// to `true`. A condition can add constraints based on attributes of
-// the
-// request, the resource, or both.
+// For some types of Google Cloud resources, a `binding` can also
+// specify a
+// `condition`, which is a logical expression that allows access to a
+// resource
+// only if the expression evaluates to `true`. A condition can add
+// constraints
+// based on attributes of the request, the resource, or both. To learn
+// which
+// resources support conditions in their IAM policies, see the
+// [IAM
+// documentation](https://cloud.google.com/iam/help/conditions/resource-p
+// olicies).
 //
 // **JSON example:**
 //
@@ -2001,7 +2377,9 @@ func (s *LocationMetadata) MarshalJSON() ([]byte, error) {
 //         },
 //         {
 //           "role": "roles/resourcemanager.organizationViewer",
-//           "members": ["user:eve@example.com"],
+//           "members": [
+//             "user:eve@example.com"
+//           ],
 //           "condition": {
 //             "title": "expirable access",
 //             "description": "Does not grant access after Sep 2020",
@@ -2100,6 +2478,12 @@ type Policy struct {
 	// If a policy does not include any conditions, operations on that
 	// policy may
 	// specify any valid version or leave the field unset.
+	//
+	// To learn which resources support conditions in their IAM policies,
+	// see the
+	// [IAM
+	// documentation](https://cloud.google.com/iam/help/conditions/resource-p
+	// olicies).
 	Version int64 `json:"version,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
@@ -2171,6 +2555,12 @@ type PublicKey struct {
 	// encryption by an external key manager.
 	Algorithm string `json:"algorithm,omitempty"`
 
+	// Name: The name of the CryptoKeyVersion public key.
+	// Provided here for verification.
+	//
+	// NOTE: This field is in Beta.
+	Name string `json:"name,omitempty"`
+
 	// Pem: The public key, encoded in PEM format. For more information, see
 	// the
 	// [RFC 7468](https://tools.ietf.org/html/rfc7468) sections for
@@ -2181,6 +2571,29 @@ type PublicKey struct {
 	// Info]
 	// (https://tools.ietf.org/html/rfc7468#section-13).
 	Pem string `json:"pem,omitempty"`
+
+	// PemCrc32c: Integrity verification field. A CRC32C checksum of the
+	// returned
+	// PublicKey.pem. An integrity check of PublicKey.pem can be
+	// performed
+	// by computing the CRC32C checksum of PublicKey.pem and
+	// comparing your results to this field. Discard the response in case
+	// of
+	// non-matching checksum values, and perform a limited number of
+	// retries. A
+	// persistent mismatch may indicate an issue in your computation of the
+	// CRC32C
+	// checksum.
+	// Note: This field is defined as int64 for reasons of compatibility
+	// across
+	// different languages. However, it is a non-negative integer, which
+	// will
+	// never exceed 2^32-1, and can be safely downconverted to uint32 in
+	// languages
+	// that support this type.
+	//
+	// NOTE: This field is in Beta.
+	PemCrc32c int64 `json:"pemCrc32c,omitempty,string"`
 
 	// ServerResponse contains the HTTP response code and headers from the
 	// server.
@@ -2229,8 +2642,8 @@ type SetIamPolicyRequest struct {
 	// the fields in the mask will be modified. If no mask is provided,
 	// the
 	// following default mask is used:
-	// paths: "bindings, etag"
-	// This field is only used by Cloud IAM.
+	//
+	// `paths: "bindings, etag"
 	UpdateMask string `json:"updateMask,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Policy") to
@@ -2450,7 +2863,7 @@ func (c *ProjectsLocationsGetCall) Header() http.Header {
 
 func (c *ProjectsLocationsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2617,7 +3030,7 @@ func (c *ProjectsLocationsListCall) Header() http.Header {
 
 func (c *ProjectsLocationsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2798,7 +3211,7 @@ func (c *ProjectsLocationsKeyRingsCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -2953,7 +3366,7 @@ func (c *ProjectsLocationsKeyRingsGetCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3077,6 +3490,13 @@ func (r *ProjectsLocationsKeyRingsService) GetIamPolicy(resource string) *Projec
 // Policies without any conditional bindings may specify any valid value
 // or
 // leave the field unset.
+//
+// To learn which resources support conditions in their IAM policies,
+// see
+// the
+// [IAM
+// documentation](https://cloud.google.com/iam/help/conditions/r
+// esource-policies).
 func (c *ProjectsLocationsKeyRingsGetIamPolicyCall) OptionsRequestedPolicyVersion(optionsRequestedPolicyVersion int64) *ProjectsLocationsKeyRingsGetIamPolicyCall {
 	c.urlParams_.Set("options.requestedPolicyVersion", fmt.Sprint(optionsRequestedPolicyVersion))
 	return c
@@ -3119,7 +3539,7 @@ func (c *ProjectsLocationsKeyRingsGetIamPolicyCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsGetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3190,7 +3610,7 @@ func (c *ProjectsLocationsKeyRingsGetIamPolicyCall) Do(opts ...googleapi.CallOpt
 	//   ],
 	//   "parameters": {
 	//     "options.requestedPolicyVersion": {
-	//       "description": "Optional. The policy format version to be returned.\n\nValid values are 0, 1, and 3. Requests specifying an invalid value will be\nrejected.\n\nRequests for policies with any conditional bindings must specify version 3.\nPolicies without any conditional bindings may specify any valid value or\nleave the field unset.",
+	//       "description": "Optional. The policy format version to be returned.\n\nValid values are 0, 1, and 3. Requests specifying an invalid value will be\nrejected.\n\nRequests for policies with any conditional bindings must specify version 3.\nPolicies without any conditional bindings may specify any valid value or\nleave the field unset.\n\nTo learn which resources support conditions in their IAM policies, see the\n[IAM\ndocumentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
 	//       "format": "int32",
 	//       "location": "query",
 	//       "type": "integer"
@@ -3316,7 +3736,7 @@ func (c *ProjectsLocationsKeyRingsListCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3463,8 +3883,8 @@ type ProjectsLocationsKeyRingsSetIamPolicyCall struct {
 // resource. Replaces any
 // existing policy.
 //
-// Can return Public Errors: NOT_FOUND, INVALID_ARGUMENT and
-// PERMISSION_DENIED
+// Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`
+// errors.
 func (r *ProjectsLocationsKeyRingsService) SetIamPolicy(resource string, setiampolicyrequest *SetIamPolicyRequest) *ProjectsLocationsKeyRingsSetIamPolicyCall {
 	c := &ProjectsLocationsKeyRingsSetIamPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.resource = resource
@@ -3499,7 +3919,7 @@ func (c *ProjectsLocationsKeyRingsSetIamPolicyCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3563,7 +3983,7 @@ func (c *ProjectsLocationsKeyRingsSetIamPolicyCall) Do(opts ...googleapi.CallOpt
 	}
 	return ret, nil
 	// {
-	//   "description": "Sets the access control policy on the specified resource. Replaces any\nexisting policy.\n\nCan return Public Errors: NOT_FOUND, INVALID_ARGUMENT and PERMISSION_DENIED",
+	//   "description": "Sets the access control policy on the specified resource. Replaces any\nexisting policy.\n\nCan return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED` errors.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}:setIamPolicy",
 	//   "httpMethod": "POST",
 	//   "id": "cloudkms.projects.locations.keyRings.setIamPolicy",
@@ -3609,7 +4029,7 @@ type ProjectsLocationsKeyRingsTestIamPermissionsCall struct {
 // specified resource.
 // If the resource does not exist, this will return an empty set
 // of
-// permissions, not a NOT_FOUND error.
+// permissions, not a `NOT_FOUND` error.
 //
 // Note: This operation is designed to be used for building
 // permission-aware
@@ -3650,7 +4070,7 @@ func (c *ProjectsLocationsKeyRingsTestIamPermissionsCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3714,7 +4134,7 @@ func (c *ProjectsLocationsKeyRingsTestIamPermissionsCall) Do(opts ...googleapi.C
 	}
 	return ret, nil
 	// {
-	//   "description": "Returns permissions that a caller has on the specified resource.\nIf the resource does not exist, this will return an empty set of\npermissions, not a NOT_FOUND error.\n\nNote: This operation is designed to be used for building permission-aware\nUIs and command-line tools, not for authorization checking. This operation\nmay \"fail open\" without warning.",
+	//   "description": "Returns permissions that a caller has on the specified resource.\nIf the resource does not exist, this will return an empty set of\npermissions, not a `NOT_FOUND` error.\n\nNote: This operation is designed to be used for building permission-aware\nUIs and command-line tools, not for authorization checking. This operation\nmay \"fail open\" without warning.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}:testIamPermissions",
 	//   "httpMethod": "POST",
 	//   "id": "cloudkms.projects.locations.keyRings.testIamPermissions",
@@ -3815,7 +4235,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -3968,7 +4388,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysDecryptCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysDecryptCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -4112,7 +4532,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysEncryptCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysEncryptCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -4263,7 +4683,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -4387,6 +4807,13 @@ func (r *ProjectsLocationsKeyRingsCryptoKeysService) GetIamPolicy(resource strin
 // Policies without any conditional bindings may specify any valid value
 // or
 // leave the field unset.
+//
+// To learn which resources support conditions in their IAM policies,
+// see
+// the
+// [IAM
+// documentation](https://cloud.google.com/iam/help/conditions/r
+// esource-policies).
 func (c *ProjectsLocationsKeyRingsCryptoKeysGetIamPolicyCall) OptionsRequestedPolicyVersion(optionsRequestedPolicyVersion int64) *ProjectsLocationsKeyRingsCryptoKeysGetIamPolicyCall {
 	c.urlParams_.Set("options.requestedPolicyVersion", fmt.Sprint(optionsRequestedPolicyVersion))
 	return c
@@ -4429,7 +4856,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetIamPolicyCall) Header() http.Head
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysGetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -4500,7 +4927,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysGetIamPolicyCall) Do(opts ...googlea
 	//   ],
 	//   "parameters": {
 	//     "options.requestedPolicyVersion": {
-	//       "description": "Optional. The policy format version to be returned.\n\nValid values are 0, 1, and 3. Requests specifying an invalid value will be\nrejected.\n\nRequests for policies with any conditional bindings must specify version 3.\nPolicies without any conditional bindings may specify any valid value or\nleave the field unset.",
+	//       "description": "Optional. The policy format version to be returned.\n\nValid values are 0, 1, and 3. Requests specifying an invalid value will be\nrejected.\n\nRequests for policies with any conditional bindings must specify version 3.\nPolicies without any conditional bindings may specify any valid value or\nleave the field unset.\n\nTo learn which resources support conditions in their IAM policies, see the\n[IAM\ndocumentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
 	//       "format": "int32",
 	//       "location": "query",
 	//       "type": "integer"
@@ -4638,7 +5065,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysListCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -4832,7 +5259,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysPatchCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -4948,8 +5375,8 @@ type ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall struct {
 // resource. Replaces any
 // existing policy.
 //
-// Can return Public Errors: NOT_FOUND, INVALID_ARGUMENT and
-// PERMISSION_DENIED
+// Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`
+// errors.
 func (r *ProjectsLocationsKeyRingsCryptoKeysService) SetIamPolicy(resource string, setiampolicyrequest *SetIamPolicyRequest) *ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall {
 	c := &ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.resource = resource
@@ -4984,7 +5411,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall) Header() http.Head
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5048,7 +5475,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysSetIamPolicyCall) Do(opts ...googlea
 	}
 	return ret, nil
 	// {
-	//   "description": "Sets the access control policy on the specified resource. Replaces any\nexisting policy.\n\nCan return Public Errors: NOT_FOUND, INVALID_ARGUMENT and PERMISSION_DENIED",
+	//   "description": "Sets the access control policy on the specified resource. Replaces any\nexisting policy.\n\nCan return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED` errors.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}/cryptoKeys/{cryptoKeysId}:setIamPolicy",
 	//   "httpMethod": "POST",
 	//   "id": "cloudkms.projects.locations.keyRings.cryptoKeys.setIamPolicy",
@@ -5094,7 +5521,7 @@ type ProjectsLocationsKeyRingsCryptoKeysTestIamPermissionsCall struct {
 // specified resource.
 // If the resource does not exist, this will return an empty set
 // of
-// permissions, not a NOT_FOUND error.
+// permissions, not a `NOT_FOUND` error.
 //
 // Note: This operation is designed to be used for building
 // permission-aware
@@ -5135,7 +5562,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysTestIamPermissionsCall) Header() htt
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5199,7 +5626,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysTestIamPermissionsCall) Do(opts ...g
 	}
 	return ret, nil
 	// {
-	//   "description": "Returns permissions that a caller has on the specified resource.\nIf the resource does not exist, this will return an empty set of\npermissions, not a NOT_FOUND error.\n\nNote: This operation is designed to be used for building permission-aware\nUIs and command-line tools, not for authorization checking. This operation\nmay \"fail open\" without warning.",
+	//   "description": "Returns permissions that a caller has on the specified resource.\nIf the resource does not exist, this will return an empty set of\npermissions, not a `NOT_FOUND` error.\n\nNote: This operation is designed to be used for building permission-aware\nUIs and command-line tools, not for authorization checking. This operation\nmay \"fail open\" without warning.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}/cryptoKeys/{cryptoKeysId}:testIamPermissions",
 	//   "httpMethod": "POST",
 	//   "id": "cloudkms.projects.locations.keyRings.cryptoKeys.testIamPermissions",
@@ -5279,7 +5706,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysUpdatePrimaryVersionCall) Header() h
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysUpdatePrimaryVersionCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5424,7 +5851,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricDecryptCa
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricDecryptCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5569,7 +5996,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricSignCall)
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsAsymmetricSignCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5714,7 +6141,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsCreateCall) Header(
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -5867,7 +6294,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDestroyCall) Header
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsDestroyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6017,7 +6444,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetCall) Header() h
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6166,7 +6593,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall) H
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsGetPublicKeyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6308,7 +6735,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsImportCall) Header(
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsImportCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6516,7 +6943,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsListCall) Header() 
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6717,7 +7144,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsPatchCall) Header()
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsPatchCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -6871,7 +7298,7 @@ func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRestoreCall) Header
 
 func (c *ProjectsLocationsKeyRingsCryptoKeysCryptoKeyVersionsRestoreCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7023,7 +7450,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsCreateCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsImportJobsCreateCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7178,7 +7605,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsImportJobsGetCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7302,6 +7729,13 @@ func (r *ProjectsLocationsKeyRingsImportJobsService) GetIamPolicy(resource strin
 // Policies without any conditional bindings may specify any valid value
 // or
 // leave the field unset.
+//
+// To learn which resources support conditions in their IAM policies,
+// see
+// the
+// [IAM
+// documentation](https://cloud.google.com/iam/help/conditions/r
+// esource-policies).
 func (c *ProjectsLocationsKeyRingsImportJobsGetIamPolicyCall) OptionsRequestedPolicyVersion(optionsRequestedPolicyVersion int64) *ProjectsLocationsKeyRingsImportJobsGetIamPolicyCall {
 	c.urlParams_.Set("options.requestedPolicyVersion", fmt.Sprint(optionsRequestedPolicyVersion))
 	return c
@@ -7344,7 +7778,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetIamPolicyCall) Header() http.Head
 
 func (c *ProjectsLocationsKeyRingsImportJobsGetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7415,7 +7849,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsGetIamPolicyCall) Do(opts ...googlea
 	//   ],
 	//   "parameters": {
 	//     "options.requestedPolicyVersion": {
-	//       "description": "Optional. The policy format version to be returned.\n\nValid values are 0, 1, and 3. Requests specifying an invalid value will be\nrejected.\n\nRequests for policies with any conditional bindings must specify version 3.\nPolicies without any conditional bindings may specify any valid value or\nleave the field unset.",
+	//       "description": "Optional. The policy format version to be returned.\n\nValid values are 0, 1, and 3. Requests specifying an invalid value will be\nrejected.\n\nRequests for policies with any conditional bindings must specify version 3.\nPolicies without any conditional bindings may specify any valid value or\nleave the field unset.\n\nTo learn which resources support conditions in their IAM policies, see the\n[IAM\ndocumentation](https://cloud.google.com/iam/help/conditions/resource-policies).",
 	//       "format": "int32",
 	//       "location": "query",
 	//       "type": "integer"
@@ -7541,7 +7975,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsListCall) Header() http.Header {
 
 func (c *ProjectsLocationsKeyRingsImportJobsListCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7688,8 +8122,8 @@ type ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall struct {
 // resource. Replaces any
 // existing policy.
 //
-// Can return Public Errors: NOT_FOUND, INVALID_ARGUMENT and
-// PERMISSION_DENIED
+// Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED`
+// errors.
 func (r *ProjectsLocationsKeyRingsImportJobsService) SetIamPolicy(resource string, setiampolicyrequest *SetIamPolicyRequest) *ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall {
 	c := &ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.resource = resource
@@ -7724,7 +8158,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall) Header() http.Head
 
 func (c *ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7788,7 +8222,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsSetIamPolicyCall) Do(opts ...googlea
 	}
 	return ret, nil
 	// {
-	//   "description": "Sets the access control policy on the specified resource. Replaces any\nexisting policy.\n\nCan return Public Errors: NOT_FOUND, INVALID_ARGUMENT and PERMISSION_DENIED",
+	//   "description": "Sets the access control policy on the specified resource. Replaces any\nexisting policy.\n\nCan return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED` errors.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}/importJobs/{importJobsId}:setIamPolicy",
 	//   "httpMethod": "POST",
 	//   "id": "cloudkms.projects.locations.keyRings.importJobs.setIamPolicy",
@@ -7834,7 +8268,7 @@ type ProjectsLocationsKeyRingsImportJobsTestIamPermissionsCall struct {
 // specified resource.
 // If the resource does not exist, this will return an empty set
 // of
-// permissions, not a NOT_FOUND error.
+// permissions, not a `NOT_FOUND` error.
 //
 // Note: This operation is designed to be used for building
 // permission-aware
@@ -7875,7 +8309,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsTestIamPermissionsCall) Header() htt
 
 func (c *ProjectsLocationsKeyRingsImportJobsTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
 	reqHeaders := make(http.Header)
-	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200422")
+	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/20200601")
 	for k, v := range c.header_ {
 		reqHeaders[k] = v
 	}
@@ -7939,7 +8373,7 @@ func (c *ProjectsLocationsKeyRingsImportJobsTestIamPermissionsCall) Do(opts ...g
 	}
 	return ret, nil
 	// {
-	//   "description": "Returns permissions that a caller has on the specified resource.\nIf the resource does not exist, this will return an empty set of\npermissions, not a NOT_FOUND error.\n\nNote: This operation is designed to be used for building permission-aware\nUIs and command-line tools, not for authorization checking. This operation\nmay \"fail open\" without warning.",
+	//   "description": "Returns permissions that a caller has on the specified resource.\nIf the resource does not exist, this will return an empty set of\npermissions, not a `NOT_FOUND` error.\n\nNote: This operation is designed to be used for building permission-aware\nUIs and command-line tools, not for authorization checking. This operation\nmay \"fail open\" without warning.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/keyRings/{keyRingsId}/importJobs/{importJobsId}:testIamPermissions",
 	//   "httpMethod": "POST",
 	//   "id": "cloudkms.projects.locations.keyRings.importJobs.testIamPermissions",

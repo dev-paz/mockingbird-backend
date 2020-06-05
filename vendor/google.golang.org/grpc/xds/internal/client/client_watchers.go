@@ -19,6 +19,8 @@
 package client
 
 import (
+	"fmt"
+	"sync"
 	"time"
 )
 
@@ -33,8 +35,18 @@ const (
 	edsURL = "type.googleapis.com/envoy.api.v2.ClusterLoadAssignment"
 )
 
+type watchInfoState int
+
+const (
+	watchInfoStateStarted watchInfoState = iota
+	watchInfoStateRespReceived
+	watchInfoStateTimeout
+	watchInfoStateCanceled
+)
+
 // watchInfo holds all the information from a watch() call.
 type watchInfo struct {
+	c       *Client
 	typeURL string
 	target  string
 
@@ -42,7 +54,74 @@ type watchInfo struct {
 	rdsCallback rdsCallbackFunc
 	cdsCallback func(ClusterUpdate, error)
 	edsCallback func(EndpointsUpdate, error)
+
 	expiryTimer *time.Timer
+
+	// mu protects state, and c.scheduleCallback().
+	// - No callback should be scheduled after watchInfo is canceled.
+	// - No timeout error should be scheduled after watchInfo is resp received.
+	mu    sync.Mutex
+	state watchInfoState
+}
+
+func (wi *watchInfo) newUpdate(update interface{}) {
+	wi.mu.Lock()
+	defer wi.mu.Unlock()
+	if wi.state == watchInfoStateCanceled {
+		return
+	}
+	wi.state = watchInfoStateRespReceived
+	wi.expiryTimer.Stop()
+	wi.c.scheduleCallback(wi, update, nil)
+}
+
+func (wi *watchInfo) resourceNotFound() {
+	wi.mu.Lock()
+	defer wi.mu.Unlock()
+	if wi.state == watchInfoStateCanceled {
+		return
+	}
+	wi.state = watchInfoStateRespReceived
+	wi.expiryTimer.Stop()
+	wi.sendErrorLocked(NewErrorf(ErrorTypeResourceNotFound, "xds: %s target %s not found in received response", wi.typeURL, wi.target))
+}
+
+func (wi *watchInfo) timeout() {
+	wi.mu.Lock()
+	defer wi.mu.Unlock()
+	if wi.state == watchInfoStateCanceled || wi.state == watchInfoStateRespReceived {
+		return
+	}
+	wi.state = watchInfoStateTimeout
+	wi.sendErrorLocked(fmt.Errorf("xds: %s target %s not found, watcher timeout", wi.typeURL, wi.target))
+}
+
+// Caller must hold wi.mu.
+func (wi *watchInfo) sendErrorLocked(err error) {
+	var (
+		u interface{}
+	)
+	switch wi.typeURL {
+	case ldsURL:
+		u = ldsUpdate{}
+	case rdsURL:
+		u = rdsUpdate{}
+	case cdsURL:
+		u = ClusterUpdate{}
+	case edsURL:
+		u = EndpointsUpdate{}
+	}
+	wi.c.scheduleCallback(wi, u, err)
+}
+
+func (wi *watchInfo) cancel() {
+	wi.mu.Lock()
+	defer wi.mu.Unlock()
+	if wi.state == watchInfoStateCanceled {
+		return
+	}
+	wi.expiryTimer.Stop()
+	wi.state = watchInfoStateCanceled
 }
 
 func (c *Client) watch(wi *watchInfo) (cancel func()) {
@@ -83,31 +162,31 @@ func (c *Client) watch(wi *watchInfo) (cancel func()) {
 	case ldsURL:
 		if v, ok := c.ldsCache[resourceName]; ok {
 			c.logger.Debugf("LDS resource with name %v found in cache: %+v", wi.target, v)
-			c.scheduleCallback(wi, v, nil)
+			wi.newUpdate(v)
 		}
 	case rdsURL:
 		if v, ok := c.rdsCache[resourceName]; ok {
 			c.logger.Debugf("RDS resource with name %v found in cache: %+v", wi.target, v)
-			c.scheduleCallback(wi, v, nil)
+			wi.newUpdate(v)
 		}
 	case cdsURL:
 		if v, ok := c.cdsCache[resourceName]; ok {
 			c.logger.Debugf("CDS resource with name %v found in cache: %+v", wi.target, v)
-			c.scheduleCallback(wi, v, nil)
+			wi.newUpdate(v)
 		}
 	case edsURL:
 		if v, ok := c.edsCache[resourceName]; ok {
 			c.logger.Debugf("EDS resource with name %v found in cache: %+v", wi.target, v)
-			c.scheduleCallback(wi, v, nil)
+			wi.newUpdate(v)
 		}
 	}
 
 	return func() {
 		c.logger.Debugf("watch for type %v, resource name %v canceled", wi.typeURL, wi.target)
+		wi.cancel()
 		c.mu.Lock()
 		defer c.mu.Unlock()
 		if s := watchers[resourceName]; s != nil {
-			wi.expiryTimer.Stop()
 			// Remove this watcher, so it's callback will not be called in the
 			// future.
 			delete(s, wi)
@@ -117,7 +196,19 @@ func (c *Client) watch(wi *watchInfo) (cancel func()) {
 				// watching this resource.
 				delete(watchers, resourceName)
 				c.v2c.removeWatch(wi.typeURL, resourceName)
-				// TODO: remove item from cache.
+				// Remove the resource from cache. When a watch for this
+				// resource is added later, it will trigger a xDS request with
+				// resource names, and client will receive new xDS responses.
+				switch wi.typeURL {
+				case ldsURL:
+					delete(c.ldsCache, resourceName)
+				case rdsURL:
+					delete(c.rdsCache, resourceName)
+				case cdsURL:
+					delete(c.cdsCache, resourceName)
+				case edsURL:
+					delete(c.edsCache, resourceName)
+				}
 			}
 		}
 	}

@@ -40,7 +40,14 @@ func TestAll(t *testing.T) {
 		"SA2001": {{Dir: "CheckEmptyCriticalSection"}},
 		"SA2002": {{Dir: "CheckConcurrentTesting"}},
 		"SA2003": {{Dir: "CheckDeferLock"}},
-		"SA3000": {{Dir: "CheckTestMainExit-1"}, {Dir: "CheckTestMainExit-2"}, {Dir: "CheckTestMainExit-3"}, {Dir: "CheckTestMainExit-4"}, {Dir: "CheckTestMainExit-5"}},
+		"SA3000": {
+			{Dir: "CheckTestMainExit-1"},
+			{Dir: "CheckTestMainExit-2"},
+			{Dir: "CheckTestMainExit-3"},
+			{Dir: "CheckTestMainExit-4"},
+			{Dir: "CheckTestMainExit-5"},
+			{Dir: "CheckTestMainExit-1_go115", Version: "1.15"},
+		},
 		"SA3001": {{Dir: "CheckBenchmarkN"}},
 		"SA4000": {{Dir: "CheckLhsRhsIdentical"}},
 		"SA4001": {{Dir: "CheckIneffectiveCopy"}},
@@ -83,6 +90,7 @@ func TestAll(t *testing.T) {
 		"SA9003": {{Dir: "CheckEmptyBranch"}},
 		"SA9004": {{Dir: "CheckMissingEnumTypesInDeclaration"}},
 		"SA9005": {{Dir: "CheckNoopMarshal"}},
+		"SA9006": {{Dir: "CheckStaticBitShift"}},
 	}
 
 	testutil.Run(t, Analyzers, checks)
