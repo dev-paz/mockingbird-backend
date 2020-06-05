@@ -1,6 +1,11 @@
 package: github.com/mockingbird-backend
 import:
 - package: firebase.google.com/go
+- package: github.com/aws/aws-sdk-go
+  subpackages:
+  - aws
+  - aws/session
+  - service/s3
 - package: github.com/google/uuid
 - package: github.com/gorilla/schema
 - package: github.com/lib/pq
