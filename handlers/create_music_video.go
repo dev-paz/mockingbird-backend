@@ -1,37 +1,34 @@
 package handler
 
 import (
-	"context"
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"log"
+	"io/ioutil"
 	"net/http"
 	"net/url"
-	"time"
 
 	"github.com/gorilla/schema"
 
-	firebase "firebase.google.com/go"
 	guuid "github.com/google/uuid"
-	"google.golang.org/api/option"
 
 	"github.com/mockingbird-backend/dto"
 	"github.com/mockingbird-backend/models"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	checkOpenshotIP()
 	projectData := dto.ProjectData{}
 	createVideoReq := new(dto.CreateMusicVideoRequest)
-	bucketLocation := "mockingbird-287ec.appspot.com"
 
 	err := req.ParseForm()
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-
-	fmt.Println(req.Form)
 
 	for _, str := range req.Form["json"] {
 		fmt.Println(str)
@@ -41,17 +38,11 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		json.Unmarshal([]byte(str), &projectData)
 	}
 
-	fmt.Println(projectData)
-	createVideoReq.ProjectData = projectData
-
 	decoder := schema.NewDecoder()
 	err = decoder.Decode(createVideoReq, req.Form)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-
-	fmt.Println(createVideoReq)
-	fmt.Println(createVideoReq.ProjectData)
 
 	u, err := url.Parse(createVideoReq.OutputURL)
 	if err != nil {
@@ -71,7 +62,15 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		Project: projectData.ProjectID,
 	}
 
-	downloadFileToFirebase(downloadURL, bucketLocation, fileName, videoID, createVideoReq.ProjectData.ProjectID)
+	err = models.UpdateProjectMusicVideo(createVideoReq.ProjectData.ProjectID, videoID)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	err = downloadFileToS3(downloadURL, fileName)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	err = models.CreateMusicVideo(&musicVideo)
 	if err != nil {
@@ -79,68 +78,42 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = models.UpdateProjectStatus(createVideoReq.ProjectData.ProjectID, "completed", string(createVideoReq.ExportID))
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
-	err = models.UpdateProjectMusicVideo(createVideoReq.ProjectData.ProjectID, videoID)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
 
-func downloadFileToFirebase(openShotURL string, bucketLocation string, fileName string, videoID string, projectID string) error {
-	fmt.Println("starting download...")
-	config := &firebase.Config{
-		StorageBucket: "mockingbird-287ec.appspot.com",
-	}
-	opt := option.WithCredentialsFile("credentials.json")
-	app, err := firebase.NewApp(context.Background(), config, opt)
-	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatalln(err)
-	}
-	ctx := context.Background()
-	client, err := app.Storage(ctx)
-	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatalln(err)
-	}
-
-	bucket, err := client.Bucket(bucketLocation)
-	if err != nil {
-		fmt.Println(err.Error())
-		log.Fatalln(err)
-	}
-
+func downloadFileToS3(openShotURL string, fileName string) error {
 	resp, err := http.Get(openShotURL)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err
 	}
 
-	defer resp.Body.Close()
-
-	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
-	defer cancel()
-	wc := bucket.Object(fileName).NewWriter(ctx)
-	if _, err = io.Copy(wc, resp.Body); err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-	if err := wc.Close(); err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-
-	err = models.UpdateVideoStatus(videoID, "completed")
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("error updating video status")
+		fmt.Println(err.Error())
 	}
 
+	const (
+		AWS_S3_REGION = "us-east-1"
+		AWS_S3_BUCKET = "mockingbird-source-16iqlqkop2oyn"
+	)
+
+	s, err := session.NewSession(&aws.Config{Region: aws.String(AWS_S3_REGION)})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	r, err := s3.New(s).PutObject(&s3.PutObjectInput{
+		Bucket: aws.String(AWS_S3_BUCKET),
+		Key:    aws.String(fileName),
+		Body:   bytes.NewReader(bodyBytes),
+	})
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	fmt.Println(r)
 	return nil
 }

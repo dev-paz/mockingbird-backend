@@ -32,6 +32,7 @@ func HandleRequests() {
 	http.HandleFunc("/get_music_video", handleGetMusicVideo)
 
 	http.HandleFunc("/upload_video", handleUploadVideoRequest)
+	http.HandleFunc("/transcode_completed", handleTranscodeCompleted)
 }
 
 // TODO: secure the routes by checking the firebase token

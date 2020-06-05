@@ -108,3 +108,16 @@ func ReadAllProjects(userID string) (*[]dto.Project, error) {
 	}
 	return &projects, nil
 }
+
+func UpdateProjectStatusByVideoID(id string, status string) error {
+	sqlStatement := `
+	UPDATE projects
+	SET status=$2
+	WHERE music_video=$1`
+	_, err := db.Exec(sqlStatement, id, status)
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
+	return nil
+}
