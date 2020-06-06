@@ -48,34 +48,17 @@ func handleCreateMusicVideo(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+
 	downloadURL := "http://" + OpenShotIP + u.Path
-
 	videoID := "mv_" + guuid.New().String()
-	fileName := videoID + ".mp4"
-	musicVideo := dto.MusicVideo{
-		ID:      videoID,
-		URL:     fileName,
-		SongID:  createVideoReq.ProjectData.SongID,
-		Created: createVideoReq.Created,
-		Status:  "uploading",
-		Public:  false,
-		Project: projectData.ProjectID,
-	}
-
 	err = models.UpdateProjectMusicVideo(createVideoReq.ProjectData.ProjectID, videoID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	err = downloadFileToS3(downloadURL, fileName)
+	err = downloadFileToS3(downloadURL, videoID+".mp4")
 	if err != nil {
 		fmt.Println(err.Error())
-	}
-
-	err = models.CreateMusicVideo(&musicVideo)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")

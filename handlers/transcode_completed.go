@@ -7,6 +7,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/mockingbird-backend/dto"
 	"github.com/mockingbird-backend/models"
 )
 
@@ -23,17 +24,35 @@ func handleTranscodeCompleted(w http.ResponseWriter, req *http.Request) {
 		fmt.Println(err.Error())
 		panic(err)
 	}
-	fmt.Println(reqBody.ObjectKey)
 
 	_, file := path.Split(reqBody.ObjectKey)
 	videoID := strings.Split(file, ".")[0]
-	err = models.UpdateProjectStatusByVideoID(videoID, "completed")
+
+	project, err := models.ReadProjectByVideoID(videoID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	fmt.Println(file)
-	fmt.Println(videoID)
+	musicVideo := dto.MusicVideo{
+		ID:      videoID,
+		URL:     "https://" + reqBody.ObjectKey,
+		SongID:  project.Song.ID,
+		Created: project.Created,
+		Status:  "uploading",
+		Public:  false,
+		Project: project.ID,
+	}
+
+	err = models.CreateMusicVideo(&musicVideo)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	err = models.UpdateProjectStatus(project.ID, "completetd", project.ExportID)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

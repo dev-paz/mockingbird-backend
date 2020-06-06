@@ -109,15 +109,18 @@ func ReadAllProjects(userID string) (*[]dto.Project, error) {
 	return &projects, nil
 }
 
-func UpdateProjectStatusByVideoID(id string, status string) error {
-	sqlStatement := `
-	UPDATE projects
-	SET status=$2
-	WHERE music_video=$1`
-	_, err := db.Exec(sqlStatement, id, status)
+func ReadProjectByVideoID(videoID string) (*dto.Project, error) {
+	sqlStatement :=
+		`SELECT  id, name, status, clips, song, openshot_id, export_id, owner, music_video
+		 FROM projects_view
+		 WHERE music_video=$1
+		`
+	var p dto.Project
+	row := db.QueryRow(sqlStatement, videoID)
+	err := row.Scan(&p.ID, &p.Name, &p.Status, &p.Clips, &p.Song, &p.OpenshotID, &p.ExportID, &p.Owner, &p.MusicVideo)
 	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
+		fmt.Printf(err.Error())
+		return nil, err
 	}
-	return nil
+	return &p, nil
 }
