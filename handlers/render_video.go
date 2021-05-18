@@ -227,7 +227,7 @@ func addBackingTrack(backingURL string, OpenShotIP string, requestData map[strin
 	requestData["json"] = configMap["json"]
 	requestData["file"] = uploadResponse.URL
 	requestData["layer"] = layer
-	requestData["position"] = 0.5
+	requestData["position"] = 1
 
 	songConfig, err := json.Marshal(requestData)
 	if err != nil {
